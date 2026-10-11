@@ -1,0 +1,246 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-09T15:38:16.656Z",
+    "url": "http://localhost:3000/",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0",
+    "viewportTested": [
+      "Desktop HD",
+      "Laptop",
+      "Tablet Portrait",
+      "Mobile Portrait (iPhone)",
+      "Mobile Landscape"
+    ]
+  },
+  "sections": {
+    "homeScreen": {
+      "isHomeVisible": true,
+      "title": "OFFLINE DINO",
+      "subtitle": "Style 1 — Friendly Classic",
+      "hasStartBtn": true,
+      "hasHighScoreBtn": true,
+      "hasSoundBtn": true,
+      "hasExitBtn": true,
+      "mascotWidth": 220,
+      "mascotHeight": 170,
+      "mascotRafRunning": true
+    },
+    "gameplayRunning": {
+      "dinoX": 90,
+      "dinoY": 493,
+      "groundY": 557,
+      "dinoHeight": 64,
+      "dinoWidth": 58,
+      "speed": 262.5004310558407,
+      "score": 8.439350357868385,
+      "isGrounded": true,
+      "isDucking": false
+    },
+    "gameplayJumping": {
+      "ascending": {
+        "vy": -577.175,
+        "isGrounded": false,
+        "jumpPhase": "ASCENDING"
+      },
+      "apex": {
+        "y": 493,
+        "vy": 0,
+        "jumpPhase": "IN_AIR"
+      },
+      "landed": {
+        "y": 493,
+        "isGrounded": true,
+        "jumpPhase": "IN_AIR"
+      },
+      "heightDelta": 0
+    },
+    "gameplayDucking": {
+      "anticipation": {
+        "isDucking": true,
+        "duckDuration": 0.050299999999999276
+      },
+      "active": {
+        "isDucking": true,
+        "duckDuration": 0.7500999999999988,
+        "dinoY": 493
+      },
+      "recovery": {
+        "isDucking": false,
+        "duckEndingTimer": 0.03
+      },
+      "resumed": {
+        "isDucking": false,
+        "dinoY": 493
+      }
+    },
+    "pterodactylObstacle": {
+      "totalTraveledPx": 904.9925636868599,
+      "flapFramesObserved": [
+        0,
+        1
+      ],
+      "startX": 800,
+      "endX": -104.99256368685981
+    },
+    "cactusObstacle": {},
+    "collisionAndGameOver": {
+      "gameState": "GAMEOVER",
+      "isDinoDead": true,
+      "isModalVisible": true,
+      "runScore": "00036",
+      "bestScore": "00036"
+    },
+    "pauseAndResume": {
+      "pauseState": {
+        "isModalVisible": true,
+        "gameState": "PAUSED",
+        "score1": 34.8694782979522
+      },
+      "pauseFreezeCheck": true,
+      "resumedState": {
+        "isModalHidden": true,
+        "gameState": "PLAYING"
+      }
+    },
+    "audioAndMute": {
+      "initialMute": false,
+      "toggledMute": true,
+      "restoredMute": false,
+      "soundLabel": "Sound: OFF",
+      "hasSoundEngine": true
+    },
+    "scoreAndPersistence": {
+      "modalData": {
+        "isVisible": true,
+        "best": "00000",
+        "last": "00000",
+        "games": "0"
+      },
+      "closedCleanly": true
+    },
+    "dayNightCycle": {},
+    "responsiveViewports": {
+      "Desktop HD": {
+        "viewport": {
+          "name": "Desktop HD",
+          "width": 1920,
+          "height": 1080
+        },
+        "metrics": {
+          "canvasWidth": 1920,
+          "canvasHeight": 1080,
+          "cssWidth": 1920,
+          "cssHeight": 1080,
+          "groundY": 494.5,
+          "dinoY": 430.5,
+          "scale": 1.92,
+          "hudVisible": true
+        },
+        "screenshot": "audit_responsive_desktop_hd.png"
+      },
+      "Laptop": {
+        "viewport": {
+          "name": "Laptop",
+          "width": 1366,
+          "height": 768
+        },
+        "metrics": {
+          "canvasWidth": 1366,
+          "canvasHeight": 768,
+          "cssWidth": 1366,
+          "cssHeight": 768,
+          "groundY": 494.2254758418741,
+          "dinoY": 430.2254758418741,
+          "scale": 1.366,
+          "hudVisible": true
+        },
+        "screenshot": "audit_responsive_laptop.png"
+      },
+      "Tablet Portrait": {
+        "viewport": {
+          "name": "Tablet Portrait",
+          "width": 768,
+          "height": 1024
+        },
+        "metrics": {
+          "canvasWidth": 768,
+          "canvasHeight": 1024,
+          "cssWidth": 768,
+          "cssHeight": 1024,
+          "groundY": 1265.3333333333333,
+          "dinoY": 1201.3333333333333,
+          "scale": 0.768,
+          "hudVisible": true
+        },
+        "screenshot": "audit_responsive_tablet_portrait.png"
+      },
+      "Mobile Portrait (iPhone)": {
+        "viewport": {
+          "name": "Mobile Portrait (iPhone)",
+          "width": 390,
+          "height": 844
+        },
+        "metrics": {
+          "canvasWidth": 390,
+          "canvasHeight": 844,
+          "cssWidth": 390,
+          "cssHeight": 844,
+          "groundY": 1230.4615384615383,
+          "dinoY": 1166.4615384615383,
+          "scale": 0.65,
+          "hudVisible": true
+        },
+        "screenshot": "audit_responsive_mobile_portrait__iphone_.png"
+      },
+      "Mobile Landscape": {
+        "viewport": {
+          "name": "Mobile Landscape",
+          "width": 844,
+          "height": 390
+        },
+        "metrics": {
+          "canvasWidth": 844,
+          "canvasHeight": 390,
+          "cssWidth": 844,
+          "cssHeight": 390,
+          "groundY": 394.08530805687207,
+          "dinoY": 330.08530805687207,
+          "scale": 0.844,
+          "hudVisible": true
+        },
+        "screenshot": "audit_responsive_mobile_landscape.png"
+      }
+    },
+    "performanceAndReliability": {
+      "serviceWorker": {
+        "supported": true,
+        "registered": true,
+        "cacheNames": [
+          "offline-dino-v4.0"
+        ],
+        "cacheItemCount": 39
+      },
+      "fpsAndFrameTiming": {
+        "avgDeltaMs": 16.628333332538627,
+        "maxDeltaMs": 17,
+        "minDeltaMs": 14.499999952317012,
+        "fps": 60.13831813457706,
+        "memory": {
+          "totalJSHeapSize": 4694519,
+          "usedJSHeapSize": 3558319
+        }
+      },
+      "autoPause": {
+        "autoPauseHidden": {
+          "state": "PAUSED",
+          "isModalVisible": true
+        },
+        "autoResumeRecovery": {
+          "state": "COUNTDOWN",
+          "isCountdownVisible": true
+        }
+      }
+    },
+    "consoleAndNetworkErrors": []
+  },
+  "discoveredIssues": []
+}

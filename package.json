@@ -1,0 +1,15 @@
+{
+  "name": "offline-dino",
+  "version": "2.0.0",
+  "description": "OFFLINE DINO - Friendly Classic Endless Runner",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.12.0",
+    "sharp": "^0.35.5"
+  }
+}

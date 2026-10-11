@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#4da6ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="OFFLINE DINO - Style 1: Friendly Classic Edition. A colorful, smooth, polished 2D cartoon endless runner.">
+  <title>OFFLINE DINO — Style 1: Friendly Classic</title>
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=5">
+  <link rel="manifest" href="manifest.json?v=5">
+  <link rel="stylesheet" href="css/style.css?v=5">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js?v=6').then(function(reg) {
+          reg.update();
+        }).catch(function() {});
+      });
+    }
+  </script>
+</head>
+<body>
+  <div id="gameContainer" class="game-container">
+    <!-- Main High-DPI Gameplay Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Gameplay HUD -->
+    <div id="gameplayHUD" class="hud-overlay hidden">
+      <div class="hud-center-panel">
+        <div class="hud-score-chip">
+          <span class="hud-score-label">SCORE</span>
+          <span id="hudScore" class="hud-score-val">00000</span>
+        </div>
+        <div class="hud-score-divider"></div>
+        <div class="hud-score-chip hi">
+          <span class="hud-score-label">BEST</span>
+          <span id="hudHighScore" class="hud-score-val hi">HI 00000</span>
+        </div>
+      </div>
+      <button id="btnPause" class="hud-pause-btn" aria-label="Pause Game">
+        <span class="pause-icon"></span>
+      </button>
+      <div id="newHighScoreBanner" class="high-score-banner hidden">
+        ⭐ NEW HIGH SCORE! ⭐
+      </div>
+    </div>
+
+    <!-- Centered Countdown Overlay (3 -> 2 -> 1 -> GO) -->
+    <div id="countdownOverlay" class="countdown-overlay hidden">
+      <div id="countdownText" class="countdown-number">3</div>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen home-screen">
+      <div class="home-content">
+        <!-- 1. Title & 2. Friendly Classic label -->
+        <div class="home-title-wrapper">
+          <h1 class="game-title">OFFLINE DINO</h1>
+          <p class="game-subtitle">Style 1 — Friendly Classic</p>
+        </div>
+
+        <!-- 3. One animated dinosaur mascot directly above START GAME (no ground surface or shadow) -->
+        <div class="mascot-wrapper">
+          <canvas id="mascotCanvas" width="220" height="170"></canvas>
+        </div>
+
+        <!-- 4. Big Cartoon START GAME Button -->
+        <button id="btnStartGame" class="btn-start-game">
+          <span class="btn-text">START GAME</span>
+        </button>
+
+        <!-- 5. Bottom row of remaining action buttons (High Score, Sound, Exit - Settings removed) -->
+        <div class="home-bottom-bar">
+          <button id="btnHomeHighScore" class="btn-tool" aria-label="High Scores">
+            <span class="btn-icon">🏆</span>
+            <span class="btn-label">High Score</span>
+          </button>
+          <button id="btnHomeSound" class="btn-tool" aria-label="Sound Toggle">
+            <span id="homeSoundIcon" class="btn-icon">🔊</span>
+            <span id="homeSoundLabel" class="btn-label">Sound: ON</span>
+          </button>
+          <button id="btnHomeExit" class="btn-tool" aria-label="Exit Game">
+            <span class="btn-icon">🚪</span>
+            <span class="btn-label">Exit</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause Modal (Resume, Restart - Settings and Home removed) -->
+    <div id="pauseModal" class="modal-backdrop hidden">
+      <div class="modal-card cartoon-card">
+        <div class="modal-header">
+          <h2 class="modal-title">GAME PAUSED</h2>
+        </div>
+        <div class="modal-body">
+          <button id="btnPauseResume" class="cartoon-btn btn-green">
+            <span class="btn-text">RESUME</span>
+          </button>
+          <button id="btnPauseRestart" class="cartoon-btn btn-orange">
+            <span class="btn-text">RESTART</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Modal (Play Again - Settings and Home removed) -->
+    <div id="gameOverModal" class="modal-backdrop hidden">
+      <div class="modal-card cartoon-card game-over-card">
+        <div class="modal-header">
+          <h2 class="modal-title danger">GAME OVER</h2>
+        </div>
+        <div class="modal-body">
+          <div class="stats-scoreboard">
+            <div class="stat-box">
+              <span class="stat-label">RUN SCORE</span>
+              <span id="gameOverRunScore" class="stat-val highlight">00000</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">BEST SCORE</span>
+              <span id="gameOverBestScore" class="stat-val">00000</span>
+            </div>
+          </div>
+          <button id="btnPlayAgain" class="cartoon-btn btn-primary-yellow">
+            <span class="btn-text">PLAY AGAIN</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- High Score Modal -->
+    <div id="highScoreModal" class="modal-backdrop hidden">
+      <div class="modal-card cartoon-card">
+        <div class="modal-header">
+          <h2 class="modal-title">HIGH SCORES</h2>
+        </div>
+        <div class="modal-body">
+          <div class="score-records-list">
+            <div class="record-row">
+              <span class="record-name">🏆 Best Score</span>
+              <span id="hsBestScore" class="record-value gold">00000</span>
+            </div>
+            <div class="record-row">
+              <span class="record-name">⏱️ Last Score</span>
+              <span id="hsLastScore" class="record-value">00000</span>
+            </div>
+            <div class="record-row">
+              <span class="record-name">🎮 Games Played</span>
+              <span id="hsGamesPlayed" class="record-value">0</span>
+            </div>
+          </div>
+          <div id="hsStorageNotice" class="storage-notice hidden">ℹ️ Session only (browser storage unavailable)</div>
+          <button id="btnHighScoreBack" class="cartoon-btn btn-blue">
+            <span class="btn-text">BACK</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exit Dialog Modal -->
+    <div id="exitModal" class="modal-backdrop hidden">
+      <div class="modal-card cartoon-card">
+        <div class="modal-header">
+          <h2 class="modal-title">EXIT GAME</h2>
+        </div>
+        <div class="modal-body">
+          <p class="modal-text">You can close this browser tab or window to exit the game.<br><br>Thanks for playing <strong>OFFLINE DINO</strong>! 🦖</p>
+          <button id="btnExitOk" class="cartoon-btn btn-blue">
+            <span class="btn-text">OK</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
+  <script src="js/sprite_data.js?v=7"></script>
+  <script src="js/audio.js?v=7"></script>
+  <script src="js/sprites.js?v=7"></script>
+  <script src="js/game.js?v=7"></script>
+  <script src="js/ui.js?v=7"></script>
+</body>
+</html>

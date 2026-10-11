@@ -1,0 +1,22 @@
+{
+  "name": "OFFLINE DINO",
+  "short_name": "OfflineDino",
+  "description": "A polished, colorful 2D cartoon endless runner inspired by the classic Chrome Dino.",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#5bb2ff",
+  "theme_color": "#5bb2ff",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

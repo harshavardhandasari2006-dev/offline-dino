@@ -1,0 +1,517 @@
+{
+  "timestamp": "2026-10-08T13:09:57.486Z",
+  "assetAudit": {
+    "dino_idle_0.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 15,
+        "maxX": 113,
+        "minY": 12,
+        "maxY": 103,
+        "w": 99,
+        "h": 92
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 5413
+    },
+    "dino_idle_1.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 15,
+        "maxX": 113,
+        "minY": 12,
+        "maxY": 103,
+        "w": 99,
+        "h": 92
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 5291
+    },
+    "dino_idle_2.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 16,
+        "maxX": 111,
+        "minY": 12,
+        "maxY": 103,
+        "w": 96,
+        "h": 92
+      },
+      "baseline": 103,
+      "horizontalCenter": "63.5",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 5182
+    },
+    "dino_idle_3.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 21,
+        "maxX": 107,
+        "minY": 12,
+        "maxY": 103,
+        "w": 87,
+        "h": 92
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4735
+    },
+    "dino_run_0.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 15,
+        "maxX": 113,
+        "minY": 21,
+        "maxY": 103,
+        "w": 99,
+        "h": 83
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4252
+    },
+    "dino_run_1.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 16,
+        "maxX": 112,
+        "minY": 17,
+        "maxY": 103,
+        "w": 97,
+        "h": 87
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4295
+    },
+    "dino_run_2.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 15,
+        "maxX": 113,
+        "minY": 17,
+        "maxY": 103,
+        "w": 99,
+        "h": 87
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4187
+    },
+    "dino_run_3.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 12,
+        "maxX": 115,
+        "minY": 13,
+        "maxY": 103,
+        "w": 104,
+        "h": 91
+      },
+      "baseline": 103,
+      "horizontalCenter": "63.5",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4452
+    },
+    "dino_run_4.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 13,
+        "maxX": 111,
+        "minY": 16,
+        "maxY": 103,
+        "w": 99,
+        "h": 88
+      },
+      "baseline": 103,
+      "horizontalCenter": "62.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4178
+    },
+    "dino_jump_0.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 17,
+        "maxX": 110,
+        "minY": 40,
+        "maxY": 103,
+        "w": 94,
+        "h": 64
+      },
+      "baseline": 103,
+      "horizontalCenter": "63.5",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3246
+    },
+    "dino_jump_1.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 18,
+        "maxX": 110,
+        "minY": 13,
+        "maxY": 95,
+        "w": 93,
+        "h": 83
+      },
+      "baseline": 95,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3405
+    },
+    "dino_jump_2.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 19,
+        "maxX": 109,
+        "minY": 11,
+        "maxY": 89,
+        "w": 91,
+        "h": 79
+      },
+      "baseline": 89,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3268
+    },
+    "dino_jump_3.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 19,
+        "maxX": 108,
+        "minY": 29,
+        "maxY": 97,
+        "w": 90,
+        "h": 69
+      },
+      "baseline": 97,
+      "horizontalCenter": "63.5",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3229
+    },
+    "dino_jump_4.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 16,
+        "maxX": 111,
+        "minY": 46,
+        "maxY": 103,
+        "w": 96,
+        "h": 58
+      },
+      "baseline": 103,
+      "horizontalCenter": "63.5",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3053
+    },
+    "dino_duck_0.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 20,
+        "maxX": 108,
+        "minY": 21,
+        "maxY": 103,
+        "w": 89,
+        "h": 83
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4042
+    },
+    "dino_duck_1.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 19,
+        "maxX": 108,
+        "minY": 48,
+        "maxY": 103,
+        "w": 90,
+        "h": 56
+      },
+      "baseline": 103,
+      "horizontalCenter": "63.5",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3352
+    },
+    "dino_duck_2.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 21,
+        "maxX": 107,
+        "minY": 54,
+        "maxY": 103,
+        "w": 87,
+        "h": 50
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 2999
+    },
+    "dino_duck_3.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 23,
+        "maxX": 105,
+        "minY": 62,
+        "maxY": 103,
+        "w": 83,
+        "h": 42
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 2627
+    },
+    "dino_duck_4.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 22,
+        "maxX": 106,
+        "minY": 27,
+        "maxY": 103,
+        "w": 85,
+        "h": 77
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 3970
+    },
+    "dino_dead.png": {
+      "width": 131,
+      "height": 71,
+      "bbox": {
+        "minX": 0,
+        "maxX": 130,
+        "minY": 0,
+        "maxY": 70,
+        "w": 131,
+        "h": 71
+      },
+      "baseline": 70,
+      "horizontalCenter": "65.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 4869
+    },
+    "dino_hit.png": {
+      "width": 128,
+      "height": 112,
+      "bbox": {
+        "minX": 16,
+        "maxX": 112,
+        "minY": 20,
+        "maxY": 103,
+        "w": 97,
+        "h": 84
+      },
+      "baseline": 103,
+      "horizontalCenter": "64.0",
+      "semiTransparentCount": 0,
+      "nonZeroAlphaCount": 6733
+    },
+    "cactus_single.png": {
+      "width": 39,
+      "height": 71,
+      "channels": 4
+    },
+    "cactus_small.png": {
+      "width": 31,
+      "height": 52,
+      "channels": 4
+    },
+    "cactus_double.png": {
+      "width": 33,
+      "height": 65,
+      "channels": 4
+    },
+    "cactus_tall.png": {
+      "width": 39,
+      "height": 70,
+      "channels": 4
+    },
+    "pterodactyl_0.png": {
+      "width": 104,
+      "height": 80,
+      "channels": 4
+    },
+    "pterodactyl_1.png": {
+      "width": 104,
+      "height": 80,
+      "channels": 4
+    },
+    "bg_day.png": {
+      "width": 1280,
+      "height": 500,
+      "channels": 3
+    },
+    "bg_night.png": {
+      "width": 1280,
+      "height": 500,
+      "channels": 3
+    }
+  },
+  "gameplayRuns": {
+    "run1_casual": {
+      "score": 13.797401983787049,
+      "speed": 264.0441646958456,
+      "distance": 574.8917493244602,
+      "obstaclesCleared": 0
+    },
+    "run2_jumping": {
+      "totalJumps": 0,
+      "expectedJumps": 5
+    },
+    "run3_ducking": {
+      "normalAirTimeMs": 0,
+      "fastDropAirTimeMs": 793
+    },
+    "run4_dayNight": {
+      "preNight": false,
+      "postNight": false,
+      "backToDay": false
+    },
+    "run5_highSpeed": {
+      "score": 1502.6155156816349,
+      "speed": 726.5903908198039,
+      "gap": 1630.313110773992,
+      "jumpAirTime": 0.76,
+      "jumpTravel": 552.208697023051,
+      "reactionBuffer": 1020.1044137509411,
+      "reactionTime": 1.4039607826356864
+    },
+    "run6_stats": {
+      "statsBefore": {
+        "gamesPlayed": 1,
+        "bestScore": 1503
+      },
+      "statsAfterGameOver": {
+        "gamesPlayed": 2,
+        "bestScore": 1504
+      },
+      "statsAfterRestart": {
+        "gamesPlayed": 2,
+        "bestScore": 1504
+      },
+      "restartIntegrity": true
+    },
+    "run7_pause": {
+      "isFrozen": true,
+      "pausedSample1": {
+        "dinoY": 451.33333333333337,
+        "score": 4.27353910459547,
+        "distance": 178.06412935814458,
+        "firstObsX": 0,
+        "animTime": 1.9832999999761607
+      },
+      "pausedSample2": {
+        "dinoY": 451.33333333333337,
+        "score": 4.27353910459547,
+        "distance": 178.06412935814458,
+        "firstObsX": 0,
+        "animTime": 1.9832999999761607
+      }
+    },
+    "run9_audio": {
+      "audioInfo": {
+        "hasCtx": true,
+        "ctxState": "running",
+        "isMuted": false,
+        "isUnlocked": true
+      },
+      "muteToggleTest": {
+        "initial": false,
+        "toggled": true,
+        "lsVal": "true"
+      }
+    }
+  },
+  "performanceMetrics": {},
+  "responsiveMetrics": {
+    "Desktop (1080p)": {
+      "scale": 1.92,
+      "groundY": 494.5,
+      "dinoY": 430.5,
+      "canvasW": 1920,
+      "canvasH": 1080,
+      "hudOverflowX": false,
+      "scoreChipWidth": 272.15625
+    },
+    "Laptop (Standard)": {
+      "scale": 1.366,
+      "groundY": 494.2254758418741,
+      "dinoY": 430.2254758418741,
+      "canvasW": 1366,
+      "canvasH": 768,
+      "hudOverflowX": false,
+      "scoreChipWidth": 272.15625
+    },
+    "Tablet Portrait": {
+      "scale": 0.768,
+      "groundY": 1265.3333333333333,
+      "dinoY": 1201.3333333333333,
+      "canvasW": 768,
+      "canvasH": 1024,
+      "hudOverflowX": false,
+      "scoreChipWidth": 272.15625
+    },
+    "Tablet Landscape": {
+      "scale": 1.024,
+      "groundY": 682,
+      "dinoY": 618,
+      "canvasW": 1024,
+      "canvasH": 768,
+      "hudOverflowX": false,
+      "scoreChipWidth": 271.671875
+    },
+    "Mobile Landscape": {
+      "scale": 0.667,
+      "groundY": 494.21889055472263,
+      "dinoY": 430.21889055472263,
+      "canvasW": 667,
+      "canvasH": 375,
+      "hudOverflowX": false,
+      "scoreChipWidth": 271.671875
+    },
+    "Mobile Portrait": {
+      "scale": 0.65,
+      "groundY": 958.1538461538462,
+      "dinoY": 894.1538461538462,
+      "canvasW": 375,
+      "canvasH": 667,
+      "hudOverflowX": false,
+      "scoreChipWidth": 222.375
+    }
+  },
+  "uiAudit": {},
+  "issuesFound": [],
+  "consoleErrors": [],
+  "consoleWarnings": []
+}
