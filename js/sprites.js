@@ -25,8 +25,8 @@ class SpriteRenderer {
     const spriteKeys = [
       // Idle
       'dino_idle_0', 'dino_idle_1', 'dino_idle_2', 'dino_idle_3',
-      // Run (5 fluid frames)
-      'dino_run_0', 'dino_run_1', 'dino_run_2', 'dino_run_3', 'dino_run_4',
+      // Run (6 fluid frames - alternating strides A and B)
+      'dino_run_0', 'dino_run_1', 'dino_run_2', 'dino_run_3', 'dino_run_4', 'dino_run_5',
       // Jump (5 phases)
       'dino_jump_0', 'dino_jump_1', 'dino_jump_2', 'dino_jump_3', 'dino_jump_4',
       // Duck (smooth transition with closed eyes)
@@ -430,15 +430,17 @@ class SpriteRenderer {
         img = this.images['dino_jump_2'];
       }
     }
-    // 5. RUNNING CYCLE (Strictly alternating two-leg cartoon run cycle)
-    // Frame 0 -> Left leg forward, Right leg back (Stride A, Left foot firmly planted on baseline y=103)
-    // Frame 1 -> Passing transition (Left leg supporting on baseline y=103, Right leg swinging forward)
-    // Frame 2 -> Right leg forward, Left leg back (Stride B, Right foot firmly planted on baseline y=103)
-    // Frame 3 -> Passing transition (Right leg supporting on baseline y=103, Left leg swinging forward)
-    // Both legs visibly run using the exact same ground baseline (y=103) with zero floating
+    // 5. RUNNING CYCLE (Strictly alternating two-leg cartoon run cycle - 6 frames)
+    // Frame 0 -> Stride A Contact (Near leg forward, far leg back, heel/foot firmly planted on baseline y=103)
+    // Frame 1 -> Stride A Passing (Near leg supporting on baseline y=103, far leg knee tucking forward)
+    // Frame 2 -> Stride A Push-off / Extension (Near leg push-off, far leg extending)
+    // Frame 3 -> Stride B Contact (Far leg forward, near leg back, far foot planted on baseline y=103)
+    // Frame 4 -> Stride B Passing (Far leg supporting on baseline y=103, near leg swinging forward)
+    // Frame 5 -> Stride B Push-off / Extension (Far leg push-off, near leg extending forward smoothly into Frame 0)
+    // Both legs visibly participate with believable ground contact at y=103 and zero floating
     else if (state === 'RUNNING') {
-      const runFps = Math.min(15.0, 8.5 + (gameSpeed / 95.0));
-      const runSequence = [0, 1, 2, 3];
+      const runFps = Math.min(15.0, 9.0 + (gameSpeed / 85.0));
+      const runSequence = [0, 1, 2, 3, 4, 5];
       const frameIdx = Math.floor(animTime * runFps) % runSequence.length;
       img = this.images['dino_run_' + runSequence[frameIdx]] || this.images['dino_run_0'];
     }
