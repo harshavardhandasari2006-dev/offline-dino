@@ -406,14 +406,12 @@ class DinoGame {
     if (lastObs) {
       if (lastObs.type === 'CACTUS_LARGE_TRIPLE' || lastObs.type === 'CACTUS_SMALL_TRIPLE') {
         minSafeGap += 95;
-      } else if (lastObs.type === 'PTERODACTYL' && lastObs.heightLabel === 'LOW') {
+      } else if (lastObs.type === 'PTERODACTYL') {
         minSafeGap += 85;
-      } else if (lastObs.type === 'PTERODACTYL' && lastObs.heightLabel === 'MID') {
-        minSafeGap += 75;
       } else {
         // Preceding cactus with potential fast pterodactyl following (ISSUE-03):
-        // Account for speed differential ((speed * 1.45 + 100) - speed) across visible runway
-        const pteroFlightDiff = (this.speed * 1.45 + 100) - this.speed;
+        // Account for speed differential ((speed * 1.35 + 80) - speed) across visible runway
+        const pteroFlightDiff = (this.speed * 1.35 + 80) - this.speed;
         const runwayTime = Math.min(1.8, (this.canvas.width / this.scale) / Math.max(1, this.speed));
         minSafeGap += Math.min(180, pteroFlightDiff * runwayTime * 0.35);
       }
@@ -428,7 +426,7 @@ class DinoGame {
   // Stores relative groundOffset for robust resizing
   // ==========================================
   spawnObstacle() {
-    const isPterodactylAllowed = this.score > 90;
+    const isPterodactylAllowed = this.score > 40;
     const isLargeCactusAllowed = this.score > 60;
 
     const rand = Math.random();
@@ -437,26 +435,18 @@ class DinoGame {
     const prevWasPtero = this.lastSpawnedObstacle && this.lastSpawnedObstacle.type === 'PTERODACTYL';
     const prevWasTriple = this.lastSpawnedObstacle && (this.lastSpawnedObstacle.type === 'CACTUS_LARGE_TRIPLE' || this.lastSpawnedObstacle.type === 'CACTUS_SMALL_TRIPLE');
 
-    // Spawn Pterodactyl
-    if (isPterodactylAllowed && rand < 0.35 && !(prevWasPtero && this.score < 400)) {
-      const hRand = Math.random();
-      let groundOffset = -46; // Low (must jump over)
-      let pHeightLabel = 'LOW';
-      if (hRand < 0.38) {
-        groundOffset = -72; // Mid (must duck under!)
-        pHeightLabel = 'MID';
-      } else if (hRand < 0.70) {
-        groundOffset = -110; // High (can run under safely)
-        pHeightLabel = 'HIGH';
-      }
+    // Spawn Head-Level Flying Obstacle (Pterodactyl)
+    if (isPterodactylAllowed && rand < 0.35 && !(prevWasPtero && this.score < 300)) {
+      const groundOffset = -74; // Head-height flying obstacle (must duck to avoid!)
+      const pHeightLabel = 'HEAD';
 
       obstacle = {
         type: 'PTERODACTYL',
         x: (this.canvas.width / this.scale) + 40,
         y: this.groundY + groundOffset,
         groundOffset: groundOffset,
-        width: 58,
-        height: 38,
+        width: 60,
+        height: 46,
         flapTimer: 0,
         flapFrame: 0,
         heightLabel: pHeightLabel
@@ -517,14 +507,15 @@ class DinoGame {
     const dino = this.dino;
 
     let dinoBoxes = [];
-    if (dino.isDucking) {
+    if (dino.isDucking && dino.duckDuration >= 0.04) {
       // Ducking pose: lower, horizontal box anchored to ground baseline (DINO-002)
-      const duckCollisionTop = dino.y + (dino.height - dino.duckHeight) + 4;
+      // Visible top of dino_duck_3 is at y = 292
+      const duckCollisionTop = dino.y + (dino.height - dino.duckHeight) + 8;
       dinoBoxes.push({
         x: dino.x + 8,
         y: duckCollisionTop,
         w: dino.duckWidth - 12,
-        h: dino.duckHeight - 6
+        h: dino.duckHeight - 8
       });
     } else {
       // Standing/Running/Jumping pose: multi-box matching cartoon torso and head
@@ -535,9 +526,9 @@ class DinoGame {
         h: 40
       });
       dinoBoxes.push({
-        x: dino.x + 28,
+        x: dino.x + 26,
         y: dino.y + 6,
-        w: 26,
+        w: 28,
         h: 24
       });
     }
@@ -556,11 +547,13 @@ class DinoGame {
 
       let obsBox;
       if (obs.type === 'PTERODACTYL') {
+        // Synchronized with visible 60x46 sprite at head height (y=246..292)
+        // Hitbox covers body & wings at y in [254..288]
         obsBox = {
-          x: obs.x + 8,
+          x: obs.x + 6,
           y: obs.y + 8,
-          w: obs.width - 14,
-          h: obs.height - 14
+          w: obs.width - 12,
+          h: obs.height - 12
         };
       } else {
         // Multi-cactus cluster collision: strictly covers visible cacti with 4px margin (DINO-001)
@@ -735,7 +728,7 @@ class DinoGame {
 
       if (obs.type === 'PTERODACTYL') {
         // Flying obstacle actively flies toward player (ground speed + active flight velocity)
-        let pteroFlightSpeed = this.speed * 1.45 + 100;
+        let pteroFlightSpeed = this.speed * 1.35 + 80;
 
         // In-flight minimum separation rule (ISSUE-03):
         // Prevent dragon from bunching into a preceding obstacle closer than minimum reaction distance

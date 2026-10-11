@@ -389,12 +389,12 @@ class SpriteRenderer {
 
     ctx.save();
     if (img && img.complete && img.naturalWidth > 0) {
-      const targetH = 48;
-      const targetW = targetH * (img.naturalWidth / img.naturalHeight);
+      const targetH = 46;
+      const targetW = 60;
       ctx.drawImage(img, x, y, targetW, targetH);
     } else {
       ctx.fillStyle = '#b45309';
-      ctx.fillRect(x, y, 62, 48);
+      ctx.fillRect(x, y, 60, 46);
     }
     ctx.restore();
   }
