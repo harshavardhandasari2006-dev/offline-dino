@@ -192,6 +192,7 @@ async function runComprehensiveTests() {
       g.state = g.STATE_PLAYING;
       g.dino.isGrounded = true;
       g.dino.y = g.groundY - g.dino.height;
+      g.keys.duck = !ct.ending;
       g.dino.isDucking = !ct.ending;
       g.dino.duckDuration = ct.dur;
       g.dino.duckEndingTimer = ct.ending ? 0.05 : 0;

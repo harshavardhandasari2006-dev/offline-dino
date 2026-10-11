@@ -69,19 +69,50 @@ class SpriteRenderer {
   }
 
   // Pre-render blurred background to an offscreen canvas once (DINO-007)
-  // Preserves 100% of the soft atmospheric depth while removing software filter costs from 60 FPS loop
+  // Pre-render blurred background to an offscreen canvas with wrap-around boundary filtering
+  // Eliminates canvas edge darkening so seams between tiled backgrounds are 100% invisible
   createPrebakedBlurredBg(key, img) {
     if (!img || img.naturalWidth === 0) return;
     try {
-      const offscreen = document.createElement('canvas');
-      offscreen.width = img.naturalWidth;
-      offscreen.height = img.naturalHeight;
-      const offCtx = offscreen.getContext('2d');
-      if (offCtx) {
-        offCtx.filter = 'blur(1.4px)';
-        offCtx.drawImage(img, 0, 0);
-        this.blurredBgs[key] = offscreen;
+      const nw = img.naturalWidth;
+      const nh = img.naturalHeight;
+
+      // 1. Create a 3-tile panorama offscreen canvas to allow wrap-around blur
+      const wrapCanvas = document.createElement('canvas');
+      wrapCanvas.width = nw * 3;
+      wrapCanvas.height = nh;
+      const wCtx = wrapCanvas.getContext('2d');
+      if (!wCtx) {
+        this.blurredBgs[key] = img;
+        return;
       }
+
+      // Draw 3 contiguous tiles
+      wCtx.drawImage(img, 0, 0);
+      wCtx.drawImage(img, nw, 0);
+      wCtx.drawImage(img, nw * 2, 0);
+
+      // 2. Blur the 3-tile strip
+      const blurCanvas = document.createElement('canvas');
+      blurCanvas.width = nw * 3;
+      blurCanvas.height = nh;
+      const bCtx = blurCanvas.getContext('2d');
+      if (bCtx) {
+        bCtx.filter = 'blur(1.4px)';
+        bCtx.drawImage(wrapCanvas, 0, 0);
+
+        // 3. Extract the pristine center tile (nw .. 2*nw) where boundary blur bleed is 0
+        const offscreen = document.createElement('canvas');
+        offscreen.width = nw;
+        offscreen.height = nh;
+        const offCtx = offscreen.getContext('2d');
+        if (offCtx) {
+          offCtx.drawImage(blurCanvas, nw, 0, nw, nh, 0, 0, nw, nh);
+          this.blurredBgs[key] = offscreen;
+          return;
+        }
+      }
+      this.blurredBgs[key] = img;
     } catch (e) {
       this.blurredBgs[key] = img;
     }
@@ -110,9 +141,9 @@ class SpriteRenderer {
       const offset = -(parallaxSpeed % bgW);
 
       for (let l = -1; l <= Math.ceil(width / bgW) + 1; l++) {
-        const bx = offset + l * bgW;
-        // Overlap by 1.5px to guarantee seamless joint
-        ctx.drawImage(bgImg, Math.floor(bx), 0, Math.ceil(bgW) + 2, bgH);
+        const bx0 = Math.round(offset + l * bgW);
+        const bx1 = Math.round(offset + (l + 1) * bgW);
+        ctx.drawImage(bgImg, bx0, 0, bx1 - bx0, bgH);
       }
       ctx.restore();
     } else {
@@ -404,14 +435,15 @@ class SpriteRenderer {
       } else if (duckDuration < 0.04) {
         // Anticipation frame: bending knees, preparing to drop (DINO-011)
         img = this.images['dino_duck_0'];
-      } else if (duckDuration < 0.09) {
+      } else if (duckDuration < 0.08) {
         // Lowering body into duck posture with eyes closing
         img = this.images['dino_duck_1'];
+      } else if (duckDuration < 0.12) {
+        // Transitional lowering into full duck posture
+        img = this.images['dino_duck_2'];
       } else {
-        // Active ducking cycle with CLOSED EYES and natural leg motion
-        const duckCycle = Math.floor(animTime * 12) % 2;
-        img = duckCycle === 0 ? this.images['dino_duck_2'] : this.images['dino_duck_3'];
-        if (!img) img = this.images['dino_duck_2'];
+        // Stable sustained crouch pose ("Continue Duck") with CLOSED EYES — rock solid, zero shaking
+        img = this.images['dino_duck_3'] || this.images['dino_duck_2'];
       }
     }
     // 4. JUMPING SEQUENCE (Style 1 Panel 3: 5 Distinct Phases with Full Tails)
@@ -439,7 +471,7 @@ class SpriteRenderer {
     // Frame 5 -> Stride B Push-off / Extension (Far leg push-off, near leg extending forward smoothly into Frame 0)
     // Both legs visibly participate with believable ground contact at y=103 and zero floating
     else if (state === 'RUNNING') {
-      const runFps = Math.min(15.0, 9.0 + (gameSpeed / 85.0));
+      const runFps = Math.min(16.0, 10.0 + (gameSpeed / 85.0));
       const runSequence = [0, 1, 2, 3, 4, 5];
       const frameIdx = Math.floor(animTime * runFps) % runSequence.length;
       img = this.images['dino_run_' + runSequence[frameIdx]] || this.images['dino_run_0'];
