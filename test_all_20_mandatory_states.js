@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const EDGE_PATH = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-const URL = 'http://localhost:3000';
+const URL = process.env.TEST_URL || 'http://localhost:3001';
 const OUT_DIR = path.join(__dirname, 'validation_states');
 
 if (!fs.existsSync(OUT_DIR)) {
@@ -44,22 +44,25 @@ async function captureAll20States() {
   // 2. First running frame
   console.log('[2/20] Capturing First running frame...');
   await page.evaluate(() => {
-    window.dinoGame.dino.runFrame = 0;
+    window.dinoGame.dino.animTime = 0.04;
+    window.dinoGame.render();
   });
   await new Promise(r => setTimeout(r, 60));
   await page.screenshot({ path: path.join(OUT_DIR, '02_first_running_frame.png') });
   console.log('  ✓ 02_first_running_frame.png');
 
-  // 3. Every frame of the running cycle
-  console.log('[3/20] Capturing Every frame of running cycle...');
-  for (let f = 0; f < 5; f++) {
+  // 3. Every frame of the running cycle (8 frames)
+  console.log('[3/20] Capturing Every frame of 8-frame running cycle...');
+  for (let f = 0; f < 8; f++) {
     await page.evaluate((frameIdx) => {
-      window.dinoGame.dino.runFrame = frameIdx;
+      window.dinoGame.speed = 260;
+      window.dinoGame.dino.animTime = (frameIdx + 0.5) / 12.0;
+      window.dinoGame.render();
     }, f);
     await new Promise(r => setTimeout(r, 50));
     await page.screenshot({ path: path.join(OUT_DIR, `03_running_frame_${f}.png`) });
   }
-  console.log('  ✓ 03_running_frame_0..4.png');
+  console.log('  ✓ 03_running_frame_0..7.png');
 
   // 4. Jump takeoff
   console.log('[4/20] Capturing Jump Takeoff...');

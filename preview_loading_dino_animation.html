@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Loading Dino Animation Preview</title>
+<style>
+  body {
+    background: #1e293b;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .preview-stage {
+    width: 600px;
+    height: 350px;
+    background: linear-gradient(180deg, #4ea3f7 0%, #76bcfd 60%, #e0f2fe 100%);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .sun {
+    position: absolute;
+    top: 50px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+  }
+  .cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50px;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .cloud-1 { top: 80px; left: 30px; width: 110px; height: 35px; }
+  .cloud-1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+  .cloud-1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+
+  .cloud-2 { top: 160px; left: 20px; width: 90px; height: 28px; opacity: 0.6; }
+  .cloud-2::before { width: 40px; height: 40px; top: -20px; left: 15px; }
+
+  .cloud-3 { top: 90px; right: 40px; width: 120px; height: 38px; }
+  .cloud-3::before { width: 55px; height: 55px; top: -28px; left: 30px; }
+  .cloud-3::after { width: 45px; height: 45px; top: -18px; left: 65px; }
+
+  .cloud-4 { top: 170px; right: 25px; width: 85px; height: 26px; opacity: 0.6; }
+  .cloud-4::before { width: 38px; height: 38px; top: -18px; left: 25px; }
+
+  .dino-container {
+    width: 140px;
+    height: 90px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: -6px; /* Foot directly on bar */
+    z-index: 2;
+  }
+  .dino-sprite {
+    width: 140px;
+    height: 90px;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+
+  .loading-track {
+    width: 320px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 999px;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  .loading-bar {
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(180deg, #ffc107 0%, #ff9800 100%);
+    border-radius: 999px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+  }
+  .loading-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.25),
+      rgba(255, 255, 255, 0.25) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+  }
+
+  .loading-text {
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 5px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .frames-strip {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    overflow-x: auto;
+    max-width: 900px;
+    padding: 10px;
+    background: #0f172a;
+    border-radius: 12px;
+  }
+  .frame-thumb {
+    width: 70px;
+    height: 50px;
+    object-fit: contain;
+    border: 1px solid #334155;
+    background: #1e293b;
+    image-rendering: pixelated;
+  }
+</style>
+</head>
+<body>
+  <h2>Loading Screen Dinosaur Animation Preview</h2>
+  <div class="preview-stage">
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+
+    <div class="dino-container">
+      <img id="animatedDino" class="dino-sprite" src="scratch_15_frames_3x/frame_01.png" alt="Dino" />
+    </div>
+    <div class="loading-track">
+      <div id="progBar" class="loading-bar"></div>
+    </div>
+    <div class="loading-text">LOADING...</div>
+  </div>
+
+  <h3>Individual Extracted Frames (1 to 15)</h3>
+  <div id="strip" class="frames-strip"></div>
+
+  <script>
+    const strip = document.getElementById('strip');
+    const frames = [];
+    for (let i = 1; i <= 15; i++) {
+      const src = `scratch_15_frames_3x/frame_${String(i).padStart(2, '0')}.png`;
+      frames.push(src);
+      const img = document.createElement('img');
+      img.src = src;
+      img.className = 'frame-thumb';
+      img.title = `Frame ${i}`;
+      strip.appendChild(img);
+    }
+
+    const dino = document.getElementById('animatedDino');
+    const prog = document.getElementById('progBar');
+    let fIdx = 0;
+    let progress = 0;
+
+    // Loop through 15 frames at ~10 fps (100ms per frame)
+    setInterval(() => {
+      fIdx = (fIdx + 1) % frames.length;
+      dino.src = frames[fIdx];
+    }, 100);
+
+    // Simulate 3-second progress fill
+    setInterval(() => {
+      progress = (progress + 2) % 102;
+      prog.style.width = Math.min(100, progress) + '%';
+    }, 60);
+  </script>
+</body>
+</html>

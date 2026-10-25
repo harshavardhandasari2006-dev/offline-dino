@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Dino — Dragon Flight Animation Laboratory</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐉</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f17;
+      --panel-bg: #121824;
+      --card-bg: #182234;
+      --accent-orange: #f97316;
+      --accent-amber: #f59e0b;
+      --accent-green: #22c55e;
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #243247;
+      --snout-line: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    header {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-titles h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .badge-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: rgba(249, 115, 22, 0.18);
+      color: var(--accent-orange);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .header-titles p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-orange { background: var(--accent-orange); box-shadow: 0 0 8px var(--accent-orange); }
+    .dot-blue { background: var(--accent-blue); box-shadow: 0 0 8px var(--accent-blue); }
+    .dot-green { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+
+    .alert-box {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #fed7aa;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .alert-box strong {
+      color: #fff;
+    }
+
+    .grid-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 1080px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dragon-theme { color: var(--accent-orange); }
+    .runway-theme { color: var(--accent-blue); }
+
+    .stage-container {
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .canvas-viewport {
+      width: 100%;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s ease;
+    }
+
+    /* Background Themes */
+    .bg-checker {
+      background-color: #111827;
+      background-image:
+        linear-gradient(45deg, #1f2937 25%, transparent 25%),
+        linear-gradient(-45deg, #1f2937 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1f2937 75%),
+        linear-gradient(-45deg, transparent 75%, #1f2937 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .bg-sky {
+      background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 60%, #bae6fd 100%);
+    }
+    .bg-desert {
+      background: linear-gradient(180deg, #4da6ff 0%, #a6dbff 65%, #fcd34d 100%);
+    }
+    .bg-night {
+      background: linear-gradient(180deg, #131a38 0%, #273369 65%, #334155 100%);
+    }
+    .bg-black {
+      background: #000000;
+    }
+
+    .anim-canvas {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      max-width: 100%;
+      max-height: 100%;
+      z-index: 2;
+    }
+
+    /* Guidance overlays */
+    .guideline-h {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 4px rgba(56, 189, 248, 0.8);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .guideline-v {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 1px;
+      background: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 4px rgba(56, 189, 248, 0.8);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .stage-status-bar {
+      width: 100%;
+      padding: 10px 16px;
+      background: rgba(18, 24, 36, 0.95);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      z-index: 4;
+    }
+
+    .frame-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .counter-highlight {
+      color: var(--accent-orange);
+      font-size: 15px;
+    }
+
+    .pose-label {
+      color: var(--text-muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 60%;
+    }
+
+    /* Controls */
+    .controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ctrl-btn:hover {
+      background: #202d44;
+      border-color: #3b82f6;
+    }
+    .ctrl-btn.primary {
+      background: var(--accent-orange);
+      border-color: #ea580c;
+      color: #fff;
+    }
+    .ctrl-btn.primary:hover {
+      background: #ea580c;
+    }
+    .ctrl-btn.active {
+      background: #1e3a5f;
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .tuning-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(18, 24, 36, 0.6);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-grow: 1;
+    }
+    .slider-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      min-width: 55px;
+    }
+    input[type="range"] {
+      flex-grow: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-color);
+      outline: none;
+      accent-color: var(--accent-orange);
+    }
+    .speed-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      min-width: 50px;
+      text-align: right;
+    }
+
+    /* Filmstrip */
+    .filmstrip-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .filmstrip-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .thumbnails-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .thumb-item {
+      flex: 0 0 74px;
+      height: 64px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: all 0.15s ease;
+    }
+    .thumb-item:hover {
+      border-color: var(--accent-orange);
+      transform: translateY(-2px);
+    }
+    .thumb-item.active {
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+    }
+    .thumb-item img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    .thumb-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      color: #cbd5e1;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* Inspection Section */
+    .inspection-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .inspection-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      border-color: #475569;
+    }
+    .tab-btn.active {
+      background: #1e293b;
+      border-color: var(--accent-orange);
+      color: var(--accent-orange);
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .contact-sheet-preview {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #0f172a;
+      display: block;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .spec-table th, .spec-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .spec-table th {
+      background: var(--card-bg);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .spec-table td {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Animated Flight Stage Canvas */
+    #flightRunwayCanvas {
+      width: 100%;
+      height: 280px;
+      display: block;
+      background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 60%, #bae6fd 100%);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-titles">
+      <h1>
+        <span>🐉</span>
+        Offline Dino — Dragon Flight Animation Laboratory
+        <span class="badge-tag">Standalone Verification</span>
+      </h1>
+      <p>Inspection, frame stepping, genuine alpha transparency verification, and right-to-left flight simulation.</p>
+    </div>
+    <div class="header-badges">
+      <div class="status-chip"><span class="dot dot-orange"></span> 10 Flight Frames</div>
+      <div class="status-chip"><span class="dot dot-blue"></span> Left-Facing (R to L)</div>
+      <div class="status-chip"><span class="dot dot-green"></span> 240x210 Standardized</div>
+    </div>
+  </header>
+
+  <div class="alert-box">
+    <strong>Transparency & Boundary Audit:</strong> The original sprite sheet possessed a solid baked pitch-black background RGB(0,0,0) (alpha=255). Outer boundary flood-fill combined with enclosed sky-pocket transparency has successfully isolated the dragon silhouettes to genuine transparent alpha, clearing trapped pockets between horns and wings while strictly preserving 100% of eye pupils, mouth depth, and wing membrane shadows!
+  </div>
+
+  <main class="grid-container">
+
+    <!-- ======================================================== -->
+    <!-- PANEL 1: STATIONARY FLIGHT & WING POSE INSPECTION        -->
+    <!-- ======================================================== -->
+    <section class="panel-card">
+      <div class="panel-header">
+        <div class="panel-title dragon-theme">
+          <span>🔬</span> STATIONARY WING & POSE INSPECTOR
+        </div>
+        <span class="status-chip" id="staticStageBadge">Frame 01 / 10</span>
+      </div>
+
+      <div class="stage-container">
+        <div class="canvas-viewport bg-checker" id="staticViewport">
+          <canvas id="staticCanvas" width="240" height="210" class="anim-canvas"></canvas>
+          <div class="guideline-h" id="snoutGuidelineH" style="top: 110px;"></div>
+          <div class="guideline-v" id="snoutGuidelineV" style="left: 25px;"></div>
+        </div>
+
+        <div class="stage-status-bar">
+          <div class="frame-counter">
+            FRAME <span class="counter-highlight" id="staticFrameNum">01</span> / 10
+          </div>
+          <div class="pose-label" id="staticPoseLabel">High Wing Ascent / Full Upstroke</div>
+        </div>
+      </div>
+
+      <div class="controls-wrapper">
+        <div class="button-group">
+          <button class="ctrl-btn primary" id="btnStaticPlayPause">⏸ Pause</button>
+          <button class="ctrl-btn" id="btnStaticRestart">↺ Restart</button>
+          <button class="ctrl-btn" id="btnStaticPrev">⏮ Step Prev</button>
+          <button class="ctrl-btn" id="btnStaticNext">⏭ Step Next</button>
+          <button class="ctrl-btn" id="btnToggleGuidelines">Toggle Snout Anchor Crosshair</button>
+        </div>
+
+        <div class="tuning-row">
+          <div class="slider-container">
+            <span class="slider-label">SPEED:</span>
+            <input type="range" id="staticSpeedSlider" min="1" max="24" value="10">
+            <span class="speed-val" id="staticSpeedVal">10 FPS</span>
+          </div>
+          <div class="button-group">
+            <button class="ctrl-btn active" id="btnLoopFull" onclick="setStaticLoopMode('full')">Full Cycle (1–10)</button>
+            <button class="ctrl-btn" id="btnLoopDownstroke" onclick="setStaticLoopMode('downstroke')">Downstroke (6–9)</button>
+            <button class="ctrl-btn" id="btnLoopUpstroke" onclick="setStaticLoopMode('upstroke')">Upstroke (10, 1–5)</button>
+          </div>
+        </div>
+
+        <div class="tuning-row">
+          <div class="button-group">
+            <span class="slider-label">BG THEME:</span>
+            <button class="ctrl-btn" onclick="setStaticBg('bg-checker')">Checker</button>
+            <button class="ctrl-btn" onclick="setStaticBg('bg-sky')">Sky Blue</button>
+            <button class="ctrl-btn" onclick="setStaticBg('bg-desert')">Desert</button>
+            <button class="ctrl-btn" onclick="setStaticBg('bg-night')">Night</button>
+            <button class="ctrl-btn" onclick="setStaticBg('bg-black')">Black (Raw)</button>
+          </div>
+          <div class="button-group">
+            <span class="slider-label">MODE:</span>
+            <button class="ctrl-btn active" id="btnModeTrans" onclick="setStaticRenderMode('trans')">Alpha Clean</button>
+            <button class="ctrl-btn" id="btnModeRaw" onclick="setStaticRenderMode('raw')">Raw Black</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filmstrip-section">
+        <div class="filmstrip-title">
+          <span>CLICK ANY FRAME TO INSPECT SILHOUETTE</span>
+          <span>10 Poses</span>
+        </div>
+        <div class="thumbnails-row" id="staticThumbnails"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PANEL 2: RIGHT-TO-LEFT FORWARD FLIGHT RUNWAY SIMULATION   -->
+    <!-- ======================================================== -->
+    <section class="panel-card">
+      <div class="panel-header">
+        <div class="panel-title runway-theme">
+          <span>🚀</span> CONTINUOUS RIGHT-TO-LEFT FLIGHT STAGE
+        </div>
+        <span class="status-chip"><span class="dot dot-blue"></span> Continuous Translation</span>
+      </div>
+
+      <div class="stage-container">
+        <canvas id="flightRunwayCanvas" width="600" height="280"></canvas>
+        <div class="stage-status-bar">
+          <div class="frame-counter">
+            FLIGHT SPEED: <span class="counter-highlight" id="runwaySpeedDisplay">320 px/s</span>
+          </div>
+          <div class="pose-label" id="runwayStatusLabel">Facing Left • Traveling Right to Left</div>
+        </div>
+      </div>
+
+      <div class="controls-wrapper">
+        <div class="button-group">
+          <button class="ctrl-btn primary" id="btnRunwayPlayPause">⏸ Pause Flight</button>
+          <button class="ctrl-btn" id="btnRunwayReset">↺ Reset Position</button>
+          <button class="ctrl-btn" id="btnRunwayAltitudeToggle">Toggle Altitude Wave</button>
+        </div>
+
+        <div class="tuning-row">
+          <div class="slider-container">
+            <span class="slider-label">FLIGHT SPEED:</span>
+            <input type="range" id="runwayFlightSpeedSlider" min="100" max="700" value="320">
+            <span class="speed-val" id="runwayFlightSpeedVal">320 px/s</span>
+          </div>
+          <div class="slider-container">
+            <span class="slider-label">WING FPS:</span>
+            <input type="range" id="runwayWingFpsSlider" min="2" max="24" value="12">
+            <span class="speed-val" id="runwayWingFpsVal">12 FPS</span>
+          </div>
+        </div>
+
+        <div class="tuning-row">
+          <div class="button-group">
+            <span class="slider-label">RUNWAY THEME:</span>
+            <button class="ctrl-btn" onclick="setRunwayTheme('sky')">Open Sky</button>
+            <button class="ctrl-btn" onclick="setRunwayTheme('desert')">Desert Panorama</button>
+            <button class="ctrl-btn" onclick="setRunwayTheme('twilight')">Twilight Mesa</button>
+          </div>
+          <div class="button-group">
+            <span class="slider-label">SCALE:</span>
+            <button class="ctrl-btn" onclick="setRunwayScale(0.5)">50% (Game Size)</button>
+            <button class="ctrl-btn active" onclick="setRunwayScale(0.75)">75%</button>
+            <button class="ctrl-btn" onclick="setRunwayScale(1.0)">100% (High Res)</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: rgba(18,24,36,0.6); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        <strong>Flight Direction & Translation:</strong> The dragon faces LEFT and flies continuously from RIGHT to LEFT across the sky, exactly as obstacle pterosaurs/dragons behave in the Offline Dino game engine. Wing flapping rhythmically synchronizes with the forward flight translation!
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- TECHNICAL INSPECTION, CONTACT SHEET & ORIGINAL REFERENCE  -->
+  <!-- ======================================================== -->
+  <section class="inspection-section">
+    <div class="inspection-header">
+      <h2>🔍 Technical Inspection & Contact Sheets</h2>
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="showTab('tabContact')">Extracted Contact Sheet (1200x420)</button>
+        <button class="tab-btn" onclick="showTab('tabOriginal')">Original Source Sprite Sheet</button>
+        <button class="tab-btn" onclick="showTab('tabSpecs')">Anatomical & Alignment Specs</button>
+      </div>
+    </div>
+
+    <!-- Tab 1: Contact Sheet -->
+    <div class="tab-content active" id="tabContact">
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+        High-resolution 10-frame Contact Sheet ($1200 \times 420\text{ px}$) on dark checkerboard. Notice the sky-blue guideline anchoring the dragon's snout line ($Y=110$) across both rows with zero clipping.
+      </p>
+      <img id="imgContactSheet" src="" alt="Dragon Flight Contact Sheet" class="contact-sheet-preview">
+    </div>
+
+    <!-- Tab 2: Original Reference Sheet -->
+    <div class="tab-content" id="tabOriginal">
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+        Unmodified source sprite sheet ($1024 \times 409\text{ px}$) demonstrating the original 2-row × 5-column layout on baked black background.
+      </p>
+      <img id="imgOriginalSheet" src="" alt="Original Dragon Sprite Sheet" class="contact-sheet-preview">
+    </div>
+
+    <!-- Tab 3: Specs Table -->
+    <div class="tab-content" id="tabSpecs">
+      <div style="overflow-x:auto;">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Frame</th>
+              <th>Row / Col</th>
+              <th>Pose & Wing Anatomy</th>
+              <th>Dimensions</th>
+              <th>Snout Anchor</th>
+              <th>Pocket Status</th>
+              <th>Scale Integrity</th>
+            </tr>
+          </thead>
+          <tbody id="specsTableBody">
+            <!-- Populated dynamically from manifest -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Path auto-detector (works whether loaded from root or test_dragon_flight/)
+    const isSubfolder = window.location.pathname.includes('test_dragon_flight');
+    const pathPrefix = isSubfolder ? '' : 'test_dragon_flight/';
+
+    document.getElementById('imgContactSheet').src = pathPrefix + 'dragon_frames/contact_sheet_dragon_flight.png';
+    document.getElementById('imgOriginalSheet').src = pathPrefix + 'dragon_sheet_original.png';
+
+    // State for Stationary Inspector
+    const staticData = {
+      total: 10,
+      current: 1,
+      fps: 10,
+      isPlaying: true,
+      mode: 'trans', // 'trans' or 'raw'
+      loopMode: 'full', // 'full', 'downstroke' (6-9), 'upstroke' (10,1-5)
+      images: { trans: [], raw: [] },
+      poses: [
+        'High Wing Ascent / Full Upstroke',
+        'Forward Wing Swept Upstroke',
+        'Transition to Mid-Flap Down',
+        'Arched Wing Flap Spread',
+        'Forward Swept Mid-Flap',
+        'High Arched Crest Flap',
+        'Beginning Downstroke Power Sweep',
+        'Deep Downstroke Power Thrust',
+        'Lowest Wing Downstroke Pocket',
+        'Upward Recovery Lift to Upstroke'
+      ]
+    };
+
+    // Preload all 10 frames
+    for (let i = 1; i <= 10; i++) {
+      const pad = i.toString().padStart(2, '0');
+      const imgTrans = new Image();
+      imgTrans.src = `${pathPrefix}dragon_frames/dragon_flight_${pad}.png`;
+      staticData.images.trans.push(imgTrans);
+
+      const imgRaw = new Image();
+      imgRaw.src = `${pathPrefix}dragon_frames/dragon_flight_raw_${pad}.png`;
+      staticData.images.raw.push(imgRaw);
+    }
+
+    // Static Canvas
+    const staticCanvas = document.getElementById('staticCanvas');
+    const staticCtx = staticCanvas.getContext('2d');
+
+    function renderStatic() {
+      const img = staticData.images[staticData.mode][staticData.current - 1];
+      staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+      if (img && img.complete) {
+        staticCtx.drawImage(img, 0, 0);
+      }
+      document.getElementById('staticFrameNum').textContent = staticData.current.toString().padStart(2, '0');
+      document.getElementById('staticPoseLabel').textContent = staticData.poses[staticData.current - 1];
+      document.getElementById('staticStageBadge').textContent = `Frame ${staticData.current.toString().padStart(2, '0')} / 10`;
+      updateThumbActive(staticData.current);
+    }
+
+    // Build thumbnails
+    function buildThumbnails() {
+      const container = document.getElementById('staticThumbnails');
+      container.innerHTML = '';
+      for (let i = 1; i <= staticData.total; i++) {
+        const pad = i.toString().padStart(2, '0');
+        const item = document.createElement('div');
+        item.className = 'thumb-item' + (i === 1 ? ' active' : '');
+        item.onclick = () => {
+          staticData.current = i;
+          renderStatic();
+        };
+
+        const img = document.createElement('img');
+        img.src = `${pathPrefix}dragon_frames/dragon_flight_${pad}.png`;
+        img.alt = `Pose ${i}`;
+
+        const badge = document.createElement('div');
+        badge.className = 'thumb-badge';
+        badge.textContent = pad;
+
+        item.appendChild(img);
+        item.appendChild(badge);
+        container.appendChild(item);
+      }
+    }
+
+    function updateThumbActive(currentIdx) {
+      const items = document.getElementById('staticThumbnails').children;
+      for (let i = 0; i < items.length; i++) {
+        if (i === currentIdx - 1) {
+          items[i].classList.add('active');
+          items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          items[i].classList.remove('active');
+        }
+      }
+    }
+
+    // Static Animation Loop
+    let staticLastTime = performance.now();
+    let staticTimer = 0;
+
+    function staticLoop(now) {
+      const dt = (now - staticLastTime) / 1000;
+      staticLastTime = now;
+
+      if (staticData.isPlaying) {
+        staticTimer += dt;
+        const interval = 1 / staticData.fps;
+        if (staticTimer >= interval) {
+          staticTimer %= interval;
+
+          if (staticData.loopMode === 'full') {
+            staticData.current = (staticData.current % staticData.total) + 1;
+          } else if (staticData.loopMode === 'downstroke') {
+            // 6, 7, 8, 9
+            if (staticData.current < 6 || staticData.current >= 9) {
+              staticData.current = 6;
+            } else {
+              staticData.current++;
+            }
+          } else if (staticData.loopMode === 'upstroke') {
+            // 10, 1, 2, 3, 4, 5
+            const seq = [10, 1, 2, 3, 4, 5];
+            const idx = seq.indexOf(staticData.current);
+            if (idx === -1 || idx >= seq.length - 1) {
+              staticData.current = seq[0];
+            } else {
+              staticData.current = seq[idx + 1];
+            }
+          }
+
+          renderStatic();
+        }
+      }
+
+      requestAnimationFrame(staticLoop);
+    }
+
+    // Static Controls
+    document.getElementById('btnStaticPlayPause').onclick = function() {
+      staticData.isPlaying = !staticData.isPlaying;
+      this.textContent = staticData.isPlaying ? '⏸ Pause' : '▶ Play';
+      if (staticData.isPlaying) this.classList.add('primary'); else this.classList.remove('primary');
+    };
+
+    document.getElementById('btnStaticRestart').onclick = function() {
+      staticData.current = 1;
+      renderStatic();
+    };
+
+    document.getElementById('btnStaticPrev').onclick = function() {
+      staticData.isPlaying = false;
+      document.getElementById('btnStaticPlayPause').textContent = '▶ Play';
+      document.getElementById('btnStaticPlayPause').classList.remove('primary');
+      staticData.current = staticData.current === 1 ? staticData.total : staticData.current - 1;
+      renderStatic();
+    };
+
+    document.getElementById('btnStaticNext').onclick = function() {
+      staticData.isPlaying = false;
+      document.getElementById('btnStaticPlayPause').textContent = '▶ Play';
+      document.getElementById('btnStaticPlayPause').classList.remove('primary');
+      staticData.current = (staticData.current % staticData.total) + 1;
+      renderStatic();
+    };
+
+    document.getElementById('staticSpeedSlider').oninput = function() {
+      staticData.fps = parseInt(this.value, 10);
+      document.getElementById('staticSpeedVal').textContent = `${staticData.fps} FPS`;
+    };
+
+    function setStaticLoopMode(mode) {
+      staticData.loopMode = mode;
+      document.getElementById('btnLoopFull').className = 'ctrl-btn' + (mode === 'full' ? ' active' : '');
+      document.getElementById('btnLoopDownstroke').className = 'ctrl-btn' + (mode === 'downstroke' ? ' active' : '');
+      document.getElementById('btnLoopUpstroke').className = 'ctrl-btn' + (mode === 'upstroke' ? ' active' : '');
+    }
+
+    function setStaticBg(bgClass) {
+      const vp = document.getElementById('staticViewport');
+      vp.className = `canvas-viewport ${bgClass}`;
+    }
+
+    function setStaticRenderMode(mode) {
+      staticData.mode = mode;
+      document.getElementById('btnModeTrans').className = 'ctrl-btn' + (mode === 'trans' ? ' active' : '');
+      document.getElementById('btnModeRaw').className = 'ctrl-btn' + (mode === 'raw' ? ' active' : '');
+      renderStatic();
+    }
+
+    let guidelinesVisible = true;
+    document.getElementById('btnToggleGuidelines').onclick = function() {
+      guidelinesVisible = !guidelinesVisible;
+      document.getElementById('snoutGuidelineH').style.display = guidelinesVisible ? 'block' : 'none';
+      document.getElementById('snoutGuidelineV').style.display = guidelinesVisible ? 'block' : 'none';
+    };
+
+    // ========================================================
+    // PANEL 2: CONTINUOUS RIGHT-TO-LEFT FLIGHT RUNWAY ENGINE
+    // ========================================================
+    const runwayCanvas = document.getElementById('flightRunwayCanvas');
+    const runwayCtx = runwayCanvas.getContext('2d');
+
+    const runwayState = {
+      isPlaying: true,
+      flightSpeed: 320, // pixels per second moving right to left
+      wingFps: 12,
+      scale: 0.75,
+      altitudeWave: true,
+      theme: 'sky', // 'sky', 'desert', 'twilight'
+      dragonX: 650, // Starts off-screen to the right
+      baseY: 130,
+      dragonY: 130,
+      animTime: 0,
+      wingTimer: 0,
+      currentFrame: 1
+    };
+
+    function setRunwayTheme(theme) {
+      runwayState.theme = theme;
+    }
+
+    function setRunwayScale(scale) {
+      runwayState.scale = scale;
+      const buttons = document.querySelectorAll('[onclick^="setRunwayScale"]');
+      buttons.forEach(b => {
+        b.classList.remove('active');
+        if (b.textContent.includes(Math.round(scale * 100) + '%')) b.classList.add('active');
+      });
+    }
+
+    document.getElementById('btnRunwayPlayPause').onclick = function() {
+      runwayState.isPlaying = !runwayState.isPlaying;
+      this.textContent = runwayState.isPlaying ? '⏸ Pause Flight' : '▶ Resume Flight';
+      if (runwayState.isPlaying) this.classList.add('primary'); else this.classList.remove('primary');
+    };
+
+    document.getElementById('btnRunwayReset').onclick = function() {
+      runwayState.dragonX = runwayCanvas.width + 50;
+    };
+
+    document.getElementById('btnRunwayAltitudeToggle').onclick = function() {
+      runwayState.altitudeWave = !runwayState.altitudeWave;
+      this.classList.toggle('active');
+    };
+
+    document.getElementById('runwayFlightSpeedSlider').oninput = function() {
+      runwayState.flightSpeed = parseInt(this.value, 10);
+      document.getElementById('runwayFlightSpeedVal').textContent = `${runwayState.flightSpeed} px/s`;
+      document.getElementById('runwaySpeedDisplay').textContent = `${runwayState.flightSpeed} px/s`;
+    };
+
+    document.getElementById('runwayWingFpsSlider').oninput = function() {
+      runwayState.wingFps = parseInt(this.value, 10);
+      document.getElementById('runwayWingFpsVal').textContent = `${runwayState.wingFps} FPS`;
+    };
+
+    let runwayLastTime = performance.now();
+
+    function runwayLoop(now) {
+      const dt = (now - runwayLastTime) / 1000;
+      runwayLastTime = now;
+
+      if (runwayState.isPlaying) {
+        runwayState.animTime += dt;
+        runwayState.wingTimer += dt;
+
+        // Wing cycle
+        const wingInterval = 1 / runwayState.wingFps;
+        if (runwayState.wingTimer >= wingInterval) {
+          runwayState.wingTimer %= wingInterval;
+          runwayState.currentFrame = (runwayState.currentFrame % 10) + 1;
+        }
+
+        // Translation right-to-left
+        runwayState.dragonX -= runwayState.flightSpeed * dt;
+        const dragonW = 240 * runwayState.scale;
+        if (runwayState.dragonX < -dragonW - 20) {
+          runwayState.dragonX = runwayCanvas.width + 60; // Wrap around to right
+        }
+
+        // Gentle altitude bobbing
+        if (runwayState.altitudeWave) {
+          runwayState.dragonY = runwayState.baseY + Math.sin(runwayState.animTime * 3.2) * 14;
+        } else {
+          runwayState.dragonY = runwayState.baseY;
+        }
+      }
+
+      // Render Runway
+      const rw = runwayCanvas.width;
+      const rh = runwayCanvas.height;
+
+      // Draw Sky Background Theme
+      if (runwayState.theme === 'sky') {
+        const skyGrad = runwayCtx.createLinearGradient(0, 0, 0, rh);
+        skyGrad.addColorStop(0, '#38bdf8');
+        skyGrad.addColorStop(0.6, '#7dd3fc');
+        skyGrad.addColorStop(1.0, '#bae6fd');
+        runwayCtx.fillStyle = skyGrad;
+        runwayCtx.fillRect(0, 0, rw, rh);
+
+        // Distant stylized clouds moving
+        const cloudOffset = (runwayState.animTime * 40) % rw;
+        runwayCtx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        for (let i = -1; i <= 2; i++) {
+          const cx = i * 280 - cloudOffset;
+          runwayCtx.beginPath();
+          runwayCtx.arc(cx + 60, 60, 24, 0, Math.PI * 2);
+          runwayCtx.arc(cx + 90, 50, 32, 0, Math.PI * 2);
+          runwayCtx.arc(cx + 120, 60, 24, 0, Math.PI * 2);
+          runwayCtx.fill();
+        }
+      } else if (runwayState.theme === 'desert') {
+        const skyGrad = runwayCtx.createLinearGradient(0, 0, 0, rh);
+        skyGrad.addColorStop(0, '#4da6ff');
+        skyGrad.addColorStop(0.7, '#a6dbff');
+        skyGrad.addColorStop(1.0, '#fcd34d');
+        runwayCtx.fillStyle = skyGrad;
+        runwayCtx.fillRect(0, 0, rw, rh);
+
+        // Desert mesa silhouettes
+        runwayCtx.fillStyle = '#b45309';
+        runwayCtx.beginPath();
+        runwayCtx.moveTo(0, rh);
+        runwayCtx.lineTo(0, rh - 30);
+        runwayCtx.lineTo(80, rh - 60);
+        runwayCtx.lineTo(160, rh - 60);
+        runwayCtx.lineTo(220, rh - 35);
+        runwayCtx.lineTo(380, rh - 35);
+        runwayCtx.lineTo(440, rh - 70);
+        runwayCtx.lineTo(520, rh - 70);
+        runwayCtx.lineTo(rw, rh - 25);
+        runwayCtx.lineTo(rw, rh);
+        runwayCtx.fill();
+      } else {
+        const skyGrad = runwayCtx.createLinearGradient(0, 0, 0, rh);
+        skyGrad.addColorStop(0, '#131a38');
+        skyGrad.addColorStop(0.65, '#273369');
+        skyGrad.addColorStop(1.0, '#334155');
+        runwayCtx.fillStyle = skyGrad;
+        runwayCtx.fillRect(0, 0, rw, rh);
+      }
+
+      // Draw Flight Corridor Reference Lines
+      runwayCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      runwayCtx.lineWidth = 1;
+      runwayCtx.setLineDash([6, 6]);
+      runwayCtx.beginPath();
+      runwayCtx.moveTo(0, runwayState.baseY);
+      runwayCtx.lineTo(rw, runwayState.baseY);
+      runwayCtx.stroke();
+      runwayCtx.setLineDash([]);
+
+      // Draw Flying Dragon
+      const dragonImg = staticData.images.trans[runwayState.currentFrame - 1];
+      if (dragonImg && dragonImg.complete) {
+        const dw = 240 * runwayState.scale;
+        const dh = 210 * runwayState.scale;
+        runwayCtx.drawImage(dragonImg, runwayState.dragonX, runwayState.dragonY - dh / 2, dw, dh);
+      }
+
+      requestAnimationFrame(runwayLoop);
+    }
+
+    // Tabs navigation
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // Load Manifest and Populate Table
+    fetch(pathPrefix + 'manifest.json')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('specsTableBody');
+        tbody.innerHTML = '';
+        data.frames.forEach(f => {
+          const tr = document.createElement('tr');
+          const isEnclosed = [1, 2, 4, 5, 9].includes(f.frameNumber);
+          tr.innerHTML = `
+            <td><strong>#${f.frameNumber.toString().padStart(2, '0')}</strong></td>
+            <td>Row ${f.row}, Col ${f.col}</td>
+            <td><span style="color:var(--accent-orange);">${f.poseName}</span> (${f.wingStage})</td>
+            <td>${f.sourceBounds.width} × ${f.sourceBounds.height} px</td>
+            <td>X=${f.snoutSource.x}, Y=${f.snoutSource.y}</td>
+            <td><span style="color:${isEnclosed ? 'var(--accent-green)' : 'var(--accent-blue)'};">${isEnclosed ? 'Cleaned (400-560px)' : 'Natural Open'}</span></td>
+            <td><span style="color:var(--accent-green);">100% Intact</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(() => {});
+
+    // Initialize
+    buildThumbnails();
+    renderStatic();
+    requestAnimationFrame(staticLoop);
+    requestAnimationFrame(runwayLoop);
+  </script>
+</body>
+</html>

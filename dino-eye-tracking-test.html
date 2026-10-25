@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Dino — Interactive Eye Tracking Prototype</title>
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=5">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 70%, #020617 100%);
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      user-select: none;
+      overflow-x: hidden;
+    }
+
+    /* Header & Instructions */
+    .test-header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 680px;
+    }
+
+    .test-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #38bdf8;
+      text-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+      margin-bottom: 8px;
+    }
+
+    .test-instruction {
+      font-size: 16px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .instruction-highlight {
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    /* Main Stage Card */
+    .stage-card {
+      background: rgba(19, 27, 46, 0.85);
+      border: 1.5px solid rgba(56, 189, 248, 0.25);
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 32px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      backdrop-filter: blur(12px);
+    }
+
+    /* Interactive Dino Stage Container */
+    .dino-container {
+      position: relative;
+      width: 100%;
+      max-width: 512px;
+      aspect-ratio: 1024 / 906;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.4));
+    }
+
+    .dino-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: hidden;
+    }
+
+    /* Telemetry / Metrics Bar */
+    .telemetry-bar {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .telemetry-item {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .tel-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .tel-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #4ade80;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px #4ade80;
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 540px) {
+      .telemetry-bar {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .test-title {
+        font-size: 22px;
+      }
+      .stage-card {
+        padding: 20px 16px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="test-header">
+    <h1 class="test-title">DINO EYE TRACKING TEST</h1>
+    <p class="test-instruction">
+      <span class="instruction-highlight">Move your cursor</span> across the screen. Both eyes will naturally follow your pointer while remaining strictly bounded inside the dinosaur's white eye regions.
+    </p>
+  </header>
+
+  <main class="stage-card">
+    <div id="dinoStage" class="dino-container">
+      <svg id="eyeTrackingSvg" class="dino-svg" viewBox="0 0 1024 906" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <!-- Exact Sclera Clipping Mask for Left Eye (Viewer Left) -->
+          <clipPath id="leftEyeClip">
+            <polygon points="476.5,174.4 478.2,176.1 480.0,177.9 481.7,179.6 482.6,181.3 484.3,183.1 485.2,184.8 486.9,186.5 487.8,188.3 488.6,190.0 489.5,191.7 490.4,193.4 491.2,195.2 492.1,196.9 492.1,198.6 492.9,200.4 493.8,202.1 493.8,203.8 494.7,205.6 495.5,207.3 495.5,209.0 496.4,210.7 496.4,212.5 497.3,214.2 497.3,215.9 497.3,217.7 498.1,219.4 498.1,221.1 498.1,222.9 498.1,224.6 498.1,226.3 498.1,228.1 498.1,229.8 498.1,231.5 498.1,233.2 498.1,235.0 498.1,236.7 498.1,238.4 498.1,240.2 498.1,241.9 498.1,243.6 498.1,245.4 498.1,247.1 498.1,248.8 498.1,250.5 497.3,252.3 495.5,254.0 493.8,255.7 491.2,257.5 489.5,259.2 487.8,260.9 486.9,262.7 485.2,264.4 483.4,266.1 482.6,267.8 480.8,269.6 480.0,271.3 479.1,273.0 478.2,274.8 476.5,276.5 475.6,278.2 474.8,280.0 473.9,281.7 472.2,283.4 470.4,285.2 468.7,286.9 467.0,288.6 465.2,290.3 462.6,292.1 460.9,293.8 459.2,295.5 457.4,297.3 455.7,299.0 450.5,300.7 422.8,300.7 418.5,299.0 415.0,297.3 412.4,295.5 409.8,293.8 408.1,292.1 406.4,290.3 404.6,288.6 402.9,286.9 402.0,285.2 400.3,283.4 399.4,281.7 399.4,280.0 398.6,278.2 397.7,276.5 398.6,274.8 396.8,273.0 396.0,271.3 396.8,269.6 396.8,267.8 396.0,266.1 396.0,264.4 395.1,262.7 395.1,260.9 395.1,259.2 395.1,257.5 394.2,255.7 394.2,254.0 394.2,252.3 394.2,250.5 394.2,248.8 394.2,247.1 394.2,245.4 394.2,243.6 394.2,241.9 394.2,240.2 394.2,238.4 394.2,236.7 394.2,235.0 394.2,233.2 394.2,231.5 394.2,229.8 394.2,228.1 394.2,226.3 394.2,224.6 394.2,222.9 395.1,221.1 395.1,219.4 396.0,217.7 396.0,215.9 396.8,214.2 396.8,212.5 397.7,210.7 398.6,209.0 398.6,207.3 396.8,205.6 400.3,203.8 401.2,202.1 402.0,200.4 403.8,198.6 403.8,196.9 404.6,195.2 406.4,193.4 407.2,191.7 409.0,190.0 410.7,188.3 411.6,186.5 413.3,184.8 415.0,183.1 416.7,181.3 418.5,179.6 420.2,177.9 422.8,176.1 425.4,174.4" />
+          </clipPath>
+
+          <!-- Exact Sclera Clipping Mask for Right Eye (Viewer Right) -->
+          <clipPath id="rightEyeClip">
+            <polygon points="706.0,174.4 686.1,176.1 687.8,177.9 689.5,179.6 691.2,181.3 693.0,183.1 694.7,184.8 695.6,186.5 696.4,188.3 698.2,190.0 699.0,191.7 699.9,193.4 701.6,195.2 701.6,196.9 702.5,198.6 703.4,200.4 704.2,202.1 706.0,203.8 706.0,205.6 706.0,207.3 706.0,209.0 706.0,210.7 706.0,212.5 706.0,214.2 706.0,215.9 706.0,217.7 706.0,219.4 706.0,221.1 706.0,222.9 706.0,224.6 706.0,226.3 706.0,228.1 706.0,229.8 706.0,231.5 706.0,233.2 706.0,235.0 706.0,236.7 706.0,238.4 706.0,240.2 706.0,241.9 706.0,243.6 706.0,245.4 706.0,247.1 706.0,248.8 706.0,250.5 706.0,252.3 706.0,254.0 706.0,255.7 706.0,257.5 706.0,259.2 706.0,260.9 706.0,262.7 706.0,264.4 706.0,266.1 706.0,267.8 706.0,269.6 706.0,271.3 705.1,273.0 706.0,274.8 705.1,276.5 704.2,278.2 704.2,280.0 703.4,281.7 702.5,283.4 700.8,285.2 699.9,286.9 698.2,288.6 696.4,290.3 694.7,292.1 692.1,293.8 690.4,295.5 686.9,297.3 683.5,299.0 677.4,300.7 658.3,300.7 647.9,299.0 647.1,297.3 643.6,295.5 641.0,293.8 640.2,292.1 638.4,290.3 637.6,288.6 635.0,286.9 633.2,285.2 631.5,283.4 630.6,281.7 628.9,280.0 627.2,278.2 625.4,276.5 624.6,274.8 622.8,273.0 622.0,271.3 620.2,269.6 618.5,267.8 615.9,266.1 615.0,264.4 613.3,262.7 611.6,260.9 609.8,259.2 608.1,257.5 607.3,255.7 607.3,254.0 607.3,252.3 608.1,250.5 608.1,248.8 608.1,247.1 607.3,245.4 607.3,243.6 607.3,241.9 607.3,240.2 607.3,238.4 607.3,236.7 607.3,235.0 607.3,233.2 607.3,231.5 607.3,229.8 607.3,228.1 607.3,226.3 607.3,224.6 608.1,222.9 608.1,221.1 608.1,219.4 608.1,217.7 609.0,215.9 609.0,214.2 609.0,212.5 609.8,210.7 609.8,209.0 611.6,207.3 612.4,205.6 613.3,203.8 614.2,202.1 615.0,200.4 615.9,198.6 616.8,196.9 617.6,195.2 618.5,193.4 618.5,191.7 619.4,190.0 620.2,188.3 621.1,186.5 622.0,184.8 622.8,183.1 623.7,181.3 624.6,179.6 625.4,177.9 626.3,176.1 628.0,174.4" />
+          </clipPath>
+        </defs>
+
+        <!-- Layer 1: Base Dinosaur Image (Stationary, completely untouched) -->
+        <image id="dinoBaseLayer" href="assets/test_eyes/dino_base.png" x="0" y="0" width="1024" height="906" preserveAspectRatio="none" />
+
+        <!-- Layer 2: Left Pupil Assembly (Moving, clipped strictly to white eye area) -->
+        <g clip-path="url(#leftEyeClip)">
+          <g id="leftPupilGroup">
+            <image href="assets/test_eyes/pupil_left.png" x="401" y="183" width="100" height="100" />
+          </g>
+        </g>
+
+        <!-- Layer 3: Right Pupil Assembly (Moving, clipped strictly to white eye area) -->
+        <g clip-path="url(#rightEyeClip)">
+          <g id="rightPupilGroup">
+            <image href="assets/test_eyes/pupil_right.png" x="584" y="186" width="100" height="100" />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Live Telemetry Display -->
+    <div class="telemetry-bar">
+      <div class="telemetry-item">
+        <div class="tel-label">Eye Gaze Status</div>
+        <div class="tel-val status-badge"><span class="status-dot"></span>Active Tracking</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="tel-label">Left Eye Offset</div>
+        <div id="leftOffsetVal" class="tel-val">+0.0px, +0.0px</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="tel-label">Right Eye Offset</div>
+        <div id="rightOffsetVal" class="tel-val">+0.0px, +0.0px</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const svg = document.getElementById('eyeTrackingSvg');
+      const leftPupilGroup = document.getElementById('leftPupilGroup');
+      const rightPupilGroup = document.getElementById('rightPupilGroup');
+      const leftOffsetVal = document.getElementById('leftOffsetVal');
+      const rightOffsetVal = document.getElementById('rightOffsetVal');
+
+      // Resting anatomical eye centers in SVG coordinate space (1024 x 906)
+      const LEFT_EYE_CENTER = { x: 451, y: 233 };
+      const RIGHT_EYE_CENTER = { x: 634, y: 236 };
+
+      // Bounded movement parameters (anatomically plausible range in SVG units)
+      const MAX_OFFSET_X = 12.0; // Max horizontal travel
+      const MAX_OFFSET_Y = 15.0; // Max vertical travel
+      const LERP_SPEED = 0.12;   // Silky smooth interpolation speed
+
+      // Tracking state
+      let targetLeft = { x: 0, y: 0 };
+      let targetRight = { x: 0, y: 0 };
+      let currentLeft = { x: 0, y: 0 };
+      let currentRight = { x: 0, y: 0 };
+      let isMouseInWindow = false;
+
+      // Transform client screen coordinates to SVG viewBox space
+      function screenToSvg(clientX, clientY) {
+        const pt = svg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        return pt.matrixTransform(svg.getScreenCTM().inverse());
+      }
+
+      function updateTargetOffsets(svgX, svgY) {
+        // Calculate independent gaze vectors from each eye's local center
+        const dxLeft = svgX - LEFT_EYE_CENTER.x;
+        const dyLeft = svgY - LEFT_EYE_CENTER.y;
+        const distLeft = Math.hypot(dxLeft, dyLeft);
+        const angleLeft = Math.atan2(dyLeft, dxLeft);
+
+        const dxRight = svgX - RIGHT_EYE_CENTER.x;
+        const dyRight = svgY - RIGHT_EYE_CENTER.y;
+        const distRight = Math.hypot(dxRight, dyRight);
+        const angleRight = Math.atan2(dyRight, dxRight);
+
+        // Smooth non-linear distance response curve (tanh prevents over-travel and sudden snap)
+        const intensityLeft = Math.tanh(distLeft / 360);
+        const intensityRight = Math.tanh(distRight / 360);
+
+        targetLeft.x = Math.cos(angleLeft) * MAX_OFFSET_X * intensityLeft;
+        targetLeft.y = Math.sin(angleLeft) * MAX_OFFSET_Y * intensityLeft;
+
+        targetRight.x = Math.cos(angleRight) * MAX_OFFSET_X * intensityRight;
+        targetRight.y = Math.sin(angleRight) * MAX_OFFSET_Y * intensityRight;
+      }
+
+      // Pointer event listeners
+      window.addEventListener('pointermove', (e) => {
+        isMouseInWindow = true;
+        const svgCoords = screenToSvg(e.clientX, e.clientY);
+        updateTargetOffsets(svgCoords.x, svgCoords.y);
+      }, { passive: true });
+
+      // When cursor leaves the test window, smoothly return to resting position
+      document.addEventListener('mouseleave', () => {
+        isMouseInWindow = false;
+        targetLeft = { x: 0, y: 0 };
+        targetRight = { x: 0, y: 0 };
+      });
+
+      // Animation loop for silky 60fps tracking
+      function animate() {
+        // Spring/lerp toward target offsets
+        currentLeft.x += (targetLeft.x - currentLeft.x) * LERP_SPEED;
+        currentLeft.y += (targetLeft.y - currentLeft.y) * LERP_SPEED;
+        currentRight.x += (targetRight.x - currentRight.x) * LERP_SPEED;
+        currentRight.y += (targetRight.y - currentRight.y) * LERP_SPEED;
+
+        // Apply translations via SVG transform
+        leftPupilGroup.setAttribute('transform', 'translate(' + currentLeft.x.toFixed(2) + ', ' + currentLeft.y.toFixed(2) + ')');
+        rightPupilGroup.setAttribute('transform', 'translate(' + currentRight.x.toFixed(2) + ', ' + currentRight.y.toFixed(2) + ')');
+
+        // Update telemetry display
+        if (leftOffsetVal && rightOffsetVal) {
+          const lSignX = currentLeft.x >= 0 ? '+' : '';
+          const lSignY = currentLeft.y >= 0 ? '+' : '';
+          leftOffsetVal.textContent = lSignX + currentLeft.x.toFixed(1) + 'px, ' + lSignY + currentLeft.y.toFixed(1) + 'px';
+
+          const rSignX = currentRight.x >= 0 ? '+' : '';
+          const rSignY = currentRight.y >= 0 ? '+' : '';
+          rightOffsetVal.textContent = rSignX + currentRight.x.toFixed(1) + 'px, ' + rSignY + currentRight.y.toFixed(1) + 'px';
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

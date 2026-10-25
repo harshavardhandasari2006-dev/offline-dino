@@ -1,0 +1,1898 @@
+{
+  "running": [
+    {
+      "frame": "run_01.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "64.1%",
+      "solidPixels": 5661,
+      "bbox": {
+        "x": 7,
+        "y": 8,
+        "w": 123,
+        "h": 101
+      },
+      "margins": {
+        "left": 7,
+        "right": 6,
+        "top": 8,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 152,
+      "pupilCount": 276,
+      "creamBellyCount": 908,
+      "clawCount": 586,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_02.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "65.0%",
+      "solidPixels": 5524,
+      "bbox": {
+        "x": 8,
+        "y": 7,
+        "w": 121,
+        "h": 102
+      },
+      "margins": {
+        "left": 8,
+        "right": 7,
+        "top": 7,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 148,
+      "pupilCount": 252,
+      "creamBellyCount": 822,
+      "clawCount": 561,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_03.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "65.1%",
+      "solidPixels": 5506,
+      "bbox": {
+        "x": 7,
+        "y": 7,
+        "w": 122,
+        "h": 102
+      },
+      "margins": {
+        "left": 7,
+        "right": 7,
+        "top": 7,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 150,
+      "pupilCount": 259,
+      "creamBellyCount": 883,
+      "clawCount": 568,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_04.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "64.9%",
+      "solidPixels": 5532,
+      "bbox": {
+        "x": 9,
+        "y": 7,
+        "w": 119,
+        "h": 102
+      },
+      "margins": {
+        "left": 9,
+        "right": 8,
+        "top": 7,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 139,
+      "pupilCount": 250,
+      "creamBellyCount": 857,
+      "clawCount": 533,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_05.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "63.9%",
+      "solidPixels": 5688,
+      "bbox": {
+        "x": 7,
+        "y": 9,
+        "w": 123,
+        "h": 100
+      },
+      "margins": {
+        "left": 7,
+        "right": 6,
+        "top": 9,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 150,
+      "pupilCount": 268,
+      "creamBellyCount": 831,
+      "clawCount": 563,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_06.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "63.1%",
+      "solidPixels": 5827,
+      "bbox": {
+        "x": 6,
+        "y": 7,
+        "w": 125,
+        "h": 102
+      },
+      "margins": {
+        "left": 6,
+        "right": 5,
+        "top": 7,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 156,
+      "pupilCount": 263,
+      "creamBellyCount": 936,
+      "clawCount": 623,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_07.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "63.2%",
+      "solidPixels": 5803,
+      "bbox": {
+        "x": 7,
+        "y": 7,
+        "w": 123,
+        "h": 102
+      },
+      "margins": {
+        "left": 7,
+        "right": 6,
+        "top": 7,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 153,
+      "pupilCount": 266,
+      "creamBellyCount": 960,
+      "clawCount": 636,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_08.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "62.6%",
+      "solidPixels": 5901,
+      "bbox": {
+        "x": 5,
+        "y": 7,
+        "w": 126,
+        "h": 102
+      },
+      "margins": {
+        "left": 5,
+        "right": 5,
+        "top": 7,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 155,
+      "pupilCount": 260,
+      "creamBellyCount": 931,
+      "clawCount": 618,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_09.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "66.6%",
+      "solidPixels": 5268,
+      "bbox": {
+        "x": 9,
+        "y": 11,
+        "w": 118,
+        "h": 98
+      },
+      "margins": {
+        "left": 9,
+        "right": 9,
+        "top": 11,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 123,
+      "pupilCount": 207,
+      "creamBellyCount": 894,
+      "clawCount": 586,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_10.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "66.4%",
+      "solidPixels": 5301,
+      "bbox": {
+        "x": 8,
+        "y": 11,
+        "w": 121,
+        "h": 98
+      },
+      "margins": {
+        "left": 8,
+        "right": 7,
+        "top": 11,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 136,
+      "pupilCount": 212,
+      "creamBellyCount": 844,
+      "clawCount": 531,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_11.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "66.2%",
+      "solidPixels": 5330,
+      "bbox": {
+        "x": 8,
+        "y": 12,
+        "w": 120,
+        "h": 97
+      },
+      "margins": {
+        "left": 8,
+        "right": 8,
+        "top": 12,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 128,
+      "pupilCount": 234,
+      "creamBellyCount": 879,
+      "clawCount": 532,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_12.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "67.2%",
+      "solidPixels": 5171,
+      "bbox": {
+        "x": 10,
+        "y": 12,
+        "w": 117,
+        "h": 97
+      },
+      "margins": {
+        "left": 10,
+        "right": 9,
+        "top": 12,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 128,
+      "pupilCount": 237,
+      "creamBellyCount": 911,
+      "clawCount": 534,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_13.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "66.5%",
+      "solidPixels": 5291,
+      "bbox": {
+        "x": 8,
+        "y": 12,
+        "w": 120,
+        "h": 97
+      },
+      "margins": {
+        "left": 8,
+        "right": 8,
+        "top": 12,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 133,
+      "pupilCount": 238,
+      "creamBellyCount": 855,
+      "clawCount": 544,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_14.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "65.4%",
+      "solidPixels": 5457,
+      "bbox": {
+        "x": 6,
+        "y": 11,
+        "w": 124,
+        "h": 98
+      },
+      "margins": {
+        "left": 6,
+        "right": 6,
+        "top": 11,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 139,
+      "pupilCount": 253,
+      "creamBellyCount": 861,
+      "clawCount": 544,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_15.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "65.9%",
+      "solidPixels": 5373,
+      "bbox": {
+        "x": 7,
+        "y": 11,
+        "w": 123,
+        "h": 98
+      },
+      "margins": {
+        "left": 7,
+        "right": 6,
+        "top": 11,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 128,
+      "pupilCount": 235,
+      "creamBellyCount": 866,
+      "clawCount": 567,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "run_16.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "65.4%",
+      "solidPixels": 5459,
+      "bbox": {
+        "x": 7,
+        "y": 11,
+        "w": 122,
+        "h": 98
+      },
+      "margins": {
+        "left": 7,
+        "right": 7,
+        "top": 11,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 131,
+      "pupilCount": 230,
+      "creamBellyCount": 892,
+      "clawCount": 567,
+      "status": "PASSED",
+      "defects": []
+    }
+  ],
+  "ducking": [
+    {
+      "frame": "duck_00.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "69.4%",
+      "solidPixels": 4822,
+      "bbox": {
+        "x": 15,
+        "y": 16,
+        "w": 106,
+        "h": 93
+      },
+      "margins": {
+        "left": 15,
+        "right": 15,
+        "top": 16,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 91,
+      "pupilCount": 106,
+      "creamBellyCount": 744,
+      "clawCount": 327,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_01.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "70.2%",
+      "solidPixels": 4695,
+      "bbox": {
+        "x": 16,
+        "y": 16,
+        "w": 104,
+        "h": 93
+      },
+      "margins": {
+        "left": 16,
+        "right": 16,
+        "top": 16,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 85,
+      "pupilCount": 104,
+      "creamBellyCount": 703,
+      "clawCount": 311,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_02.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "71.1%",
+      "solidPixels": 4561,
+      "bbox": {
+        "x": 15,
+        "y": 21,
+        "w": 106,
+        "h": 88
+      },
+      "margins": {
+        "left": 15,
+        "right": 15,
+        "top": 21,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 89,
+      "pupilCount": 102,
+      "creamBellyCount": 658,
+      "clawCount": 287,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_03.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.0%",
+      "solidPixels": 4412,
+      "bbox": {
+        "x": 14,
+        "y": 27,
+        "w": 109,
+        "h": 82
+      },
+      "margins": {
+        "left": 14,
+        "right": 13,
+        "top": 27,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 90,
+      "pupilCount": 108,
+      "creamBellyCount": 611,
+      "clawCount": 250,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_04.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.2%",
+      "solidPixels": 4221,
+      "bbox": {
+        "x": 13,
+        "y": 34,
+        "w": 110,
+        "h": 75
+      },
+      "margins": {
+        "left": 13,
+        "right": 13,
+        "top": 34,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 89,
+      "pupilCount": 100,
+      "creamBellyCount": 591,
+      "clawCount": 224,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_05.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.3%",
+      "solidPixels": 4055,
+      "bbox": {
+        "x": 13,
+        "y": 41,
+        "w": 111,
+        "h": 68
+      },
+      "margins": {
+        "left": 13,
+        "right": 12,
+        "top": 41,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 87,
+      "pupilCount": 88,
+      "creamBellyCount": 546,
+      "clawCount": 194,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_06.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.7%",
+      "solidPixels": 3996,
+      "bbox": {
+        "x": 14,
+        "y": 42,
+        "w": 109,
+        "h": 67
+      },
+      "margins": {
+        "left": 14,
+        "right": 13,
+        "top": 42,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 86,
+      "pupilCount": 82,
+      "creamBellyCount": 525,
+      "clawCount": 190,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_07.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "76.6%",
+      "solidPixels": 3687,
+      "bbox": {
+        "x": 17,
+        "y": 43,
+        "w": 102,
+        "h": 66
+      },
+      "margins": {
+        "left": 17,
+        "right": 17,
+        "top": 43,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 90,
+      "pupilCount": 79,
+      "creamBellyCount": 481,
+      "clawCount": 172,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_08.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "78.1%",
+      "solidPixels": 3454,
+      "bbox": {
+        "x": 19,
+        "y": 47,
+        "w": 99,
+        "h": 62
+      },
+      "margins": {
+        "left": 19,
+        "right": 18,
+        "top": 47,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 88,
+      "pupilCount": 78,
+      "creamBellyCount": 472,
+      "clawCount": 163,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_09.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "76.9%",
+      "solidPixels": 3637,
+      "bbox": {
+        "x": 15,
+        "y": 59,
+        "w": 107,
+        "h": 50
+      },
+      "margins": {
+        "left": 15,
+        "right": 14,
+        "top": 59,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 89,
+      "pupilCount": 80,
+      "creamBellyCount": 459,
+      "clawCount": 154,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_10.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "77.9%",
+      "solidPixels": 3481,
+      "bbox": {
+        "x": 15,
+        "y": 62,
+        "w": 106,
+        "h": 47
+      },
+      "margins": {
+        "left": 15,
+        "right": 15,
+        "top": 62,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 79,
+      "pupilCount": 74,
+      "creamBellyCount": 444,
+      "clawCount": 156,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_11.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "76.5%",
+      "solidPixels": 3704,
+      "bbox": {
+        "x": 11,
+        "y": 62,
+        "w": 114,
+        "h": 47
+      },
+      "margins": {
+        "left": 11,
+        "right": 11,
+        "top": 62,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 82,
+      "pupilCount": 71,
+      "creamBellyCount": 477,
+      "clawCount": 160,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_12.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "77.1%",
+      "solidPixels": 3612,
+      "bbox": {
+        "x": 13,
+        "y": 65,
+        "w": 111,
+        "h": 44
+      },
+      "margins": {
+        "left": 13,
+        "right": 12,
+        "top": 65,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 75,
+      "pupilCount": 66,
+      "creamBellyCount": 442,
+      "clawCount": 147,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_13.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "75.1%",
+      "solidPixels": 3931,
+      "bbox": {
+        "x": 9,
+        "y": 64,
+        "w": 118,
+        "h": 45
+      },
+      "margins": {
+        "left": 9,
+        "right": 9,
+        "top": 64,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 79,
+      "pupilCount": 67,
+      "creamBellyCount": 412,
+      "clawCount": 132,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_14.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "76.3%",
+      "solidPixels": 3746,
+      "bbox": {
+        "x": 12,
+        "y": 66,
+        "w": 113,
+        "h": 43
+      },
+      "margins": {
+        "left": 12,
+        "right": 11,
+        "top": 66,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 79,
+      "pupilCount": 70,
+      "creamBellyCount": 411,
+      "clawCount": 121,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_15.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "78.3%",
+      "solidPixels": 3427,
+      "bbox": {
+        "x": 16,
+        "y": 66,
+        "w": 104,
+        "h": 43
+      },
+      "margins": {
+        "left": 16,
+        "right": 16,
+        "top": 66,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 75,
+      "pupilCount": 66,
+      "creamBellyCount": 382,
+      "clawCount": 112,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_16.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "80.6%",
+      "solidPixels": 3060,
+      "bbox": {
+        "x": 21,
+        "y": 68,
+        "w": 95,
+        "h": 41
+      },
+      "margins": {
+        "left": 21,
+        "right": 20,
+        "top": 68,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 65,
+      "pupilCount": 56,
+      "creamBellyCount": 321,
+      "clawCount": 85,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_17.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "82.5%",
+      "solidPixels": 2753,
+      "bbox": {
+        "x": 28,
+        "y": 66,
+        "w": 80,
+        "h": 43
+      },
+      "margins": {
+        "left": 28,
+        "right": 28,
+        "top": 66,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 68,
+      "pupilCount": 48,
+      "creamBellyCount": 299,
+      "clawCount": 90,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_18.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.1%",
+      "solidPixels": 4244,
+      "bbox": {
+        "x": 11,
+        "y": 35,
+        "w": 114,
+        "h": 74
+      },
+      "margins": {
+        "left": 11,
+        "right": 11,
+        "top": 35,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 90,
+      "pupilCount": 89,
+      "creamBellyCount": 591,
+      "clawCount": 214,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_19.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.8%",
+      "solidPixels": 4286,
+      "bbox": {
+        "x": 12,
+        "y": 35,
+        "w": 112,
+        "h": 74
+      },
+      "margins": {
+        "left": 12,
+        "right": 12,
+        "top": 35,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 91,
+      "pupilCount": 90,
+      "creamBellyCount": 597,
+      "clawCount": 250,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_20.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "71.8%",
+      "solidPixels": 4454,
+      "bbox": {
+        "x": 12,
+        "y": 35,
+        "w": 112,
+        "h": 74
+      },
+      "margins": {
+        "left": 12,
+        "right": 12,
+        "top": 35,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 92,
+      "pupilCount": 82,
+      "creamBellyCount": 657,
+      "clawCount": 257,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_21.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.5%",
+      "solidPixels": 4333,
+      "bbox": {
+        "x": 13,
+        "y": 35,
+        "w": 110,
+        "h": 74
+      },
+      "margins": {
+        "left": 13,
+        "right": 13,
+        "top": 35,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 88,
+      "pupilCount": 80,
+      "creamBellyCount": 629,
+      "clawCount": 251,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_22.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.6%",
+      "solidPixels": 4157,
+      "bbox": {
+        "x": 16,
+        "y": 29,
+        "w": 105,
+        "h": 80
+      },
+      "margins": {
+        "left": 16,
+        "right": 15,
+        "top": 29,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 80,
+      "pupilCount": 84,
+      "creamBellyCount": 595,
+      "clawCount": 251,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_23.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.2%",
+      "solidPixels": 4379,
+      "bbox": {
+        "x": 16,
+        "y": 24,
+        "w": 105,
+        "h": 85
+      },
+      "margins": {
+        "left": 16,
+        "right": 15,
+        "top": 24,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 76,
+      "pupilCount": 91,
+      "creamBellyCount": 674,
+      "clawCount": 295,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_24.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.6%",
+      "solidPixels": 4319,
+      "bbox": {
+        "x": 17,
+        "y": 23,
+        "w": 102,
+        "h": 86
+      },
+      "margins": {
+        "left": 17,
+        "right": 17,
+        "top": 23,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 82,
+      "pupilCount": 88,
+      "creamBellyCount": 668,
+      "clawCount": 277,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_25.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.1%",
+      "solidPixels": 4238,
+      "bbox": {
+        "x": 19,
+        "y": 22,
+        "w": 99,
+        "h": 87
+      },
+      "margins": {
+        "left": 19,
+        "right": 18,
+        "top": 22,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 81,
+      "pupilCount": 103,
+      "creamBellyCount": 637,
+      "clawCount": 276,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "duck_26.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.8%",
+      "solidPixels": 4286,
+      "bbox": {
+        "x": 19,
+        "y": 22,
+        "w": 98,
+        "h": 87
+      },
+      "margins": {
+        "left": 19,
+        "right": 19,
+        "top": 22,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 85,
+      "pupilCount": 83,
+      "creamBellyCount": 636,
+      "clawCount": 290,
+      "status": "PASSED",
+      "defects": []
+    }
+  ],
+  "jumping": [
+    {
+      "frame": "jump_00.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.2%",
+      "solidPixels": 4068,
+      "bbox": {
+        "x": 18,
+        "y": 25,
+        "w": 100,
+        "h": 84
+      },
+      "margins": {
+        "left": 18,
+        "right": 18,
+        "top": 25,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 99,
+      "pupilCount": 97,
+      "creamBellyCount": 713,
+      "clawCount": 350,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_01.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.4%",
+      "solidPixels": 4036,
+      "bbox": {
+        "x": 13,
+        "y": 38,
+        "w": 111,
+        "h": 71
+      },
+      "margins": {
+        "left": 13,
+        "right": 12,
+        "top": 38,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 102,
+      "pupilCount": 115,
+      "creamBellyCount": 583,
+      "clawCount": 249,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_02.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.7%",
+      "solidPixels": 3989,
+      "bbox": {
+        "x": 15,
+        "y": 34,
+        "w": 106,
+        "h": 75
+      },
+      "margins": {
+        "left": 15,
+        "right": 15,
+        "top": 34,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 101,
+      "pupilCount": 111,
+      "creamBellyCount": 587,
+      "clawCount": 278,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_03.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.2%",
+      "solidPixels": 4073,
+      "bbox": {
+        "x": 17,
+        "y": 20,
+        "w": 102,
+        "h": 86
+      },
+      "margins": {
+        "left": 17,
+        "right": 17,
+        "top": 20,
+        "bottom": 10
+      },
+      "footBottomY": 105,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 95,
+      "pupilCount": 121,
+      "creamBellyCount": 614,
+      "clawCount": 331,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_04.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.5%",
+      "solidPixels": 4020,
+      "bbox": {
+        "x": 19,
+        "y": 14,
+        "w": 99,
+        "h": 90
+      },
+      "margins": {
+        "left": 19,
+        "right": 18,
+        "top": 14,
+        "bottom": 12
+      },
+      "footBottomY": 103,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 104,
+      "pupilCount": 104,
+      "creamBellyCount": 670,
+      "clawCount": 329,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_05.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.0%",
+      "solidPixels": 4104,
+      "bbox": {
+        "x": 20,
+        "y": 5,
+        "w": 97,
+        "h": 95
+      },
+      "margins": {
+        "left": 20,
+        "right": 19,
+        "top": 5,
+        "bottom": 16
+      },
+      "footBottomY": 99,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 105,
+      "pupilCount": 110,
+      "creamBellyCount": 620,
+      "clawCount": 362,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_06.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.9%",
+      "solidPixels": 4279,
+      "bbox": {
+        "x": 19,
+        "y": 5,
+        "w": 99,
+        "h": 98
+      },
+      "margins": {
+        "left": 19,
+        "right": 18,
+        "top": 5,
+        "bottom": 13
+      },
+      "footBottomY": 102,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 109,
+      "pupilCount": 105,
+      "creamBellyCount": 722,
+      "clawCount": 402,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_07.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.9%",
+      "solidPixels": 4271,
+      "bbox": {
+        "x": 18,
+        "y": 5,
+        "w": 101,
+        "h": 96
+      },
+      "margins": {
+        "left": 18,
+        "right": 17,
+        "top": 5,
+        "bottom": 15
+      },
+      "footBottomY": 100,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 105,
+      "pupilCount": 130,
+      "creamBellyCount": 705,
+      "clawCount": 354,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_08.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.4%",
+      "solidPixels": 4191,
+      "bbox": {
+        "x": 18,
+        "y": 5,
+        "w": 100,
+        "h": 96
+      },
+      "margins": {
+        "left": 18,
+        "right": 18,
+        "top": 5,
+        "bottom": 15
+      },
+      "footBottomY": 100,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 100,
+      "pupilCount": 113,
+      "creamBellyCount": 683,
+      "clawCount": 356,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_09.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.9%",
+      "solidPixels": 4268,
+      "bbox": {
+        "x": 18,
+        "y": 11,
+        "w": 100,
+        "h": 93
+      },
+      "margins": {
+        "left": 18,
+        "right": 18,
+        "top": 11,
+        "bottom": 12
+      },
+      "footBottomY": 103,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 99,
+      "pupilCount": 109,
+      "creamBellyCount": 700,
+      "clawCount": 338,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_10.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.1%",
+      "solidPixels": 4397,
+      "bbox": {
+        "x": 18,
+        "y": 5,
+        "w": 100,
+        "h": 98
+      },
+      "margins": {
+        "left": 18,
+        "right": 18,
+        "top": 5,
+        "bottom": 13
+      },
+      "footBottomY": 102,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 101,
+      "pupilCount": 122,
+      "creamBellyCount": 749,
+      "clawCount": 400,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_11.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.7%",
+      "solidPixels": 4144,
+      "bbox": {
+        "x": 18,
+        "y": 5,
+        "w": 100,
+        "h": 93
+      },
+      "margins": {
+        "left": 18,
+        "right": 18,
+        "top": 5,
+        "bottom": 18
+      },
+      "footBottomY": 97,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 104,
+      "pupilCount": 137,
+      "creamBellyCount": 621,
+      "clawCount": 321,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_12.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.5%",
+      "solidPixels": 4028,
+      "bbox": {
+        "x": 19,
+        "y": 5,
+        "w": 98,
+        "h": 88
+      },
+      "margins": {
+        "left": 19,
+        "right": 19,
+        "top": 5,
+        "bottom": 23
+      },
+      "footBottomY": 92,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 102,
+      "pupilCount": 123,
+      "creamBellyCount": 579,
+      "clawCount": 284,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_13.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.4%",
+      "solidPixels": 4193,
+      "bbox": {
+        "x": 19,
+        "y": 5,
+        "w": 98,
+        "h": 93
+      },
+      "margins": {
+        "left": 19,
+        "right": 19,
+        "top": 5,
+        "bottom": 18
+      },
+      "footBottomY": 97,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 100,
+      "pupilCount": 144,
+      "creamBellyCount": 634,
+      "clawCount": 315,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_14.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "75.1%",
+      "solidPixels": 3930,
+      "bbox": {
+        "x": 19,
+        "y": 24,
+        "w": 98,
+        "h": 85
+      },
+      "margins": {
+        "left": 19,
+        "right": 19,
+        "top": 24,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 96,
+      "pupilCount": 117,
+      "creamBellyCount": 587,
+      "clawCount": 307,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_15.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.6%",
+      "solidPixels": 4159,
+      "bbox": {
+        "x": 18,
+        "y": 21,
+        "w": 101,
+        "h": 88
+      },
+      "margins": {
+        "left": 18,
+        "right": 17,
+        "top": 21,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 103,
+      "pupilCount": 135,
+      "creamBellyCount": 619,
+      "clawCount": 328,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_16.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "73.9%",
+      "solidPixels": 4114,
+      "bbox": {
+        "x": 18,
+        "y": 22,
+        "w": 101,
+        "h": 87
+      },
+      "margins": {
+        "left": 18,
+        "right": 17,
+        "top": 22,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 91,
+      "pupilCount": 137,
+      "creamBellyCount": 648,
+      "clawCount": 353,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_17.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "75.1%",
+      "solidPixels": 3927,
+      "bbox": {
+        "x": 17,
+        "y": 26,
+        "w": 103,
+        "h": 83
+      },
+      "margins": {
+        "left": 17,
+        "right": 16,
+        "top": 26,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 96,
+      "pupilCount": 114,
+      "creamBellyCount": 585,
+      "clawCount": 288,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_18.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "74.4%",
+      "solidPixels": 4044,
+      "bbox": {
+        "x": 16,
+        "y": 30,
+        "w": 105,
+        "h": 79
+      },
+      "margins": {
+        "left": 16,
+        "right": 15,
+        "top": 30,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 96,
+      "pupilCount": 103,
+      "creamBellyCount": 701,
+      "clawCount": 325,
+      "status": "PASSED",
+      "defects": []
+    },
+    {
+      "frame": "jump_19.png",
+      "dimensions": "136x116",
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "transPercent": "72.3%",
+      "solidPixels": 4367,
+      "bbox": {
+        "x": 16,
+        "y": 16,
+        "w": 104,
+        "h": 93
+      },
+      "margins": {
+        "left": 16,
+        "right": 16,
+        "top": 16,
+        "bottom": 7
+      },
+      "footBottomY": 108,
+      "perimeterSolidCount": 0,
+      "edgeCheckerboardRemnants": 0,
+      "whiteEyeCount": 110,
+      "pupilCount": 118,
+      "creamBellyCount": 794,
+      "clawCount": 356,
+      "status": "PASSED",
+      "defects": []
+    }
+  ]
+}

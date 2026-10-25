@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Skin Color Harmony Comparison</title>
+  <style>
+    body { background: #1a202c; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; margin: 0; }
+    h2 { margin: 15px 0 8px; color: #e2e8f0; font-size: 18px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .strip-box { background: #2d3748; padding: 12px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .strip-box img { width: 100%; display: block; border-radius: 6px; }
+    .legend { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; font-weight: bold; }
+    .legend span { flex: 1; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>1. Canonical Master Reference (From User Sheet)</h2>
+    <div class="strip-box">
+      <img src="crop_skins_raw.png" />
+      <div class="legend">
+        <span>1. GREEN</span><span>2. BLUE</span><span>3. RED</span>
+        <span>4. YELLOW</span><span>5. ORANGE</span><span>6. PURPLE</span>
+        <span>7. PINK</span><span>8. BROWN</span><span>9. BLACK</span>
+      </div>
+    </div>
+
+    <h2>2. Generated Recolor (dino_idle_0 with Protected Belly, Eyes, Claws)</h2>
+    <div class="strip-box">
+      <img src="test_recolor_strip_v1.png" />
+      <div class="legend">
+        <span>1. GREEN</span><span>2. BLUE</span><span>3. RED</span>
+        <span>4. YELLOW</span><span>5. ORANGE</span><span>6. PURPLE</span>
+        <span>7. PINK</span><span>8. BROWN</span><span>9. BLACK</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

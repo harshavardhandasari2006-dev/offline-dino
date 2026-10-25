@@ -18,23 +18,121 @@ class SpriteRenderer {
     this.images = {};
     this.imagesLoaded = false;
     this.blurredBgs = {}; // Pre-rendered blurred canvases to eliminate per-frame ctx.filter overhead (DINO-007)
+    this.currentSkin = (typeof window !== 'undefined' && window.SkinManager)
+      ? window.SkinManager.getSelectedSkinId()
+      : 'green';
+    this.skinCache = {};
     this.loadSprites();
   }
 
+  setSkin(skinId) {
+    if (typeof window !== 'undefined' && window.SkinManager) {
+      this.currentSkin = window.SkinManager.setSelectedSkinId(skinId);
+    } else {
+      this.currentSkin = skinId || 'green';
+    }
+    if (this.currentSkin && this.currentSkin !== 'green') {
+      this.preloadSkinSprites(this.currentSkin);
+    }
+  }
+
+  preloadSkinSprites(skinId) {
+    if (!skinId || skinId === 'green') return;
+    const runNumberedKeys = [];
+    for (let i = 1; i <= 10; i++) runNumberedKeys.push('run_' + i.toString().padStart(2, '0'));
+    const dinoRunKeys = [];
+    for (let i = 0; i < 10; i++) dinoRunKeys.push('dino_run_' + i);
+    const jumpNumberedKeys = [];
+    for (let i = 1; i <= 10; i++) jumpNumberedKeys.push('jump_' + i.toString().padStart(2, '0'));
+    const dinoJumpKeys = [];
+    for (let i = 0; i < 20; i++) dinoJumpKeys.push('dino_jump_' + i);
+    const duckNumberedKeys = [];
+    for (let i = 1; i <= 10; i++) duckNumberedKeys.push('duck_' + i.toString().padStart(2, '0'));
+    const dinoDuckKeys = [];
+    for (let i = 0; i < 27; i++) dinoDuckKeys.push('dino_duck_' + i);
+
+    const dinoKeys = [
+      'dino_idle_0', 'dino_idle_1', 'dino_idle_2', 'dino_idle_3', 'dino_idle_sclera',
+      'dino_front_0', 'dino_front_sclera', 'dino_front_blink', 'dino_front_smile',
+      'dino_home_idle', 'dino_home_sclera', 'dino_home_blink', 'dino_home_hover',
+      'dino_home_tongue_01', 'dino_home_tongue_02', 'dino_home_tongue_03',
+      'dino_turn_fl', 'dino_turn_fr', 'dino_exp_jump',
+      ...runNumberedKeys,
+      ...dinoRunKeys,
+      ...jumpNumberedKeys,
+      ...dinoJumpKeys,
+      ...duckNumberedKeys,
+      ...dinoDuckKeys,
+      'dino_hit', 'dino_dead',
+      'dino_turn_0', 'dino_turn_1', 'dino_turn_2', 'dino_turn_3', 'dino_turn_4', 'dino_turn_5', 'dino_turn_6',
+      'dino_turn_7', 'dino_turn_8', 'dino_turn_9'
+    ];
+    for (let i = 0; i < dinoKeys.length; i++) {
+      this.getDinoSprite(dinoKeys[i], skinId);
+    }
+  }
+
+  getDinoSprite(key, skinId = this.currentSkin) {
+    if (!skinId || skinId === 'green') {
+      return this.images[key] || null;
+    }
+    if (!this.skinCache[skinId]) {
+      this.skinCache[skinId] = {};
+    }
+    if (this.skinCache[skinId][key]) {
+      return this.skinCache[skinId][key];
+    }
+    const baseImg = this.images[key];
+    if (baseImg && (baseImg.complete || baseImg.width) && (baseImg.naturalWidth > 0 || baseImg.width > 0)) {
+      if (typeof window !== 'undefined' && window.SkinManager) {
+        const skin = window.SkinManager.getSkinById(skinId);
+        const recolored = window.SkinManager.recolorImage(baseImg, skin);
+        this.skinCache[skinId][key] = recolored;
+        return recolored;
+      }
+    }
+    return baseImg || null;
+  }
+
   loadSprites() {
+    const runNumberedKeys = [];
+    for (let i = 1; i <= 10; i++) runNumberedKeys.push('run_' + i.toString().padStart(2, '0'));
+    const dinoRunKeys = [];
+    for (let i = 0; i < 10; i++) dinoRunKeys.push('dino_run_' + i);
+    const jumpNumberedKeys = [];
+    for (let i = 1; i <= 10; i++) jumpNumberedKeys.push('jump_' + i.toString().padStart(2, '0'));
+    const dinoJumpKeys = [];
+    for (let i = 0; i < 20; i++) dinoJumpKeys.push('dino_jump_' + i);
+    const duckNumberedKeys = [];
+    for (let i = 1; i <= 10; i++) duckNumberedKeys.push('duck_' + i.toString().padStart(2, '0'));
+    const dinoDuckKeys = [];
+    for (let i = 0; i < 27; i++) dinoDuckKeys.push('dino_duck_' + i);
+
     const spriteKeys = [
-      // Idle
-      'dino_idle_0', 'dino_idle_1', 'dino_idle_2', 'dino_idle_3',
-      // Run (6 fluid frames - alternating strides A and B)
-      'dino_run_0', 'dino_run_1', 'dino_run_2', 'dino_run_3', 'dino_run_4', 'dino_run_5',
-      // Jump (5 phases)
-      'dino_jump_0', 'dino_jump_1', 'dino_jump_2', 'dino_jump_3', 'dino_jump_4',
-      // Duck (smooth transition with closed eyes)
-      'dino_duck_0', 'dino_duck_1', 'dino_duck_2', 'dino_duck_3', 'dino_duck_4',
+      // Idle (with cursor-tracking sclera base)
+      'dino_idle_0', 'dino_idle_1', 'dino_idle_2', 'dino_idle_3', 'dino_idle_sclera',
+      // Front-facing & Home Turnaround / Expressions
+      'dino_front_0', 'dino_front_sclera', 'dino_front_blink', 'dino_front_smile',
+      'dino_home_idle', 'dino_home_sclera', 'dino_home_blink', 'dino_home_hover',
+      'dino_home_tongue_01', 'dino_home_tongue_02', 'dino_home_tongue_03',
+      'home_pupil_left', 'home_pupil_right', 'home_title_sign',
+      'dino_turn_fl', 'dino_turn_fr', 'dino_exp_jump',
+      // 10-Frame strictly ordered running animation (Frame 1 -> Frame 10 -> repeat Frame 1)
+      ...runNumberedKeys,
+      ...dinoRunKeys,
+      // Approved 10-frame jump cycle (takeoff, ascent, airborne apex, descent, landing)
+      ...jumpNumberedKeys,
+      ...dinoJumpKeys,
+      // Approved 10-frame duck cycle (crouch drop, sustained crawl loop, smooth rise recovery)
+      ...duckNumberedKeys,
+      ...dinoDuckKeys,
       // Hit & Dead
       'dino_hit', 'dino_dead',
+      // Turnaround (10 full directional 360 degree rotation poses)
+      'dino_turn_0', 'dino_turn_1', 'dino_turn_2', 'dino_turn_3', 'dino_turn_4', 'dino_turn_5', 'dino_turn_6',
+      'dino_turn_7', 'dino_turn_8', 'dino_turn_9',
       // Obstacles
-      'cactus_single', 'cactus_small', 'cactus_double', 'cactus_tall',
+      'cactus_single', 'cactus_small', 'cactus_double', 'cactus_triple', 'cactus_tall',
       'pterodactyl_0', 'pterodactyl_1',
       // Backgrounds
       'bg_day', 'bg_night'
@@ -60,6 +158,9 @@ class SpriteRenderer {
         }
         if (loadedCount >= total) {
           this.imagesLoaded = true;
+          if (this.currentSkin && this.currentSkin !== 'green') {
+            this.preloadSkinSprites(this.currentSkin);
+          }
         }
       };
       this.images[key] = img;
@@ -122,41 +223,85 @@ class SpriteRenderer {
     // Driven by animTime
   }
 
+  // Fast, smooth RGB color interpolation helper
+  lerpColor(r1, g1, b1, r2, g2, b2, t) {
+    const clampedT = Math.max(0, Math.min(1, t));
+    const r = Math.round(r1 + (r2 - r1) * clampedT);
+    const g = Math.round(g1 + (g2 - g1) * clampedT);
+    const b = Math.round(b1 + (b2 - b1) * clampedT);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
   // ==========================================
   // BACKGROUND RENDERING (Style 1 Desert Mesas Panorama)
-  // Zero per-frame blur filter: uses pre-cached softened canvas (DINO-007)
+  // Seamless day-to-night crossfade with Stage C cinematic twilight sky gradient
   // ==========================================
-  drawBackground(ctx, scrollX, width, groundY, isNight = false) {
-    const bgKey = isNight ? 'bg_night' : 'bg_day';
-    const bgImg = this.blurredBgs[bgKey] || this.images[bgKey];
+  drawBackground(ctx, scrollX, width, groundY, nightProgress = 0) {
+    const bgDay = this.blurredBgs['bg_day'] || this.images['bg_day'];
+    const bgNight = this.blurredBgs['bg_night'] || this.images['bg_night'];
 
-    if (bgImg && (bgImg.width || bgImg.naturalWidth)) {
+    // Support both numeric progress [0..1] and legacy boolean
+    const p = typeof nightProgress === 'number'
+      ? Math.max(0, Math.min(1, nightProgress))
+      : (nightProgress ? 1.0 : 0.0);
+
+    if (bgDay && (bgDay.width || bgDay.naturalWidth)) {
       ctx.save();
-      const naturalW = bgImg.width || bgImg.naturalWidth;
-      const naturalH = bgImg.height || bgImg.naturalHeight;
+      const naturalW = bgDay.width || bgDay.naturalWidth;
+      const naturalH = bgDay.height || bgDay.naturalHeight;
       const aspect = naturalW / naturalH;
       const bgH = groundY;
       const bgW = bgH * aspect;
       const parallaxSpeed = scrollX * 0.16;
       const offset = -(parallaxSpeed % bgW);
 
-      for (let l = -1; l <= Math.ceil(width / bgW) + 1; l++) {
+      const startTile = -1;
+      const endTile = Math.ceil(width / bgW) + 1;
+
+      // 1. Draw Day Background (base layer: Stage A)
+      for (let l = startTile; l <= endTile; l++) {
         const bx0 = Math.round(offset + l * bgW);
         const bx1 = Math.round(offset + (l + 1) * bgW);
-        ctx.drawImage(bgImg, bx0, 0, bx1 - bx0, bgH);
+        ctx.drawImage(bgDay, bx0, 0, bx1 - bx0, bgH);
       }
+
+      // 2. Crossfade Night Background (aligned mesas, clouds, stars & moon)
+      if (p > 0.001 && bgNight && (bgNight.width || bgNight.naturalWidth)) {
+        ctx.save();
+        ctx.globalAlpha = p;
+        for (let l = startTile; l <= endTile; l++) {
+          const bx0 = Math.round(offset + l * bgW);
+          const bx1 = Math.round(offset + (l + 1) * bgW);
+          ctx.drawImage(bgNight, bx0, 0, bx1 - bx0, bgH);
+        }
+        ctx.restore();
+      }
+
+      // 3. Stage C — Main Twilight Environmental Sky Gradient (30% - 70%)
+      // Peaks at p = 0.50 with a gentle bell-curve for cinematic twilight atmosphere
+      const twilightFactor = Math.sin(p * Math.PI);
+      if (twilightFactor > 0.02) {
+        ctx.save();
+        const twGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+        const a = twilightFactor * 0.28;
+        twGrad.addColorStop(0, `rgba(49, 46, 129, ${a.toFixed(3)})`); // Deep indigo aloft
+        twGrad.addColorStop(0.45, `rgba(109, 40, 217, ${(a * 0.75).toFixed(3)})`); // Twilight purple
+        twGrad.addColorStop(0.85, `rgba(194, 65, 12, ${(a * 0.35).toFixed(3)})`); // Soft warm dusk
+        twGrad.addColorStop(1.0, 'rgba(180, 83, 9, 0)');
+        ctx.fillStyle = twGrad;
+        ctx.fillRect(0, 0, width, groundY);
+        ctx.restore();
+      }
+
       ctx.restore();
     } else {
-      // Clean fallback gradient
+      // Clean fallback gradient with smooth day-to-night interpolation
       ctx.save();
       const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
-      if (isNight) {
-        skyGrad.addColorStop(0, '#131a38');
-        skyGrad.addColorStop(1, '#273369');
-      } else {
-        skyGrad.addColorStop(0, '#4da6ff');
-        skyGrad.addColorStop(1, '#a6dbff');
-      }
+      const topCol = this.lerpColor(77, 166, 255, 19, 26, 56, p);
+      const botCol = this.lerpColor(166, 219, 255, 39, 51, 105, p);
+      skyGrad.addColorStop(0, topCol);
+      skyGrad.addColorStop(1, botCol);
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, groundY);
       ctx.restore();
@@ -165,26 +310,26 @@ class SpriteRenderer {
 
   // ==========================================
   // GROUND RENDERING
+  // Smooth day-to-night color gradient, baseline & pebble interpolation
   // ==========================================
-  drawGround(ctx, scrollX, width, height, groundY, isNight = false) {
+  drawGround(ctx, scrollX, width, height, groundY, nightProgress = 0) {
     ctx.save();
+    const p = typeof nightProgress === 'number'
+      ? Math.max(0, Math.min(1, nightProgress))
+      : (nightProgress ? 1.0 : 0.0);
 
-    const lineColor = isNight ? '#475569' : '#d97706';
+    // Smoothly interpolated ground terrain gradient
     const fillGradient = ctx.createLinearGradient(0, groundY, 0, height);
-    if (isNight) {
-      fillGradient.addColorStop(0, '#334155');
-      fillGradient.addColorStop(0.2, '#1e293b');
-      fillGradient.addColorStop(1, '#0f172a');
-    } else {
-      fillGradient.addColorStop(0, '#fcd34d');
-      fillGradient.addColorStop(0.12, '#fbbf24');
-      fillGradient.addColorStop(0.4, '#f59e0b');
-      fillGradient.addColorStop(1, '#d97706');
-    }
+    fillGradient.addColorStop(0, this.lerpColor(252, 211, 77, 51, 65, 85, p));
+    fillGradient.addColorStop(0.12, this.lerpColor(251, 191, 36, 30, 41, 59, p));
+    fillGradient.addColorStop(0.4, this.lerpColor(245, 158, 11, 20, 30, 48, p));
+    fillGradient.addColorStop(1, this.lerpColor(217, 119, 6, 15, 23, 42, p));
 
     ctx.fillStyle = fillGradient;
     ctx.fillRect(0, groundY, width, height - groundY);
 
+    // Ground dividing baseline
+    const lineColor = this.lerpColor(217, 119, 6, 71, 85, 105, p);
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = 3.5;
     ctx.lineCap = 'round';
@@ -193,13 +338,14 @@ class SpriteRenderer {
     ctx.lineTo(width, groundY);
     ctx.stroke();
 
-    // Stylized terrain dashes & smooth pebbles (Varied 2400px cycle for wide screens - ISSUE-05)
+    // Stylized terrain dashes & smooth pebbles
     const patternWidth = 600;
     const startIdx = Math.floor(scrollX / patternWidth) - 1;
     const endIdx = Math.ceil((scrollX + width) / patternWidth) + 1;
 
-    ctx.fillStyle = isNight ? '#64748b' : '#b45309';
-    ctx.strokeStyle = isNight ? '#64748b' : '#b45309';
+    const dashColor = this.lerpColor(180, 83, 9, 100, 116, 139, p);
+    ctx.fillStyle = dashColor;
+    ctx.strokeStyle = dashColor;
     ctx.lineWidth = 2.2;
 
     const dashPatterns = [
@@ -285,95 +431,61 @@ class SpriteRenderer {
   }
 
   // ==========================================
-  // CACTUS CLUSTER RENDERING (DINO-001 & DINO-018 FIX)
-  // Renders 1, 2, or 3 visible cacti corresponding to the exact obstacle width
-  // Single -> 1 body; Double -> 2 bodies; Triple -> 3 bodies
-  // Zero invisible empty air collision boxes!
   // ==========================================
-  drawCactus(ctx, x, y, w, h, type, isNight = false) {
+  // CACTUS OBSTACLE RENDERING — REPLACED WITH MASTER CARTOON ARTWORK
+  // Renders dedicated high-fidelity cartoon cactus artwork:
+  // - Single cactus (Image 1): Single variant (w=26/32, h=48/70)
+  // - Two-cactus obstacle (Image 2): Double variant (w=48/60, h=48/70)
+  // - Three-cactus obstacle (Image 3): Triple variant (w=68/88, h=48/70)
+  // Maintains exact ground baseline alignment, in-game footprint, and natural proportions
+  // ==========================================
+  drawCactus(ctx, x, y, w, h, type, nightProgress = 0) {
     ctx.save();
-
-    // Define multi-body cactus layouts matching exact collision bounds
-    // Each layout specifies: sprite key, x offset, relative height, body width
-    let layout = [];
-
-    switch (type) {
-      case 'CACTUS_SMALL_SINGLE':
-        // 1 small cactus body (w=26, h=48) - uses authentic cactus_small (DINO-018)
-        layout = [
-          { key: 'cactus_small', xOff: 0, bodyW: 26, bodyH: 48 }
-        ];
-        break;
-
-      case 'CACTUS_SMALL_DOUBLE':
-        // 2 small cactus bodies (w=48, h=48)
-        layout = [
-          { key: 'cactus_small', xOff: 0, bodyW: 24, bodyH: 48 },
-          { key: 'cactus_double', xOff: 22, bodyW: 26, bodyH: 46 }
-        ];
-        break;
-
-      case 'CACTUS_SMALL_TRIPLE':
-        // 3 small cactus bodies (w=68, h=48)
-        layout = [
-          { key: 'cactus_small', xOff: 0, bodyW: 23, bodyH: 48 },
-          { key: 'cactus_double', xOff: 22, bodyW: 23, bodyH: 45 },
-          { key: 'cactus_tall', xOff: 44, bodyW: 24, bodyH: 48 }
-        ];
-        break;
-
-      case 'CACTUS_LARGE_SINGLE':
-        // 1 large cactus body (w=32, h=70)
-        layout = [
-          { key: 'cactus_single', xOff: 0, bodyW: 32, bodyH: 70 }
-        ];
-        break;
-
-      case 'CACTUS_LARGE_DOUBLE':
-        // 2 large cactus bodies (w=60, h=70)
-        layout = [
-          { key: 'cactus_single', xOff: 0, bodyW: 32, bodyH: 70 },
-          { key: 'cactus_tall', xOff: 28, bodyW: 32, bodyH: 68 }
-        ];
-        break;
-
-      case 'CACTUS_LARGE_TRIPLE':
-        // 3 large cactus bodies (w=88, h=70)
-        layout = [
-          { key: 'cactus_single', xOff: 0, bodyW: 31, bodyH: 70 },
-          { key: 'cactus_double', xOff: 28, bodyW: 30, bodyH: 66 },
-          { key: 'cactus_tall', xOff: 57, bodyW: 31, bodyH: 70 }
-        ];
-        break;
-
-      default:
-        layout = [
-          { key: 'cactus_small', xOff: 0, bodyW: w || 26, bodyH: h || 48 }
-        ];
-    }
+    const p = typeof nightProgress === 'number'
+      ? Math.max(0, Math.min(1, nightProgress))
+      : (nightProgress ? 1.0 : 0.0);
 
     const groundBase = y + h;
 
-    // Ground shadow underneath the entire cluster
-    ctx.fillStyle = isNight ? 'rgba(15, 23, 42, 0.45)' : 'rgba(180, 83, 9, 0.32)';
+    // Ground shadow underneath the entire obstacle (smooth day-to-night interpolation)
+    const sr = Math.round(180 + (15 - 180) * p);
+    const sg = Math.round(83 + (23 - 83) * p);
+    const sb = Math.round(9 + (42 - 9) * p);
+    const sa = 0.32 + (0.45 - 0.32) * p;
+    ctx.fillStyle = `rgba(${sr}, ${sg}, ${sb}, ${sa.toFixed(2)})`;
     ctx.beginPath();
-    const clusterW = w || layout[layout.length - 1].xOff + layout[layout.length - 1].bodyW;
-    ctx.ellipse(x + clusterW / 2, groundBase, clusterW * 0.52, 4.8, 0, 0, Math.PI * 2);
+    ctx.ellipse(x + w / 2, groundBase, Math.max(w, 24) * 0.52, 4.8, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Render each cactus in the cluster
-    for (let i = 0; i < layout.length; i++) {
-      const part = layout[i];
-      const img = this.images[part.key] || this.images['cactus_small'];
-      const drawX = x + part.xOff;
-      const drawY = groundBase - part.bodyH;
+    // Map each obstacle variant to its corresponding new cartoon cactus artwork:
+    // Single cactus: Image 1 (cactus_single / cactus_small)
+    // Double cactus: Image 2 (cactus_double)
+    // Triple cactus: Image 3 (cactus_triple / cactus_tall)
+    let spriteKey = 'cactus_single';
+    let renderW = w;
+    let renderH = h;
 
-      if (img && img.complete && img.naturalWidth > 0) {
-        ctx.drawImage(img, drawX, drawY, part.bodyW, part.bodyH);
-      } else {
-        ctx.fillStyle = '#22c55e';
-        ctx.fillRect(drawX, drawY, part.bodyW, part.bodyH);
-      }
+    if (type === 'CACTUS_SMALL_DOUBLE' || type === 'CACTUS_LARGE_DOUBLE') {
+      spriteKey = 'cactus_double';
+      renderW = (h < 55) ? 46 : 66;
+    } else if (type === 'CACTUS_SMALL_TRIPLE' || type === 'CACTUS_LARGE_TRIPLE') {
+      spriteKey = 'cactus_triple';
+      renderW = (h < 55) ? 58 : 82;
+    } else {
+      spriteKey = (h < 55) ? 'cactus_small' : 'cactus_single';
+      renderW = (h < 55) ? 26 : 36;
+    }
+
+    const img = this.images[spriteKey] || this.images['cactus_tall'] || this.images['cactus_single'];
+    // Center horizontally over obstacle footprint and anchor bottom to ground baseline
+    const drawX = x + (w - renderW) / 2;
+    const drawY = groundBase - renderH;
+
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, drawX, drawY, renderW, renderH);
+    } else {
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(x, groundBase - h, w, h);
     }
 
     ctx.restore();
@@ -411,100 +523,102 @@ class SpriteRenderer {
   // - Standardized 128x112 dead pose on baseline
   // - Strict foot-to-ground baseline alignment (targetH=70, dyOffset=-2)
   // =========================================================================
-  drawDino(ctx, x, y, state, animTime = 0, isNight = false, isGrounded = true, jumpPhase = 'IN_AIR', duckDuration = 0, duckEnding = false, gameSpeed = 340) {
+  drawDino(ctx, x, y, state, animTime = 0, isNight = false, isGrounded = true, jumpPhase = 'IN_AIR', duckDuration = 0, duckEnding = false, gameSpeed = 340, landingTimer = 0, vy = 0, takeOffTimer = 0, duckEndingTimer = 0) {
     ctx.save();
 
     let img = null;
     const targetH = 70; // Standard canonical standing/running height
-    const dyOffset = -2; // Aligns sprite row 103 (feet soles) precisely with ground line surface (y=groundY-64)
+    const dyOffset = -1; // Aligns sprite row 195 (feet soles) precisely with ground line surface (y=groundY-64)
     let dxOffset = 0;
 
-    // 1. DEAD / GAME OVER (Style 1: Standardized 128x112 canvas, baseline aligned, zero magic offsets) (DINO-020)
+    // 1. DEAD / GAME OVER (Style 1: Standardized 128x112 canvas, baseline aligned)
     if (state === 'DEAD') {
-      img = this.images['dino_dead'];
+      img = this.getDinoSprite('dino_dead');
     }
-    // 2. MID-AIR HIT IMPACT POSE (DINO-012 transition)
+    // 2. MID-AIR HIT IMPACT POSE
     else if (state === 'HIT') {
-      img = this.images['dino_hit'] || this.images['dino_jump_2'];
+      img = this.getDinoSprite('dino_hit') || this.getDinoSprite('jump_08') || this.getDinoSprite('dino_jump_14');
     }
-    // 3. DUCKING (Style 1 Panel 4: Smooth lowering with anticipation, CLOSED EYES during duck, reopen when standing up)
-    else if (state === 'DUCKING' || duckEnding) {
-      if (duckEnding) {
-        // Reopen eyes during recovery transition to running
-        img = this.images['dino_duck_4'];
-      } else if (duckDuration < 0.04) {
-        // Anticipation frame: bending knees, preparing to drop (DINO-011)
-        img = this.images['dino_duck_0'];
-      } else if (duckDuration < 0.08) {
-        // Lowering body into duck posture with eyes closing
-        img = this.images['dino_duck_1'];
+    // 3. DUCKING & SLIDING (Approved 10-Frame Duck Cycle)
+    // - Crouch Entry (Frames 01, 02, 03, 04, 05): lowering body naturally into low crouch
+    // - Sustained Stable Crouch (Frame 05): stable crouching pose held steadily without jitter/shaking
+    // - Smooth Recovery Rise (Frames 06, 07, 08, 09, 10): rising back up to standing upon release
+    else if (state === 'DUCKING' || duckEnding || duckEndingTimer > 0) {
+      if (duckEnding || duckEndingTimer > 0) {
+        // Recovery transition: rising back up smoothly (Frames 06 -> 07 -> 08 -> 09 -> 10)
+        const recDuration = 0.14;
+        const remaining = Math.max(0, duckEndingTimer);
+        const p = Math.min(1, Math.max(0, 1 - (remaining / recDuration)));
+        const recIdx = Math.min(10, 6 + Math.floor(p * 5));
+        const pad = recIdx.toString().padStart(2, '0');
+        img = this.getDinoSprite('duck_' + pad) || this.getDinoSprite('dino_duck_' + (recIdx - 1));
       } else if (duckDuration < 0.12) {
-        // Transitional lowering into full duck posture
-        img = this.images['dino_duck_2'];
+        // Crouch Entry: lowering body naturally (Frames 01 -> 02 -> 03 -> 04 -> 05)
+        const p = Math.min(1, Math.max(0, duckDuration / 0.12));
+        const entryIdx = Math.min(5, 1 + Math.floor(p * 5));
+        const pad = entryIdx.toString().padStart(2, '0');
+        img = this.getDinoSprite('duck_' + pad) || this.getDinoSprite('dino_duck_' + (entryIdx - 1));
       } else {
-        // Stable sustained crouch pose ("Continue Duck") with CLOSED EYES — rock solid, zero shaking
-        img = this.images['dino_duck_3'] || this.images['dino_duck_2'];
+        // Sustained Stable Crouch: held steadily without bouncing, shaking, or jitter
+        img = this.getDinoSprite('duck_05') || this.getDinoSprite('dino_duck_4');
       }
     }
-    // 4. JUMPING SEQUENCE (Style 1 Panel 3: 5 Distinct Phases with Full Tails)
+    // 4. JUMPING SEQUENCE (Approved 10-Frame Jump Trajectory)
+    // - Takeoff Anticipation & Launch (Frames 01, 02, 03)
+    // - Leaping Ascent (Frame 04)
+    // - High Apex Flight Peak & Glide (Frames 05, 06)
+    // - Descent Trajectory & Touchdown Reach (Frames 07, 08)
+    // - Impact Compression & Landing Rebound (Frames 09, 10)
+    // 4. JUMPING SEQUENCE (Frozen Airborne Pose)
+    // Once the dinosaur leaves the ground (!isGrounded), its body animation is completely frozen
+    // in one consistent, natural airborne pose (jump_04) for the entire airborne duration.
+    // Zero body wobble, zero limb movement, zero frame cycling mid-air.
+    // Upon landing, smoothly restores the running animation without flickering or sudden visual jumps.
     else if (state === 'JUMPING' || !isGrounded) {
-      if (jumpPhase === 'TAKE_OFF') {
-        img = this.images['dino_jump_0'];
-      } else if (jumpPhase === 'ASCENDING') {
-        img = this.images['dino_jump_1'];
-      } else if (jumpPhase === 'IN_AIR') {
-        img = this.images['dino_jump_2'];
-      } else if (jumpPhase === 'DESCENDING') {
-        img = this.images['dino_jump_3'];
-      } else if (jumpPhase === 'LANDING') {
-        img = this.images['dino_jump_4'];
-      } else {
-        img = this.images['dino_jump_2'];
-      }
+      img = this.getDinoSprite('jump_04') || this.getDinoSprite('dino_jump_3');
     }
-    // 5. RUNNING CYCLE (Strictly alternating two-leg cartoon run cycle - 6 frames)
-    // Frame 0 -> Stride A Contact (Near leg forward, far leg back, heel/foot firmly planted on baseline y=103)
-    // Frame 1 -> Stride A Passing (Near leg supporting on baseline y=103, far leg knee tucking forward)
-    // Frame 2 -> Stride A Push-off / Extension (Near leg push-off, far leg extending)
-    // Frame 3 -> Stride B Contact (Far leg forward, near leg back, far foot planted on baseline y=103)
-    // Frame 4 -> Stride B Passing (Far leg supporting on baseline y=103, near leg swinging forward)
-    // Frame 5 -> Stride B Push-off / Extension (Far leg push-off, near leg extending forward smoothly into Frame 0)
-    // Both legs visibly participate with believable ground contact at y=103 and zero floating
+    // 5. RUNNING CYCLE (Approved 10-Frame strictly ordered bipedal running animation)
+    // Plays Frame 1 -> Frame 2 -> ... -> Frame 10 -> repeat Frame 1
+    // Synchronized with gameplay speed without skipping frames:
     else if (state === 'RUNNING') {
-      const runFps = Math.min(16.0, 10.0 + (gameSpeed / 85.0));
-      const runSequence = [0, 1, 2, 3, 4, 5];
-      const frameIdx = Math.floor(animTime * runFps) % runSequence.length;
-      img = this.images['dino_run_' + runSequence[frameIdx]] || this.images['dino_run_0'];
+      const runFps = Math.min(24.0, 14.0 + Math.max(0, gameSpeed - 250) * 0.024);
+      const frameIdx = Math.floor(animTime * runFps) % 10;
+      const frameNum = (frameIdx + 1).toString().padStart(2, '0');
+      img = this.getDinoSprite('run_' + frameNum) || this.getDinoSprite('dino_run_' + frameIdx) || this.getDinoSprite('dino_run_0');
     }
-    // 6. IDLE ANIMATION (Normal, Breathing, Half-Closed Blinking, Look Around)
+    // 6. IDLE ANIMATION (Standing, breathing, natural occasional blinks)
     else {
       const loopTime = animTime % 6.0;
       if (loopTime > 4.8) {
-        img = this.images['dino_idle_3']; // Look Around
+        img = this.getDinoSprite('dino_idle_3'); // Look Around
       } else if (loopTime >= 2.68 && loopTime < 2.75) {
-        img = this.images['dino_idle_1']; // Half closed (closing)
+        img = this.getDinoSprite('dino_idle_1'); // Half closed blink
       } else if (loopTime >= 2.75 && loopTime < 2.92) {
-        img = this.images['dino_idle_2']; // Fully closed blink
+        img = this.getDinoSprite('dino_idle_2'); // Fully closed blink
       } else if (loopTime >= 2.92 && loopTime < 2.99) {
-        img = this.images['dino_idle_1']; // Half closed (reopening)
+        img = this.getDinoSprite('dino_idle_1'); // Half closed reopen
       } else {
-        img = this.images['dino_idle_0']; // Standing & breathing
+        img = this.getDinoSprite('dino_idle_0'); // Standing & breathing
       }
     }
 
-    let targetW = targetH;
-    if (img && img.complete && img.naturalHeight > 0) {
-      targetW = targetH * (img.naturalWidth / img.naturalHeight);
-    }
+    const nw = img ? (img.naturalWidth || img.width || 0) : 0;
+    const nh = img ? (img.naturalHeight || img.height || 0) : 0;
+    const isReady = img && (img.complete !== undefined ? img.complete : true) && nw > 0 && nh > 0;
 
-    // Draw the clean Style 1 sprite directly on the ground line without artificial blob overlays
-
-    // Draw the clean Style 1 sprite
-    if (img && img.complete && img.naturalWidth > 0) {
+    if (isReady) {
+      const targetW = targetH * (nw / nh);
       ctx.drawImage(img, x + dxOffset, y + dyOffset, targetW, targetH);
     } else {
-      ctx.fillStyle = '#52be32';
-      ctx.fillRect(x, y + dyOffset, targetW, targetH);
+      // Safe fallback to original canonical green sprite if recolored frame is still initializing
+      // NEVER draw a solid color box or rectangle!
+      const fallbackImg = this.images['dino_run_0'];
+      if (fallbackImg && (fallbackImg.naturalWidth || fallbackImg.width)) {
+        const fw = fallbackImg.naturalWidth || fallbackImg.width;
+        const fh = fallbackImg.naturalHeight || fallbackImg.height;
+        const targetW = targetH * (fw / fh);
+        ctx.drawImage(fallbackImg, x + dxOffset, y + dyOffset, targetW, targetH);
+      }
     }
 
     ctx.restore();
@@ -517,48 +631,129 @@ class SpriteRenderer {
   // - Occasional natural eye blinks (dino_idle_1 -> dino_idle_2 -> dino_idle_1)
   // - Curious look-around / head tilt micro-expression (dino_idle_3)
   // - Subtle breathing micro-motion (<0.8px)
-  // - CRITICAL: Stationary mascot — NEVER loops running frames!
-  // - NO ground surface, NO platform, and NO ground shadow!
   // =========================================================================
-  drawMascot(ctx, cx, cy, size = 135, animTime = 0) {
-    ctx.save();
+  // HOME SCREEN ANIMATED MASCOT — STABLE BODY WITH INDEPENDENT EYE TRACKING
+  // =========================================================================
+  drawMascot(
+    ctx,
+    cx = 0,
+    cy = 0,
+    size = 140,
+    animTime = 0,
+    lookX = 0,
+    lookY = 0,
+    scaleX = 1,
+    scaleY = 1,
+    blinkStage = 'OPEN',
+    headTilt = 0,
+    smileProgress = 0,
+    clickReactionProgress = 0,
+    isFront = true,
+    skinId = this.currentSkin,
+    turnStage = 0
+  ) {
+    ctx.clearRect(0, 0, 546, 288);
 
-    // Natural varied idle timeline (~7.4 second cycle)
-    const cycle = animTime % 7.4;
-    let imgKey = 'dino_idle_0'; // Base cute relaxed standing mascot
+    // Natural blink animation: only draw closed eyelid arcs during blink frames;
+    // When open, preserve the authentic, pristine reference dinosaur artwork from home_title_sign.png
+    if (blinkStage === 'CLOSED' || blinkStage === 'HALF') {
+      const leftSocketCx = 258.5;
+      const leftSocketCy = 51.7;
+      const rightSocketCx = 304.5;
+      const rightSocketCy = 53.5;
 
-    if (cycle >= 2.50 && cycle < 2.58) {
-      imgKey = 'dino_idle_1'; // Eye blink start
-    } else if (cycle >= 2.58 && cycle < 2.74) {
-      imgKey = 'dino_idle_2'; // Closed eye gentle blink
-    } else if (cycle >= 2.74 && cycle < 2.82) {
-      imgKey = 'dino_idle_1'; // Eye blink reopening
-    } else if (cycle >= 4.60 && cycle < 5.70) {
-      imgKey = 'dino_idle_3'; // Sweet curious look-around / head tilt with perky expression
-    } else if (cycle >= 6.30 && cycle < 6.37) {
-      imgKey = 'dino_idle_1'; // Occasional quick secondary blink start
-    } else if (cycle >= 6.37 && cycle < 6.50) {
-      imgKey = 'dino_idle_2'; // Closed eye blink
-    } else if (cycle >= 6.50 && cycle < 6.57) {
-      imgKey = 'dino_idle_1'; // Eye blink reopening
+      ctx.save();
+      const skinObj = (window.SkinManager) ? window.SkinManager.getSkinById(skinId) : null;
+      ctx.strokeStyle = (skinObj && skinObj.accentColor) ? skinObj.accentColor : '#1a3311';
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+
+      // Left eye closed eyelid
+      ctx.save();
+      ctx.translate(leftSocketCx, leftSocketCy);
+      ctx.rotate(-0.08);
+      ctx.beginPath();
+      ctx.arc(0, 2, 8, Math.PI * 0.15, Math.PI * 0.85);
+      ctx.stroke();
+      ctx.restore();
+
+      // Right eye closed eyelid
+      ctx.save();
+      ctx.translate(rightSocketCx, rightSocketCy);
+      ctx.rotate(0.08);
+      ctx.beginPath();
+      ctx.arc(0, 2, 8, Math.PI * 0.15, Math.PI * 0.85);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.restore();
     }
+  }
 
-    const img = this.images[imgKey] || this.images['dino_idle_0'];
+  // =========================================================================
+  // CONTINUOUS 360-DEGREE TURNAROUND DRAWING FOR CUSTOMIZATION SCREEN (SKIN-01..05)
+  // Seamless, zero-jitter, continuous 360 rotation with 10 approved keyframes:
+  // 0: Profile Right (0°)
+  // 1: Back-Right 3/4 (36°)
+  // 2: Rear-Right (72°)
+  // 3: Direct Back (108°)
+  // 4: Rear-Left (144°)
+  // 5: Back-Left 3/4 (180°)
+  // 6: Profile Left (216°)
+  // 7: Front-Left 3/4 (252°)
+  // 8: Direct Front (288°)
+  // 9: Front-Right 3/4 (324°)
+  // Supports all 9 skins, smooth opacity cross-fade between keyframes,
+  // stable proportions, cream belly, transparent background, and zero distortion.
+  // =========================================================================
+  drawTurnaround360(
+    ctx,
+    cx,
+    cy,
+    size = 145,
+    angle = 0,
+    skinId = this.currentSkin,
+    blinkStage = 'OPEN',
+    bounceY = 0
+  ) {
+    ctx.save();
+    ctx.translate(cx, cy + bounceY);
 
-    if (img && img.complete && img.naturalHeight > 0) {
+    // Normalize angle into [0, 2*PI)
+    const twoPi = Math.PI * 2;
+    const normAngle = ((angle % twoPi) + twoPi) % twoPi;
+
+    // Map angle to discrete frame [0 .. 9]
+    // Exactly ONE complete, clearly visible dinosaur frame is rendered with alpha 1.0.
+    // Zero multi-angle cross-fading, zero ghosting, zero overlapping limbs or duplicate tails.
+    const frameIndex = Math.round((normAngle / twoPi) * 10) % 10;
+    const img = this.getDinoSprite('dino_turn_' + frameIndex, skinId);
+
+    if (img && (img.complete || img.width) && (img.naturalHeight > 0 || img.height > 0)) {
+      const nw = img.naturalWidth || img.width;
+      const nh = img.naturalHeight || img.height;
       const targetH = size;
-      const targetW = targetH * (img.naturalWidth / img.naturalHeight);
+      const targetW = targetH * (nw / nh);
 
-      // Very subtle stationary micro-breathing (<0.8px), NO running/walking/jumping
-      const breath = Math.sin(animTime * Math.PI * 1.1) * 0.75;
-      const drawX = cx - targetW / 2;
-      const drawY = cy - targetH / 2 + breath;
-
-      // Draw mascot directly with NO ground surface and NO ground shadow
-      ctx.drawImage(img, drawX, drawY, targetW, targetH);
+      ctx.drawImage(img, -targetW / 2, -targetH / 2, targetW, targetH);
     }
 
     ctx.restore();
+  }
+
+  // Compatibility wrapper for legacy frameIndex callers
+  drawTurnaround(
+    ctx,
+    cx,
+    cy,
+    size = 145,
+    frameIndex = 0,
+    skinId = this.currentSkin,
+    blinkStage = 'OPEN',
+    bounceY = 0
+  ) {
+    const angle = (frameIndex / 10.0) * (Math.PI * 2);
+    this.drawTurnaround360(ctx, cx, cy, size, angle, skinId, blinkStage, bounceY);
   }
 }
 

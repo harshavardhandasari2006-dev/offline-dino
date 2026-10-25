@@ -1,0 +1,218 @@
+[
+  {
+    "index": 1,
+    "fileName": "frame_01.png",
+    "dinoW": 95,
+    "dinoH": 151,
+    "pasteX": 81,
+    "pasteY": 64
+  },
+  {
+    "index": 2,
+    "fileName": "frame_02.png",
+    "dinoW": 86,
+    "dinoH": 152,
+    "pasteX": 85,
+    "pasteY": 63
+  },
+  {
+    "index": 3,
+    "fileName": "frame_03.png",
+    "dinoW": 100,
+    "dinoH": 152,
+    "pasteX": 78,
+    "pasteY": 63
+  },
+  {
+    "index": 4,
+    "fileName": "frame_04.png",
+    "dinoW": 100,
+    "dinoH": 152,
+    "pasteX": 78,
+    "pasteY": 63
+  },
+  {
+    "index": 5,
+    "fileName": "frame_05.png",
+    "dinoW": 97,
+    "dinoH": 150,
+    "pasteX": 80,
+    "pasteY": 65
+  },
+  {
+    "index": 6,
+    "fileName": "frame_06.png",
+    "dinoW": 92,
+    "dinoH": 150,
+    "pasteX": 82,
+    "pasteY": 65
+  },
+  {
+    "index": 7,
+    "fileName": "frame_07.png",
+    "dinoW": 101,
+    "dinoH": 149,
+    "pasteX": 78,
+    "pasteY": 66
+  },
+  {
+    "index": 8,
+    "fileName": "frame_08.png",
+    "dinoW": 101,
+    "dinoH": 149,
+    "pasteX": 78,
+    "pasteY": 66
+  },
+  {
+    "index": 9,
+    "fileName": "frame_09.png",
+    "dinoW": 100,
+    "dinoH": 149,
+    "pasteX": 78,
+    "pasteY": 66
+  },
+  {
+    "index": 10,
+    "fileName": "frame_10.png",
+    "dinoW": 107,
+    "dinoH": 146,
+    "pasteX": 75,
+    "pasteY": 69
+  },
+  {
+    "index": 11,
+    "fileName": "frame_11.png",
+    "dinoW": 105,
+    "dinoH": 146,
+    "pasteX": 76,
+    "pasteY": 69
+  },
+  {
+    "index": 12,
+    "fileName": "frame_12.png",
+    "dinoW": 94,
+    "dinoH": 146,
+    "pasteX": 81,
+    "pasteY": 69
+  },
+  {
+    "index": 13,
+    "fileName": "frame_13.png",
+    "dinoW": 81,
+    "dinoH": 144,
+    "pasteX": 88,
+    "pasteY": 71
+  },
+  {
+    "index": 14,
+    "fileName": "frame_14.png",
+    "dinoW": 89,
+    "dinoH": 145,
+    "pasteX": 84,
+    "pasteY": 70
+  },
+  {
+    "index": 15,
+    "fileName": "frame_15.png",
+    "dinoW": 88,
+    "dinoH": 146,
+    "pasteX": 84,
+    "pasteY": 69
+  },
+  {
+    "index": 16,
+    "fileName": "frame_16.png",
+    "dinoW": 88,
+    "dinoH": 146,
+    "pasteX": 84,
+    "pasteY": 69
+  },
+  {
+    "index": 17,
+    "fileName": "frame_17.png",
+    "dinoW": 90,
+    "dinoH": 146,
+    "pasteX": 83,
+    "pasteY": 69
+  },
+  {
+    "index": 18,
+    "fileName": "frame_18.png",
+    "dinoW": 101,
+    "dinoH": 146,
+    "pasteX": 78,
+    "pasteY": 69
+  },
+  {
+    "index": 19,
+    "fileName": "frame_19.png",
+    "dinoW": 112,
+    "dinoH": 150,
+    "pasteX": 72,
+    "pasteY": 65
+  },
+  {
+    "index": 20,
+    "fileName": "frame_20.png",
+    "dinoW": 112,
+    "dinoH": 150,
+    "pasteX": 72,
+    "pasteY": 65
+  },
+  {
+    "index": 21,
+    "fileName": "frame_21.png",
+    "dinoW": 112,
+    "dinoH": 150,
+    "pasteX": 72,
+    "pasteY": 65
+  },
+  {
+    "index": 22,
+    "fileName": "frame_22.png",
+    "dinoW": 111,
+    "dinoH": 150,
+    "pasteX": 73,
+    "pasteY": 65
+  },
+  {
+    "index": 23,
+    "fileName": "frame_23.png",
+    "dinoW": 107,
+    "dinoH": 150,
+    "pasteX": 75,
+    "pasteY": 65
+  },
+  {
+    "index": 24,
+    "fileName": "frame_24.png",
+    "dinoW": 96,
+    "dinoH": 152,
+    "pasteX": 80,
+    "pasteY": 63
+  },
+  {
+    "index": 25,
+    "fileName": "frame_25.png",
+    "dinoW": 85,
+    "dinoH": 152,
+    "pasteX": 86,
+    "pasteY": 63
+  },
+  {
+    "index": 26,
+    "fileName": "frame_26.png",
+    "dinoW": 89,
+    "dinoH": 152,
+    "pasteX": 84,
+    "pasteY": 63
+  },
+  {
+    "index": 27,
+    "fileName": "frame_27.png",
+    "dinoW": 94,
+    "dinoH": 152,
+    "pasteX": 81,
+    "pasteY": 63
+  }
+]

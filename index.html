@@ -4,19 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#4da6ff">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="OFFLINE DINO - Style 1: Friendly Classic Edition. A colorful, smooth, polished 2D cartoon endless runner.">
-  <title>OFFLINE DINO — Style 1: Friendly Classic</title>
-  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=5">
-  <link rel="manifest" href="manifest.json?v=5">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <meta name="description" content="Offline Dino — Run, Jump, Survive! A colorful, smooth, polished 2D cartoon endless runner.">
+  <title>Offline Dino — Run, Jump, Survive!</title>
+  <meta property="og:title" content="Offline Dino — Run, Jump, Survive!">
+  <meta name="twitter:title" content="Offline Dino — Run, Jump, Survive!">
+  <meta name="apple-mobile-web-app-title" content="Offline Dino">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=34">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=34">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=34">
+  <link rel="shortcut icon" href="favicon.ico?v=34">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=34">
+  <link rel="manifest" href="manifest.json?v=34">
+  <link rel="stylesheet" href="css/style.css?v=38">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=6').then(function(reg) {
-          reg.update();
-        }).catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=38').catch(function() {});
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          var bg = document.getElementById('homeMasterBg');
+          if (bg) bg.src = 'assets/sprites/homepage_seamless_panorama.jpg?v=' + Date.now();
+        });
       });
     }
   </script>
@@ -52,44 +62,80 @@
       <div id="countdownText" class="countdown-number">3</div>
     </div>
 
+    <!-- Initial Start Game 3-Second Loading Screen Overlay -->
+    <div id="initialLoadingScreen" class="screen initial-loading-screen hidden" role="region" aria-label="Loading Game">
+      <div class="loading-sun"></div>
+      <div class="loading-cloud cloud-1"></div>
+      <div class="loading-cloud cloud-2"></div>
+      <div class="loading-cloud cloud-3"></div>
+      <div class="loading-cloud cloud-4"></div>
+
+      <div class="loading-card">
+        <div class="loading-dino-stage">
+          <img id="loadingDinoImg" class="loading-dino-sprite" src="assets/sprites/loading_dino.png" alt="Loading Dino" draggable="false" />
+        </div>
+        <div class="loading-track">
+          <div id="loadingBarFill" class="loading-progress-bar"></div>
+        </div>
+        <div class="loading-status-text">LOADING...</div>
+      </div>
+    </div>
+
     <!-- Home Screen -->
-    <div id="homeScreen" class="screen home-screen">
-      <div class="home-content">
-        <!-- 1. Title & 2. Friendly Classic label -->
+    <div id="homeScreen" class="screen home-screen" role="region" aria-label="Home Screen">
+      <!-- Continuous Responsive Desert Scenery Background Layer -->
+      <div class="home-responsive-scenery" aria-hidden="true"></div>
+
+      <div class="homepage-stage">
+        <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=38" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+
+        <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
+        <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
+
+        <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=38" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+
+        <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
-          <h1 class="game-title">OFFLINE DINO</h1>
-          <p class="game-subtitle">Style 1 — Friendly Classic</p>
+          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
         </div>
 
-        <!-- 3. One animated dinosaur mascot directly above START GAME (no ground surface or shadow) -->
-        <div class="mascot-wrapper">
-          <canvas id="mascotCanvas" width="220" height="170"></canvas>
-        </div>
+        <!-- Backward Compatibility Elements for Tests -->
+        <canvas id="mascotCanvas" width="546" height="288" class="hidden" aria-hidden="true"></canvas>
+        <canvas id="mascot3DCanvas" width="546" height="288" class="hidden" aria-hidden="true"></canvas>
 
-        <!-- 4. Big Cartoon START GAME Button -->
-        <button id="btnStartGame" class="btn-start-game">
-          <span class="btn-text">START GAME</span>
-        </button>
+        <div class="home-controls-wrapper">
+          <!-- Orange 3D Cartoon START GAME Button -->
+          <button id="btnStartGame" class="btn-home-start-hit" aria-label="Start Game" title="Start Game">
+            <span class="btn-home-start-text">START GAME</span>
+          </button>
 
-        <!-- 5. Bottom row of remaining action buttons (High Score, Sound, Exit - Settings removed) -->
-        <div class="home-bottom-bar">
-          <button id="btnHomeHighScore" class="btn-tool" aria-label="High Scores">
-            <span class="btn-icon">🏆</span>
-            <span class="btn-label">High Score</span>
-          </button>
-          <button id="btnHomeSound" class="btn-tool" aria-label="Sound Toggle">
-            <span id="homeSoundIcon" class="btn-icon">🔊</span>
-            <span id="homeSoundLabel" class="btn-label">Sound: ON</span>
-          </button>
-          <button id="btnHomeExit" class="btn-tool" aria-label="Exit Game">
-            <span class="btn-icon">🚪</span>
-            <span class="btn-label">Exit</span>
-          </button>
+          <!-- Four Bottom Interactive Menu Buttons -->
+          <nav class="homepage-bottom-nav" aria-label="Main Menu">
+            <button id="btnHomeCustomize" class="btn-home-hit btn-home-skins" aria-label="Skins" title="Skins">
+              <span class="btn-home-icon" aria-hidden="true">🎨</span>
+              <span class="btn-home-label">Skins</span>
+            </button>
+            <button id="btnHomeHighScore" class="btn-home-hit btn-home-highscore" aria-label="High Scores" title="High Score">
+              <span class="btn-home-icon" aria-hidden="true">🏆</span>
+              <span class="btn-home-label">High Score</span>
+            </button>
+            <button id="btnHomeSound" class="btn-home-hit btn-home-sound" aria-label="Sound: ON" title="Sound: ON">
+              <img id="homeSoundFrameImg" src="assets/sprites/btn_home_sound_frame.png" alt="Sound: ON" class="sr-only" draggable="false" />
+              <span id="homeSoundIcon" class="btn-home-icon" aria-hidden="true">🔊</span>
+              <span id="homeSoundLabel" class="btn-home-label"><span class="btn-home-sound-prefix">Sound:</span> <span id="homeSoundState" class="btn-home-sound-state">ON</span></span>
+            </button>
+            <button id="btnHomeExit" class="btn-home-hit btn-home-exit" aria-label="Exit Game" title="Exit Game">
+              <span class="btn-home-icon" aria-hidden="true">🚪</span>
+              <span class="btn-home-label">Exit</span>
+            </button>
+          </nav>
         </div>
       </div>
     </div>
 
-    <!-- Pause Modal (Resume, Restart - Settings and Home removed) -->
+    <!-- Pause Modal (Resume, Restart, Home) -->
     <div id="pauseModal" class="modal-backdrop hidden">
       <div class="modal-card cartoon-card">
         <div class="modal-header">
@@ -102,11 +148,14 @@
           <button id="btnPauseRestart" class="cartoon-btn btn-orange">
             <span class="btn-text">RESTART</span>
           </button>
+          <button id="btnPauseHome" class="cartoon-btn btn-blue">
+            <span class="btn-text">HOME</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Game Over Modal (Play Again - Settings and Home removed) -->
+    <!-- Game Over Modal (Play Again, Home) -->
     <div id="gameOverModal" class="modal-backdrop hidden">
       <div class="modal-card cartoon-card game-over-card">
         <div class="modal-header">
@@ -125,6 +174,9 @@
           </div>
           <button id="btnPlayAgain" class="cartoon-btn btn-primary-yellow">
             <span class="btn-text">PLAY AGAIN</span>
+          </button>
+          <button id="btnGameOverHome" class="cartoon-btn btn-blue">
+            <span class="btn-text">HOME</span>
           </button>
         </div>
       </div>
@@ -166,9 +218,83 @@
           <h2 class="modal-title">EXIT GAME</h2>
         </div>
         <div class="modal-body">
-          <p class="modal-text">You can close this browser tab or window to exit the game.<br><br>Thanks for playing <strong>OFFLINE DINO</strong>! 🦖</p>
-          <button id="btnExitOk" class="cartoon-btn btn-blue">
-            <span class="btn-text">OK</span>
+          <p class="modal-text">Do you want to Quit?</p>
+          <div class="exit-btn-row">
+            <button id="btnExitYes" class="cartoon-btn btn-blue">
+              <span class="btn-text">Yes</span>
+            </button>
+            <button id="btnExitNo" class="cartoon-btn btn-gray">
+              <span class="btn-text">No</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backspace Confirmation Dialog Modal -->
+    <div id="backspaceModal" class="modal-backdrop hidden">
+      <div class="modal-card cartoon-card">
+        <div class="modal-header">
+          <h2 class="modal-title">QUIT GAME</h2>
+        </div>
+        <div class="modal-body">
+          <p id="backspaceModalText" class="modal-text">Do you want to quit this game?</p>
+          <div class="exit-btn-row">
+            <button id="btnBackspaceYes" class="cartoon-btn btn-blue">
+              <span class="btn-text">Yes</span>
+            </button>
+            <button id="btnBackspaceNo" class="cartoon-btn btn-gray">
+              <span class="btn-text">No</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- DINO CUSTOMIZATION SCREEN -->
+    <div id="customizationScreen" class="screen customization-screen hidden">
+      <div class="customization-card cartoon-card">
+        <div class="custom-header">
+          <h2 class="custom-title">DINO CUSTOMIZATION</h2>
+          <div class="custom-title-row">
+            <span class="custom-dino-name">REX</span>
+            <span class="custom-title-dot">•</span>
+            <span id="customSkinLabel" class="custom-skin-badge">CLASSIC GREEN</span>
+          </div>
+        </div>
+
+        <!-- Forward-Facing Dinosaur Preview Stage (Reversibly hidden rotation arrows per Requirement 4) -->
+        <div class="custom-preview-stage">
+          <button id="btnRotateLeft" class="btn-rotate preview-arrow-hidden" aria-label="Rotate Left" title="Rotate Left">
+            <span class="rotate-arrow">◀</span>
+          </button>
+
+          <div class="custom-canvas-wrapper">
+            <canvas id="customization3DCanvas" width="220" height="170" class="hidden"></canvas>
+            <canvas id="customizationCanvas" width="220" height="170" class="hidden"></canvas>
+            <img id="customDinoPreviewImg" class="custom-dino-preview-img" src="assets/sprites/skin_green.png" alt="Dino Preview" draggable="false" />
+            <div id="customRotationHint" class="custom-rotation-hint preview-hint-hidden">360° Drag & Rotate Preview</div>
+          </div>
+
+          <button id="btnRotateRight" class="btn-rotate preview-arrow-hidden" aria-label="Rotate Right" title="Rotate Right">
+            <span class="rotate-arrow">▶</span>
+          </button>
+        </div>
+
+        <!-- Skin Selection Grid (9 Selectable Cards) -->
+        <div class="custom-skins-section">
+          <div class="custom-section-title">SELECT SKIN PALETTE</div>
+          <div id="customSkinsGrid" class="custom-skins-grid">
+            <!-- 9 skin cards populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Actions Bar (Back & Confirm/Selected Button) -->
+        <div class="custom-actions-bar">
+          <button id="btnCustomizationBack" class="cartoon-btn btn-blue btn-custom-back">
+            <span class="btn-text">BACK</span>
+          </button>
+          <button id="btnConfirmSkin" class="cartoon-btn btn-primary-yellow btn-custom-confirm">
+            <span id="btnConfirmSkinText" class="btn-text">SELECTED</span>
           </button>
         </div>
       </div>
@@ -176,10 +302,14 @@
   </div>
 
   <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
-  <script src="js/sprite_data.js?v=7"></script>
-  <script src="js/audio.js?v=7"></script>
-  <script src="js/sprites.js?v=7"></script>
-  <script src="js/game.js?v=7"></script>
-  <script src="js/ui.js?v=7"></script>
+  <script src="js/sprite_data.js?v=18"></script>
+  <script src="js/skins.js?v=18"></script>
+  <script src="js/audio.js?v=20"></script>
+  <script src="js/three.min.js?v=18"></script>
+  <script src="js/dino3d.js?v=18"></script>
+  <script src="js/sprites.js?v=18"></script>
+  <script src="js/score_math.js?v=18"></script>
+  <script src="js/game.js?v=24"></script>
+  <script src="js/ui.js?v=19"></script>
 </body>
 </html>

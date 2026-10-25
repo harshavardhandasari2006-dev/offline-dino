@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Dino — Interactive Eye Tracking Test</title>
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=5">
+  <style>
+    :root {
+      --bg-dark: #0a0f1d;
+      --card-bg: rgba(19, 27, 46, 0.88);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --card-hover: rgba(30, 41, 66, 0.95);
+      --accent-blue: #38bdf8;
+      --accent-green: #4ade80;
+      --accent-amber: #fbbf24;
+      --accent-red: #f87171;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --glass-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 40px;
+      user-select: none;
+      overflow-x: hidden;
+      transition: background 0.4s ease;
+    }
+
+    /* Background Themes */
+    body.theme-desert {
+      background: radial-gradient(circle at 50% 20%, #8fd2ff 0%, #57aeff 60%, #3086e0 100%);
+    }
+    body.theme-sunset {
+      background: radial-gradient(circle at 50% 25%, #ffb076 0%, #ea580c 60%, #7c2d12 100%);
+    }
+    body.theme-studio {
+      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 70%, #020617 100%);
+    }
+    body.theme-light {
+      background: radial-gradient(circle at 50% 20%, #ffffff 0%, #e2e8f0 70%, #cbd5e1 100%);
+      color: #0f172a;
+    }
+    body.theme-light .card {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: rgba(148, 163, 184, 0.4);
+      color: #0f172a;
+    }
+    body.theme-light .badge-status {
+      background: rgba(14, 165, 233, 0.15);
+      border-color: rgba(14, 165, 233, 0.4);
+      color: #0284c7;
+    }
+    body.theme-light .stat-value {
+      color: #0f172a;
+    }
+    body.theme-light h1, body.theme-light h2 {
+      color: #0f172a;
+    }
+
+    /* Container */
+    .app-wrap {
+      width: 100%;
+      max-width: 1080px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    /* Header Bar */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 12px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--glass-glow);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .brand-text h1 {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Status Indicator Badge */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 6px 14px;
+      background: rgba(74, 222, 128, 0.12);
+      color: var(--accent-green);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 999px;
+      transition: all 0.25s ease;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      transition: all 0.25s ease;
+    }
+
+    .badge-status.resting {
+      background: rgba(251, 191, 36, 0.12);
+      color: var(--accent-amber);
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+    .badge-status.resting .status-dot {
+      background: var(--accent-amber);
+      box-shadow: 0 0 10px var(--accent-amber);
+    }
+
+    .badge-status.reset {
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-muted);
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    .badge-status.reset .status-dot {
+      background: var(--text-muted);
+      box-shadow: none;
+    }
+
+    .badge-status.auto {
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent-blue);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .badge-status.auto .status-dot {
+      background: var(--accent-blue);
+      box-shadow: 0 0 10px var(--accent-blue);
+    }
+
+    /* Top Controls Row */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-reset {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .btn-reset:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5);
+    }
+
+    .btn-toggle {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+    .btn-toggle:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .btn-toggle.active {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent-blue);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    /* Main Stage */
+    .stage-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .tracking-stage-card {
+      width: 100%;
+      min-height: 460px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glass-glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 30px 20px;
+    }
+
+    /* Ambient Spotlight behind Dino */
+    .stage-ambient-glow {
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(56, 189, 248, 0.0) 70%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      left: 50%;
+      transition: all 0.3s ease;
+    }
+
+    /* Interactive Dino Canvas/SVG Container */
+    .dino-stage-container {
+      position: relative;
+      width: 371px;
+      height: 308px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* The Dinosaur Base Artwork Image */
+    .dino-base-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 371px;
+      height: 308px;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* The Eye Tracking Dynamic SVG Overlay */
+    .dino-eye-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 371px;
+      height: 308px;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    /* Secondary Controls & Dashboard */
+    .dashboard-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--glass-glow);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Skin Selector Swatches */
+    .skin-swatch-list {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .skin-swatch-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.16s ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .skin-swatch-btn:hover {
+      transform: scale(1.14);
+    }
+    .skin-swatch-btn.active {
+      transform: scale(1.18);
+      border-color: #ffffff;
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.6);
+    }
+    .skin-swatch-btn.active::after {
+      content: '✓';
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* Background Selector Tabs */
+    .theme-tab-group {
+      display: flex;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 4px;
+      border-radius: 10px;
+      flex-wrap: wrap;
+    }
+
+    .theme-tab-btn {
+      flex: 1;
+      min-width: 65px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      text-align: center;
+    }
+    .theme-tab-btn:hover {
+      color: #fff;
+    }
+    .theme-tab-btn.active {
+      background: var(--card-hover);
+      color: var(--accent-blue);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    /* Telemetry Metrics */
+    .metric-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+    }
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Gaze Visualizer Meter */
+    .gaze-meter-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .gaze-meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+      border-radius: 999px;
+      transition: width 0.06s ease;
+    }
+
+    /* Explanation Accordion / Technical Card */
+    .tech-card {
+      width: 100%;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .tech-card p {
+      margin-bottom: 10px;
+    }
+
+    .tech-card strong {
+      color: var(--text-main);
+    }
+
+    .coord-chip {
+      display: inline-block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      color: var(--accent-blue);
+    }
+
+    /* Footer Note */
+    footer {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* Cursor crosshair hint */
+    .cursor-hint-layer {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .dino-stage-container {
+        transform: scale(0.85);
+      }
+      .tracking-stage-card {
+        min-height: 380px;
+        padding: 20px 10px;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body class="theme-studio">
+  <div class="app-wrap">
+    <!-- Top Header Bar -->
+    <header>
+      <div class="brand-group">
+        <span class="brand-icon">🦖</span>
+        <div class="brand-text">
+          <h1>
+            OFFLINE DINO
+            <span style="font-size: 12px; font-weight: 600; padding: 2px 8px; background: rgba(56, 189, 248, 0.15); border-radius: 6px; color: var(--accent-blue);">PROTOTYPE</span>
+          </h1>
+          <div class="brand-sub">Interactive Eye Tracking & Smooth Pupil Gaze Test</div>
+        </div>
+      </div>
+
+      <!-- Real-time Status Badge -->
+      <div id="statusBadge" class="badge-status" role="status" aria-live="polite">
+        <span class="status-dot"></span>
+        <span id="statusLabel">Tracking Active</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <button id="btnAutoDemo" class="btn btn-toggle" title="Toggle autonomous eye scanning demo">
+          <span>🎬</span>
+          <span id="btnAutoDemoText">Auto Demo: OFF</span>
+        </button>
+        <button id="btnWireframe" class="btn btn-toggle" title="Toggle orbital socket boundaries & gaze lines">
+          <span>🎯</span>
+          <span>Wireframe: OFF</span>
+        </button>
+        <button id="btnResetGaze" class="btn btn-reset" title="Return pupils to neutral resting position">
+          <span>↺</span>
+          <span>Reset Resting</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Interactive Tracking Stage -->
+    <div class="stage-wrapper">
+      <div id="trackingStage" class="tracking-stage-card">
+        <div class="cursor-hint-layer">
+          <span>🖱️ Move cursor anywhere on screen</span>
+        </div>
+
+        <div id="ambientGlow" class="stage-ambient-glow"></div>
+
+        <!-- Centered Dinosaur Stage -->
+        <div id="dinoStageContainer" class="dino-stage-container">
+          <!-- 1. Authentic Dinosaur Base Layer (With Clean Cartoon Sclera) -->
+          <img id="dinoBaseImg" src="assets/sprites/test_dino_eye_base.png" alt="Offline Dino Mascot" class="dino-base-img" draggable="false" />
+
+          <!-- 2. Dynamic Pupil & Eye Tracking SVG Layer -->
+          <svg id="dinoEyeSvg" class="dino-eye-svg" viewBox="0 0 371 308" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Orbital Socket Clipping Paths (Constrains pupils 100% inside visible eye socket) -->
+              <clipPath id="leftEyeClip">
+                <ellipse cx="114.0" cy="97.5" rx="18.5" ry="24.0" />
+              </clipPath>
+              <clipPath id="rightEyeClip">
+                <ellipse cx="199.0" cy="95.5" rx="19.5" ry="25.0" />
+              </clipPath>
+            </defs>
+
+            <!-- Debug Wireframe Layer (Hidden by default) -->
+            <g id="wireframeGroup" style="display: none;">
+              <!-- Sockets -->
+              <ellipse cx="114.0" cy="97.5" rx="18.5" ry="24.0" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.85" />
+              <ellipse cx="199.0" cy="95.5" rx="19.5" ry="25.0" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.85" />
+              <!-- Gaze Ray Lines -->
+              <line id="leftGazeRay" x1="114.0" y1="97.5" x2="114.0" y2="97.5" stroke="#4ade80" stroke-width="1.8" opacity="0.9" />
+              <line id="rightGazeRay" x1="199.0" y1="95.5" x2="199.0" y2="95.5" stroke="#4ade80" stroke-width="1.8" opacity="0.9" />
+            </g>
+
+            <!-- Vector Mode Pupils (Signature OFFLINE DINO Double Glint) -->
+            <g id="vectorPupilsGroup">
+              <!-- Left Pupil (Character Right / Viewer Left) -->
+              <g clip-path="url(#leftEyeClip)">
+                <g id="leftPupilElem" transform="translate(114.0, 96.5)">
+                  <ellipse cx="0" cy="0" rx="13.5" ry="18.5" fill="#0d1117" />
+                  <!-- Big Signature Catchlight -->
+                  <circle cx="3.8" cy="-5.2" r="4.5" fill="#ffffff" />
+                  <!-- Secondary Soft Catchlight -->
+                  <circle cx="-3.2" cy="5.5" r="2.3" fill="#ffffff" opacity="0.75" />
+                </g>
+              </g>
+
+              <!-- Right Pupil (Character Left / Viewer Right) -->
+              <g clip-path="url(#rightEyeClip)">
+                <g id="rightPupilElem" transform="translate(199.0, 94.5)">
+                  <ellipse cx="0" cy="0" rx="14.5" ry="19.5" fill="#0d1117" />
+                  <!-- Big Signature Catchlight -->
+                  <circle cx="3.8" cy="-5.2" r="4.6" fill="#ffffff" />
+                  <!-- Secondary Soft Catchlight -->
+                  <circle cx="-3.2" cy="5.5" r="2.4" fill="#ffffff" opacity="0.75" />
+                </g>
+              </g>
+            </g>
+
+            <!-- Sprite Mode Pupils (Using home_pupil_left.png and home_pupil_right.png) -->
+            <g id="spritePupilsGroup" style="display: none;">
+              <g clip-path="url(#leftEyeClip)">
+                <image id="leftPupilSprite" href="assets/sprites/home_pupil_left.png" x="98.0" y="75.5" width="32" height="42" preserveAspectRatio="none" />
+              </g>
+              <g clip-path="url(#rightEyeClip)">
+                <image id="rightPupilSprite" href="assets/sprites/home_pupil_right.png" x="183.0" y="73.5" width="32" height="42" preserveAspectRatio="none" />
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid: Controls & Diagnostics -->
+    <div class="dashboard-grid">
+      <!-- Card 1: Interactive Options -->
+      <div class="card">
+        <div class="card-title">⚙️ Interactive Settings</div>
+        
+        <!-- Skin Selector -->
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Dinosaur Skin:</div>
+          <div class="skin-swatch-list">
+            <button class="skin-swatch-btn active" data-skin="green" style="background: #60b932;" title="Green (Default)"></button>
+            <button class="skin-swatch-btn" data-skin="blue" style="background: #2563eb;" title="Blue"></button>
+            <button class="skin-swatch-btn" data-skin="red" style="background: #dc2626;" title="Red"></button>
+            <button class="skin-swatch-btn" data-skin="yellow" style="background: #eab308;" title="Yellow"></button>
+            <button class="skin-swatch-btn" data-skin="orange" style="background: #f97316;" title="Orange"></button>
+            <button class="skin-swatch-btn" data-skin="purple" style="background: #9333ea;" title="Purple"></button>
+            <button class="skin-swatch-btn" data-skin="pink" style="background: #ec4899;" title="Pink"></button>
+            <button class="skin-swatch-btn" data-skin="brown" style="background: #78350f;" title="Brown"></button>
+            <button class="skin-swatch-btn" data-skin="black" style="background: #334155;" title="Charcoal Black"></button>
+          </div>
+        </div>
+
+        <!-- Pupil Style Mode -->
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Pupil Artwork Style:</div>
+          <div class="theme-tab-group">
+            <button id="btnStyleVector" class="theme-tab-btn active">Signature Glint (Vector)</button>
+            <button id="btnStyleSprite" class="theme-tab-btn">Original Extracted (Sprite)</button>
+          </div>
+        </div>
+
+        <!-- Background Backdrop -->
+        <div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Backdrop Theme:</div>
+          <div class="theme-tab-group">
+            <button class="theme-tab-btn" data-theme="theme-desert">Desert Sky</button>
+            <button class="theme-tab-btn active" data-theme="theme-studio">Studio Dark</button>
+            <button class="theme-tab-btn" data-theme="theme-sunset">Sunset</button>
+            <button class="theme-tab-btn" data-theme="theme-light">Daylight</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Live Tracking Telemetry -->
+      <div class="card">
+        <div class="card-title">📊 Live Eye Telemetry</div>
+        
+        <div class="metric-row">
+          <span class="metric-label">Status</span>
+          <span id="telStatus" class="metric-value" style="color: var(--accent-green);">Active Tracking</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Cursor Window (X, Y)</span>
+          <span id="telCursor" class="metric-value">0, 0</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Left Pupil (ΔX, ΔY)</span>
+          <span id="telLeftOffset" class="metric-value">+0.0px, -1.0px</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Right Pupil (ΔX, ΔY)</span>
+          <span id="telRightOffset" class="metric-value">+0.0px, -1.0px</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Gaze Intensity / Max Travel</span>
+          <span id="telIntensity" class="metric-value">0%</span>
+        </div>
+        <div class="gaze-meter-track">
+          <div id="gazeMeterFill" class="gaze-meter-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Analysis Card -->
+    <div class="card tech-card">
+      <div class="card-title">🔬 Technical Inspection & Implementation Details</div>
+      <p>
+        <strong>Artwork Structure Inspection:</strong> The Offline Dino homepage dinosaur (<span class="coord-chip">assets/sprites/home_dino_skin_green.png</span>) is originally a single flattened 371×308 raster PNG where the black pupils were baked directly into the sclera.
+      </p>
+      <p>
+        <strong>Isolated Test Implementation:</strong> As required by the technical guidelines, this test isolates the eye socket scleras into a test base (<span class="coord-chip">test_dino_eye_base.png</span>) while leaving 100% of the dinosaur's face, green skin, facial features, teeth, scales, belly, and proportions completely untouched.
+      </p>
+      <p>
+        <strong>Boundary Guarantees:</strong> Left Eye socket is centered at <span class="coord-chip">(114.0, 97.5)</span> with radii <span class="coord-chip">(rx: 18.5, ry: 24.0)</span>; Right Eye socket is at <span class="coord-chip">(199.0, 95.5)</span> with radii <span class="coord-chip">(rx: 19.5, ry: 25.0)</span>. Dual SVG clipping paths ensure pupils can <em>never</em> escape the visible eye socket or overlap the dinosaur's eyelids.
+      </p>
+      <p>
+        <strong>Physics & Smoothing:</strong> Pupil movement uses continuous physical lerping (<span class="coord-chip">factor 0.16</span>) driven by <span class="coord-chip">requestAnimationFrame</span> for zero-jitter, buttery smooth 60fps tracking. When cursor moves far away or leaves the window, pupils smoothly return to the natural forward-looking resting position.
+      </p>
+    </div>
+
+    <footer>
+      Offline Dino — Interactive Eye Tracking Prototype &bull; Standalone Test Page &bull; Zero external network dependencies
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // --- DOM Elements ---
+      const stage = document.getElementById('trackingStage');
+      const stageContainer = document.getElementById('dinoStageContainer');
+      const dinoBaseImg = document.getElementById('dinoBaseImg');
+      const ambientGlow = document.getElementById('ambientGlow');
+      const statusBadge = document.getElementById('statusBadge');
+      const statusLabel = document.getElementById('statusLabel');
+
+      const leftPupilElem = document.getElementById('leftPupilElem');
+      const rightPupilElem = document.getElementById('rightPupilElem');
+      const leftPupilSprite = document.getElementById('leftPupilSprite');
+      const rightPupilSprite = document.getElementById('rightPupilSprite');
+      const vectorPupilsGroup = document.getElementById('vectorPupilsGroup');
+      const spritePupilsGroup = document.getElementById('spritePupilsGroup');
+
+      const wireframeGroup = document.getElementById('wireframeGroup');
+      const leftGazeRay = document.getElementById('leftGazeRay');
+      const rightGazeRay = document.getElementById('rightGazeRay');
+
+      const btnResetGaze = document.getElementById('btnResetGaze');
+      const btnAutoDemo = document.getElementById('btnAutoDemo');
+      const btnAutoDemoText = document.getElementById('btnAutoDemoText');
+      const btnWireframe = document.getElementById('btnWireframe');
+
+      const btnStyleVector = document.getElementById('btnStyleVector');
+      const btnStyleSprite = document.getElementById('btnStyleSprite');
+
+      const telStatus = document.getElementById('telStatus');
+      const telCursor = document.getElementById('telCursor');
+      const telLeftOffset = document.getElementById('telLeftOffset');
+      const telRightOffset = document.getElementById('telRightOffset');
+      const telIntensity = document.getElementById('telIntensity');
+      const gazeMeterFill = document.getElementById('gazeMeterFill');
+
+      // --- Eye Socket Anchors (in 371x308 coordinate space) ---
+      const LEFT_EYE = {
+        cx: 114.0,
+        cy: 97.5,
+        maxTx: 9.2,   // Maximum allowable X travel in pixels
+        maxTy: 11.5,  // Maximum allowable Y travel in pixels
+        restingX: 0.0,
+        restingY: -1.0
+      };
+
+      const RIGHT_EYE = {
+        cx: 199.0,
+        cy: 95.5,
+        maxTx: 9.8,
+        maxTy: 12.0,
+        restingX: 0.0,
+        restingY: -1.0
+      };
+
+      // --- Animation & Motion State ---
+      let targetLx = LEFT_EYE.restingX;
+      let targetLy = LEFT_EYE.restingY;
+      let currentLx = LEFT_EYE.restingX;
+      let currentLy = LEFT_EYE.restingY;
+
+      let targetRx = RIGHT_EYE.restingX;
+      let targetRy = RIGHT_EYE.restingY;
+      let currentRx = RIGHT_EYE.restingX;
+      let currentRy = RIGHT_EYE.restingY;
+
+      let isCursorInside = true;
+      let isAutoDemo = false;
+      let isWireframe = false;
+      let pupilStyle = 'vector'; // 'vector' or 'sprite'
+      let activeSkin = 'green';
+      let autoDemoTime = 0;
+      let lastPointerTime = Date.now();
+      let lastCursorX = window.innerWidth / 2;
+      let lastCursorY = window.innerHeight / 2;
+
+      // --- Tracking Calculation ---
+      function updatePupilTargets(mouseX, mouseY) {
+        if (!stageContainer) return;
+
+        const rect = stageContainer.getBoundingClientRect();
+        const scale = rect.width / 371; // Current scale factor of the dino image
+
+        // Screen positions of eye socket centers
+        const lScreenX = rect.left + LEFT_EYE.cx * scale;
+        const lScreenY = rect.top + LEFT_EYE.cy * scale;
+
+        const rScreenX = rect.left + RIGHT_EYE.cx * scale;
+        const rScreenY = rect.top + RIGHT_EYE.cy * scale;
+
+        // Calculate gaze vector for Left Eye
+        const lDx = mouseX - lScreenX;
+        const lDy = mouseY - lScreenY;
+        const lDist = Math.hypot(lDx, lDy);
+
+        // Calculate gaze vector for Right Eye
+        const rDx = mouseX - rScreenX;
+        const rDy = mouseY - rScreenY;
+        const rDist = Math.hypot(rDx, rDy);
+
+        // Distance attenuation: smooth asymptotic curve (tanh-like ease)
+        // Responsive up to ~400px away, saturates naturally
+        const lFactor = Math.min(1.0, lDist / 260);
+        const lAngle = Math.atan2(lDy, lDx);
+
+        const rFactor = Math.min(1.0, rDist / 260);
+        const rAngle = Math.atan2(rDy, rDx);
+
+        // Calculate clamped elliptical displacement
+        targetLx = Math.cos(lAngle) * LEFT_EYE.maxTx * lFactor;
+        targetLy = Math.sin(lAngle) * LEFT_EYE.maxTy * lFactor;
+
+        targetRx = Math.cos(rAngle) * RIGHT_EYE.maxTx * rFactor;
+        targetRy = Math.sin(rAngle) * RIGHT_EYE.maxTy * rFactor;
+
+        // Update ambient glow position subtly
+        if (ambientGlow) {
+          const glowX = 50 + (targetLx / LEFT_EYE.maxTx) * 8;
+          const glowY = 50 + (targetLy / LEFT_EYE.maxTy) * 8;
+          ambientGlow.style.top = `${glowY}%`;
+          ambientGlow.style.left = `${glowX}%`;
+        }
+
+        // Telemetry update
+        const avgIntensity = Math.round(((lFactor + rFactor) / 2) * 100);
+        telCursor.textContent = `${Math.round(mouseX)}, ${Math.round(mouseY)}`;
+        telIntensity.textContent = `${avgIntensity}%`;
+        gazeMeterFill.style.width = `${avgIntensity}%`;
+      }
+
+      // --- Pointer Event Listeners ---
+      function handlePointerMove(e) {
+        if (isAutoDemo) return;
+
+        lastCursorX = e.clientX;
+        lastCursorY = e.clientY;
+        lastPointerTime = Date.now();
+        isCursorInside = true;
+
+        updatePupilTargets(e.clientX, e.clientY);
+        setStatus('active', 'Tracking Cursor');
+      }
+
+      function handlePointerLeave() {
+        if (isAutoDemo) return;
+        isCursorInside = false;
+        returnToResting('Resting (Cursor Left Window)');
+      }
+
+      window.addEventListener('mousemove', handlePointerMove, { passive: true });
+      window.addEventListener('pointermove', handlePointerMove, { passive: true });
+      document.addEventListener('mouseleave', handlePointerLeave);
+
+      // --- Resting & Reset Logic ---
+      function returnToResting(label = 'Resting Position') {
+        targetLx = LEFT_EYE.restingX;
+        targetLy = LEFT_EYE.restingY;
+        targetRx = RIGHT_EYE.restingX;
+        targetRy = RIGHT_EYE.restingY;
+        setStatus('resting', label);
+      }
+
+      function resetGaze() {
+        isAutoDemo = false;
+        updateAutoDemoUI();
+        returnToResting('Reset (Neutral)');
+        setStatus('reset', 'Reset Neutral');
+      }
+
+      btnResetGaze.addEventListener('click', resetGaze);
+
+      // --- Auto-Demo Mode ---
+      function toggleAutoDemo() {
+        isAutoDemo = !isAutoDemo;
+        updateAutoDemoUI();
+        if (isAutoDemo) {
+          setStatus('auto', 'Auto Demo: Scanning');
+        } else {
+          returnToResting('Resting');
+        }
+      }
+
+      function updateAutoDemoUI() {
+        btnAutoDemo.classList.toggle('active', isAutoDemo);
+        btnAutoDemoText.textContent = `Auto Demo: ${isAutoDemo ? 'ON' : 'OFF'}`;
+      }
+
+      btnAutoDemo.addEventListener('click', toggleAutoDemo);
+
+      // --- Wireframe Bounds Toggle ---
+      btnWireframe.addEventListener('click', () => {
+        isWireframe = !isWireframe;
+        btnWireframe.classList.toggle('active', isWireframe);
+        wireframeGroup.style.display = isWireframe ? 'inline' : 'none';
+        btnWireframe.querySelector('span:last-child').textContent = `Wireframe: ${isWireframe ? 'ON' : 'OFF'}`;
+      });
+
+      // --- Pupil Style Switching ---
+      btnStyleVector.addEventListener('click', () => {
+        pupilStyle = 'vector';
+        btnStyleVector.classList.add('active');
+        btnStyleSprite.classList.remove('active');
+        vectorPupilsGroup.style.display = 'inline';
+        spritePupilsGroup.style.display = 'none';
+      });
+
+      btnStyleSprite.addEventListener('click', () => {
+        pupilStyle = 'sprite';
+        btnStyleSprite.classList.add('active');
+        btnStyleVector.classList.remove('active');
+        vectorPupilsGroup.style.display = 'none';
+        spritePupilsGroup.style.display = 'inline';
+      });
+
+      // --- Skin Swatch Selection ---
+      document.querySelectorAll('.skin-swatch-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.skin-swatch-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const skin = btn.getAttribute('data-skin');
+          activeSkin = skin;
+          dinoBaseImg.src = `assets/sprites/test_dino_eye_base_${skin}.png`;
+        });
+      });
+
+      // --- Backdrop Themes ---
+      document.querySelectorAll('.theme-tab-btn[data-theme]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.theme-tab-btn[data-theme]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const theme = btn.getAttribute('data-theme');
+          document.body.className = theme;
+        });
+      });
+
+      // --- Status Badge Helper ---
+      function setStatus(type, label) {
+        statusBadge.className = `badge-status ${type}`;
+        statusLabel.textContent = label;
+        telStatus.textContent = label;
+        if (type === 'active') {
+          telStatus.style.color = 'var(--accent-green)';
+        } else if (type === 'resting') {
+          telStatus.style.color = 'var(--accent-amber)';
+        } else if (type === 'auto') {
+          telStatus.style.color = 'var(--accent-blue)';
+        } else {
+          telStatus.style.color = 'var(--text-muted)';
+        }
+      }
+
+      // --- Main Animation Render Loop (60 FPS Physics Lerp) ---
+      const LERP_FACTOR = 0.16; // Perfectly tuned damping: responsive with zero jitter
+
+      function renderLoop() {
+        requestAnimationFrame(renderLoop);
+
+        // Automated scanning demo physics
+        if (isAutoDemo) {
+          autoDemoTime += 0.024;
+          // Figure-8 Lemniscate pattern
+          const demoX = Math.sin(autoDemoTime) * 0.85;
+          const demoY = Math.sin(autoDemoTime * 2) * 0.65;
+
+          targetLx = demoX * LEFT_EYE.maxTx;
+          targetLy = demoY * LEFT_EYE.maxTy;
+          targetRx = demoX * RIGHT_EYE.maxTx;
+          targetRy = demoY * RIGHT_EYE.maxTy;
+        } else if (isCursorInside) {
+          // Idle timeout: if cursor hasn't moved for 3.5s, gently relax towards resting
+          if (Date.now() - lastPointerTime > 3500) {
+            targetLx = LEFT_EYE.restingX;
+            targetLy = LEFT_EYE.restingY;
+            targetRx = RIGHT_EYE.restingX;
+            targetRy = RIGHT_EYE.restingY;
+            if (statusBadge.className.indexOf('resting') === -1) {
+              setStatus('resting', 'Resting (Idle Cursor)');
+            }
+          }
+        }
+
+        // Butter-smooth physical interpolation
+        currentLx += (targetLx - currentLx) * LERP_FACTOR;
+        currentLy += (targetLy - currentLy) * LERP_FACTOR;
+        currentRx += (targetRx - currentRx) * LERP_FACTOR;
+        currentRy += (targetRy - currentRy) * LERP_FACTOR;
+
+        // Apply to Vector Elements
+        leftPupilElem.setAttribute('transform', `translate(${(LEFT_EYE.cx + currentLx).toFixed(2)}, ${(LEFT_EYE.cy + currentLy).toFixed(2)})`);
+        rightPupilElem.setAttribute('transform', `translate(${(RIGHT_EYE.cx + currentRx).toFixed(2)}, ${(RIGHT_EYE.cy + currentRy).toFixed(2)})`);
+
+        // Apply to Sprite Elements
+        if (pupilStyle === 'sprite') {
+          // Sprite dimensions are 32x42, anchor center offset is -16, -21
+          leftPupilSprite.setAttribute('x', (LEFT_EYE.cx + currentLx - 16).toFixed(2));
+          leftPupilSprite.setAttribute('y', (LEFT_EYE.cy + currentLy - 21).toFixed(2));
+          rightPupilSprite.setAttribute('x', (RIGHT_EYE.cx + currentRx - 16).toFixed(2));
+          rightPupilSprite.setAttribute('y', (RIGHT_EYE.cy + currentRy - 21).toFixed(2));
+        }
+
+        // Apply to Debug Wireframe Rays
+        if (isWireframe) {
+          leftGazeRay.setAttribute('x2', (LEFT_EYE.cx + currentLx * 2.2).toFixed(2));
+          leftGazeRay.setAttribute('y2', (LEFT_EYE.cy + currentLy * 2.2).toFixed(2));
+          rightGazeRay.setAttribute('x2', (RIGHT_EYE.cx + currentRx * 2.2).toFixed(2));
+          rightGazeRay.setAttribute('y2', (RIGHT_EYE.cy + currentRy * 2.2).toFixed(2));
+        }
+
+        // Live Telemetry Readout
+        telLeftOffset.textContent = `${currentLx >= 0 ? '+' : ''}${currentLx.toFixed(1)}px, ${currentLy >= 0 ? '+' : ''}${currentLy.toFixed(1)}px`;
+        telRightOffset.textContent = `${currentRx >= 0 ? '+' : ''}${currentRx.toFixed(1)}px, ${currentRy >= 0 ? '+' : ''}${currentRy.toFixed(1)}px`;
+      }
+
+      // Initialize
+      returnToResting('Neutral Resting');
+      renderLoop();
+    })();
+  </script>
+</body>
+</html>

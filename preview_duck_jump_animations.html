@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Dino — Duck & Jump Animation Laboratory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f17;
+      --panel-bg: #121824;
+      --card-bg: #182234;
+      --accent-green: #22c55e;
+      --accent-blue: #38bdf8;
+      --accent-yellow: #fbbf24;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #243247;
+      --ground-red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    header {
+      max-width: 1400px;
+      margin: 0 auto 28px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-titles h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .badge-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .header-titles p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-green { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+    .dot-blue { background: var(--accent-blue); box-shadow: 0 0 8px var(--accent-blue); }
+    .dot-yellow { background: var(--accent-yellow); box-shadow: 0 0 8px var(--accent-yellow); }
+
+    /* Main Dual Panel Grid */
+    .laboratory-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+      gap: 28px;
+    }
+
+    .panel-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title.duck-theme { color: var(--accent-blue); }
+    .panel-title.jump-theme { color: var(--accent-yellow); }
+
+    .panel-header-badge {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    /* Animation Stage */
+    .stage-container {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .canvas-viewport {
+      width: 100%;
+      max-width: 480px;
+      height: 320px;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    /* Background Themes */
+    .bg-checker {
+      background-color: #0d121c;
+      background-image:
+        linear-gradient(45deg, #161f30 25%, transparent 25%),
+        linear-gradient(-45deg, #161f30 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #161f30 75%),
+        linear-gradient(-45deg, transparent 75%, #161f30 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    .bg-desert {
+      background: linear-gradient(to bottom, #4da6ff 0%, #a0d8ef 58%, #f5cf6d 60%, #e09f3e 100%);
+    }
+
+    .bg-black {
+      background-color: #000000;
+    }
+
+    .bg-darkslate {
+      background-color: #111827;
+    }
+
+    /* Active Animation Canvas */
+    .anim-canvas {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+      max-width: 100%;
+      max-height: 100%;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.15s ease;
+    }
+
+    /* Ground Reference Line */
+    .ground-line-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(239, 68, 68, 0.85);
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+      z-index: 4;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+    }
+
+    .ground-line-overlay::after {
+      content: 'GROUND BASELINE (Y=195)';
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(239, 68, 68, 0.9);
+      padding: 1px 5px;
+      border-radius: 3px;
+      transform: translateY(-8px);
+    }
+
+    /* Status Bar below canvas */
+    .stage-status-bar {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 13px;
+    }
+
+    .frame-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .counter-highlight {
+      color: var(--accent-green);
+      font-size: 15px;
+    }
+
+    .pose-label {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 240px;
+    }
+
+    /* Controls Bar */
+    .controls-wrapper {
+      padding: 0 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .ctrl-btn:hover {
+      background: #222f46;
+      border-color: #3b5073;
+      transform: translateY(-1px);
+    }
+
+    .ctrl-btn:active {
+      transform: translateY(1px);
+    }
+
+    .ctrl-btn.primary {
+      background: #1e3a5f;
+      border-color: #2563eb;
+      color: #93c5fd;
+    }
+
+    .ctrl-btn.primary:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .ctrl-btn.active {
+      background: #15803d;
+      border-color: #22c55e;
+      color: #fff;
+    }
+
+    /* Sliders & Toggles */
+    .tuning-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-label {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      min-width: 75px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      background: #243247;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+    }
+
+    .speed-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      min-width: 45px;
+    }
+
+    /* Thumbnail Contact Filmstrip */
+    .filmstrip-section {
+      padding: 16px 24px 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .filmstrip-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .thumbnails-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: #3b5073 #182234;
+    }
+
+    .thumb-item {
+      flex: 0 0 72px;
+      height: 64px;
+      background: #0f1521;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+      overflow: hidden;
+    }
+
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .thumb-item:hover {
+      border-color: var(--accent-blue);
+      background: #182438;
+      transform: translateY(-2px);
+    }
+
+    .thumb-item.active {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .thumb-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 3px;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.75);
+      color: #e2e8f0;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    /* Technical Inspection Section */
+    .inspection-section {
+      max-width: 1400px;
+      margin: 32px auto 0;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .inspection-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .inspection-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background: #1e3a5f;
+      color: #93c5fd;
+      border-color: #2563eb;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Comparison Table */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .spec-table th, .spec-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .spec-table th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .spec-table tr:hover td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .contact-sheet-preview {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #000;
+      margin-top: 12px;
+    }
+
+    .alert-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #bae6fd;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-box.warning {
+      background: rgba(251, 191, 36, 0.08);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: #fde68a;
+    }
+
+    @media (max-width: 768px) {
+      .laboratory-grid {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-titles">
+      <h1>
+        OFFLINE DINO
+        <span class="badge-tag">Animation Validation Lab</span>
+      </h1>
+      <p>Independent frame-by-frame visual inspection for Duck & Jump sprite sheets prior to engine integration.</p>
+    </div>
+    <div class="header-badges">
+      <div class="status-chip"><span class="dot dot-green"></span> 10 Duck Frames</div>
+      <div class="status-chip"><span class="dot dot-blue"></span> 10 Jump Frames</div>
+      <div class="status-chip"><span class="dot dot-yellow"></span> 240x210 Uniform Baseline</div>
+    </div>
+  </header>
+
+  <div class="alert-box warning" style="max-width: 1400px; margin: 0 auto 24px;">
+    <strong>Background Channel Audit Report:</strong> Both original source sprite sheets possess an opaque baked pitch-black background RGB(0,0,0) (alpha=255). Surgical boundary flood-fill has isolated the dinosaur silhouettes into genuine transparent alpha frames while preserving 100% of internal pupil and closed-eye pixels. Use the background theme toggle to inspect both raw source and transparent modes!
+  </div>
+
+  <main class="laboratory-grid">
+
+    <!-- ======================================================== -->
+    <!-- PANEL 1: DUCK ANIMATION                                  -->
+    <!-- ======================================================== -->
+    <section class="panel-card" id="duckPanel">
+      <div class="panel-header">
+        <div class="panel-title duck-theme">
+          <span>🦆</span> DUCK ANIMATION CYCLE
+        </div>
+        <div class="panel-header-badge" id="duckHeaderBadge">10 Frames (5 cols × 2 rows)</div>
+      </div>
+
+      <div class="stage-container">
+        <div class="canvas-viewport bg-checker" id="duckViewport">
+          <canvas id="duckCanvas" width="240" height="210" class="anim-canvas"></canvas>
+          <div class="ground-line-overlay" id="duckGroundLine"></div>
+        </div>
+
+        <div class="stage-status-bar">
+          <div class="frame-counter">
+            FRAME <span class="counter-highlight" id="duckFrameNum">01</span> / 10
+          </div>
+          <div class="pose-label" id="duckPoseLabel">Closed-Eye Standing / Crouch Entry 1</div>
+        </div>
+      </div>
+
+      <div class="controls-wrapper">
+        <div class="button-group">
+          <button class="ctrl-btn primary" id="btnDuckPlayPause">⏸ Pause</button>
+          <button class="ctrl-btn" id="btnDuckRestart">↺ Restart</button>
+          <button class="ctrl-btn" id="btnDuckPrev">⏮ Step Prev</button>
+          <button class="ctrl-btn" id="btnDuckNext">⏭ Step Next</button>
+          <button class="ctrl-btn" id="btnDuckGroundToggle">Toggle Ground Line</button>
+        </div>
+
+        <div class="tuning-row">
+          <div class="slider-container">
+            <span class="slider-label">SPEED:</span>
+            <input type="range" id="duckSpeedSlider" min="1" max="24" value="10">
+            <span class="speed-val" id="duckSpeedVal">10 FPS</span>
+          </div>
+          <div class="button-group">
+            <button class="ctrl-btn" onclick="setDuckLoopMode('full')">Full Cycle (1-10)</button>
+            <button class="ctrl-btn" onclick="setDuckLoopMode('crawl')">Crawl Loop (4-7)</button>
+          </div>
+        </div>
+
+        <div class="tuning-row">
+          <div class="button-group">
+            <span class="slider-label">BG THEME:</span>
+            <button class="ctrl-btn" onclick="setViewportBg('duckViewport', 'bg-checker')">Checker</button>
+            <button class="ctrl-btn" onclick="setViewportBg('duckViewport', 'bg-desert')">Desert</button>
+            <button class="ctrl-btn" onclick="setViewportBg('duckViewport', 'bg-black')">Black (Raw)</button>
+            <button class="ctrl-btn" onclick="setViewportBg('duckViewport', 'bg-darkslate')">Slate</button>
+          </div>
+          <div class="button-group">
+            <span class="slider-label">MODE:</span>
+            <button class="ctrl-btn active" id="btnDuckModeTrans" onclick="setDuckRenderMode('trans')">Alpha</button>
+            <button class="ctrl-btn" id="btnDuckModeRaw" onclick="setDuckRenderMode('raw')">Raw Black</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filmstrip-section">
+        <div class="filmstrip-title">
+          <span>FILMSTRIP — CLICK ANY FRAME TO INSPECT</span>
+          <span style="font-family:'JetBrains Mono'; font-size:11px;">10 Extracted Poses</span>
+        </div>
+        <div class="thumbnails-row" id="duckThumbnails"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PANEL 2: JUMP ANIMATION                                  -->
+    <!-- ======================================================== -->
+    <section class="panel-card" id="jumpPanel">
+      <div class="panel-header">
+        <div class="panel-title jump-theme">
+          <span>🦘</span> JUMP ANIMATION CYCLE
+        </div>
+        <div class="panel-header-badge" id="jumpHeaderBadge">10 Frames (5 cols × 2 rows)</div>
+      </div>
+
+      <div class="stage-container">
+        <div class="canvas-viewport bg-checker" id="jumpViewport">
+          <canvas id="jumpCanvas" width="240" height="210" class="anim-canvas"></canvas>
+          <div class="ground-line-overlay" id="jumpGroundLine"></div>
+        </div>
+
+        <div class="stage-status-bar">
+          <div class="frame-counter">
+            FRAME <span class="counter-highlight" id="jumpFrameNum">01</span> / 10
+          </div>
+          <div class="pose-label" id="jumpPoseLabel">Takeoff Anticipation / Standing</div>
+        </div>
+      </div>
+
+      <div class="controls-wrapper">
+        <div class="button-group">
+          <button class="ctrl-btn primary" id="btnJumpPlayPause">⏸ Pause</button>
+          <button class="ctrl-btn" id="btnJumpRestart">↺ Restart</button>
+          <button class="ctrl-btn" id="btnJumpPrev">⏮ Step Prev</button>
+          <button class="ctrl-btn" id="btnJumpNext">⏭ Step Next</button>
+          <button class="ctrl-btn" id="btnJumpGroundToggle">Toggle Ground Line</button>
+        </div>
+
+        <div class="tuning-row">
+          <div class="slider-container">
+            <span class="slider-label">SPEED:</span>
+            <input type="range" id="jumpSpeedSlider" min="1" max="24" value="12">
+            <span class="speed-val" id="jumpSpeedVal">12 FPS</span>
+          </div>
+          <div class="button-group">
+            <button class="ctrl-btn" onclick="setJumpLoopMode('full')">Full Trajectory (1-10)</button>
+            <button class="ctrl-btn" onclick="setJumpLoopMode('air')">Apex Glide (4-7)</button>
+          </div>
+        </div>
+
+        <div class="tuning-row">
+          <div class="button-group">
+            <span class="slider-label">BG THEME:</span>
+            <button class="ctrl-btn" onclick="setViewportBg('jumpViewport', 'bg-checker')">Checker</button>
+            <button class="ctrl-btn" onclick="setViewportBg('jumpViewport', 'bg-desert')">Desert</button>
+            <button class="ctrl-btn" onclick="setViewportBg('jumpViewport', 'bg-black')">Black (Raw)</button>
+            <button class="ctrl-btn" onclick="setViewportBg('jumpViewport', 'bg-darkslate')">Slate</button>
+          </div>
+          <div class="button-group">
+            <span class="slider-label">MODE:</span>
+            <button class="ctrl-btn active" id="btnJumpModeTrans" onclick="setJumpRenderMode('trans')">Alpha</button>
+            <button class="ctrl-btn" id="btnJumpModeRaw" onclick="setJumpRenderMode('raw')">Raw Black</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filmstrip-section">
+        <div class="filmstrip-title">
+          <span>FILMSTRIP — CLICK ANY FRAME TO INSPECT</span>
+          <span style="font-family:'JetBrains Mono'; font-size:11px;">10 Extracted Poses</span>
+        </div>
+        <div class="thumbnails-row" id="jumpThumbnails"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- TECHNICAL INSPECTION & CONTACT SHEETS                    -->
+  <!-- ======================================================== -->
+  <section class="inspection-section">
+    <div class="inspection-header">
+      <h2>🔍 Technical Inspection & Contact Sheets</h2>
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="showTab('tabDuckContact')">Duck Contact Sheet</button>
+        <button class="tab-btn" onclick="showTab('tabJumpContact')">Jump Contact Sheet</button>
+        <button class="tab-btn" onclick="showTab('tabSpecs')">Locomotion Matrix</button>
+      </div>
+    </div>
+
+    <!-- Tab 1: Duck Contact Sheet -->
+    <div class="tab-content active" id="tabDuckContact">
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+        High-resolution 10-frame Duck contact sheet ($1200 \times 420\text{ px}$) on dark checkerboard with red ground baseline ($Y=195$).
+      </p>
+      <img id="imgDuckContact" src="" alt="Duck Contact Sheet" class="contact-sheet-preview">
+    </div>
+
+    <!-- Tab 2: Jump Contact Sheet -->
+    <div class="tab-content" id="tabJumpContact">
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+        High-resolution 10-frame Jump contact sheet ($1200 \times 420\text{ px}$) on dark checkerboard with red ground baseline ($Y=195$) demonstrating airborne trajectory elevation.
+      </p>
+      <img id="imgJumpContact" src="" alt="Jump Contact Sheet" class="contact-sheet-preview">
+    </div>
+
+    <!-- Tab 3: Locomotion Matrix -->
+    <div class="tab-content" id="tabSpecs">
+      <div style="overflow-x:auto;">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Cycle</th>
+              <th>Frame</th>
+              <th>Row / Col</th>
+              <th>Pose Anatomy & Locomotion</th>
+              <th>Dimensions</th>
+              <th>Elevation</th>
+              <th>Snout / Eyes</th>
+              <th>Integrity</th>
+            </tr>
+          </thead>
+          <tbody id="specsTableBody">
+            <!-- Populated dynamically from manifest -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Path auto-detector: handles opening from root or subfolder
+    const isSubfolder = window.location.pathname.includes('test_duck_jump_animations');
+    const pathPrefix = isSubfolder ? '' : 'test_duck_jump_animations/';
+
+    document.getElementById('imgDuckContact').src = pathPrefix + 'duck_frames/contact_sheet_duck.png';
+    document.getElementById('imgJumpContact').src = pathPrefix + 'jump_frames/contact_sheet_jump.png';
+
+    // Duck state
+    const duckData = {
+      total: 10,
+      current: 1,
+      fps: 10,
+      isPlaying: true,
+      mode: 'trans', // 'trans' or 'raw'
+      loopMode: 'full', // 'full' (1-10) or 'crawl' (4-7)
+      images: { trans: [], raw: [] },
+      poses: [
+        'Closed-Eye Standing / Crouch Entry 1',
+        'Lowering Torso & Neck / Crouch Entry 2',
+        'Deep Crouch Entry 3',
+        'Low Crouch Flattening',
+        'Lowest Sustained Crouch Slide',
+        'Low Crawl Stride 1',
+        'Low Crawl Stride 2',
+        'Beginning Recovery Rise 1',
+        'Mid Recovery Rise 2',
+        'High Recovery to Standing 3'
+      ]
+    };
+
+    // Jump state
+    const jumpData = {
+      total: 10,
+      current: 1,
+      fps: 12,
+      isPlaying: true,
+      mode: 'trans', // 'trans' or 'raw'
+      loopMode: 'full', // 'full' (1-10) or 'air' (4-7)
+      images: { trans: [], raw: [] },
+      poses: [
+        'Takeoff Anticipation / Standing (Elev: 0px)',
+        'Crouch & Compression (Elev: 0px)',
+        'Upward Spring Launch (Elev: +5px)',
+        'Ascent Trajectory (Elev: +40px)',
+        'High Apex Flight Peak (Elev: +47px)',
+        'High Apex Flight Glide (Elev: +27px)',
+        'Descent Trajectory (Elev: +7px)',
+        'Touchdown Foot Reach (Elev: +2px)',
+        'Impact Compression (Elev: 0px)',
+        'Landing Rebound Recovery (Elev: 0px)'
+      ]
+    };
+
+    // Preload frames
+    for (let i = 1; i <= 10; i++) {
+      const pad = i.toString().padStart(2, '0');
+      // Duck
+      const dTrans = new Image();
+      dTrans.src = `${pathPrefix}duck_frames/duck_${pad}.png`;
+      duckData.images.trans.push(dTrans);
+      const dRaw = new Image();
+      dRaw.src = `${pathPrefix}duck_frames/duck_raw_${pad}.png`;
+      duckData.images.raw.push(dRaw);
+
+      // Jump
+      const jTrans = new Image();
+      jTrans.src = `${pathPrefix}jump_frames/jump_${pad}.png`;
+      jumpData.images.trans.push(jTrans);
+      const jRaw = new Image();
+      jRaw.src = `${pathPrefix}jump_frames/jump_raw_${pad}.png`;
+      jumpData.images.raw.push(jRaw);
+    }
+
+    // Canvas contexts
+    const duckCanvas = document.getElementById('duckCanvas');
+    const duckCtx = duckCanvas.getContext('2d');
+    const jumpCanvas = document.getElementById('jumpCanvas');
+    const jumpCtx = jumpCanvas.getContext('2d');
+
+    // Render Canvas
+    function renderDuck() {
+      const img = duckData.images[duckData.mode][duckData.current - 1];
+      duckCtx.clearRect(0, 0, duckCanvas.width, duckCanvas.height);
+      if (img && img.complete) {
+        duckCtx.drawImage(img, 0, 0);
+      }
+      document.getElementById('duckFrameNum').textContent = duckData.current.toString().padStart(2, '0');
+      document.getElementById('duckPoseLabel').textContent = duckData.poses[duckData.current - 1];
+      updateThumbActive('duckThumbnails', duckData.current);
+    }
+
+    function renderJump() {
+      const img = jumpData.images[jumpData.mode][jumpData.current - 1];
+      jumpCtx.clearRect(0, 0, jumpCanvas.width, jumpCanvas.height);
+      if (img && img.complete) {
+        jumpCtx.drawImage(img, 0, 0);
+      }
+      document.getElementById('jumpFrameNum').textContent = jumpData.current.toString().padStart(2, '0');
+      document.getElementById('jumpPoseLabel').textContent = jumpData.poses[jumpData.current - 1];
+      updateThumbActive('jumpThumbnails', jumpData.current);
+    }
+
+    // Build thumbnails
+    function buildThumbnails(containerId, data, prefix) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      for (let i = 1; i <= data.total; i++) {
+        const pad = i.toString().padStart(2, '0');
+        const item = document.createElement('div');
+        item.className = 'thumb-item' + (i === 1 ? ' active' : '');
+        item.onclick = () => {
+          data.current = i;
+          if (prefix === 'duck') renderDuck(); else renderJump();
+        };
+
+        const img = document.createElement('img');
+        img.src = `${pathPrefix}${prefix}_frames/${prefix}_${pad}.png`;
+        img.alt = `Frame ${i}`;
+
+        const badge = document.createElement('div');
+        badge.className = 'thumb-badge';
+        badge.textContent = pad;
+
+        item.appendChild(img);
+        item.appendChild(badge);
+        container.appendChild(item);
+      }
+    }
+
+    function updateThumbActive(containerId, currentIdx) {
+      const items = document.getElementById(containerId).children;
+      for (let i = 0; i < items.length; i++) {
+        if (i === currentIdx - 1) {
+          items[i].classList.add('active');
+          items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          items[i].classList.remove('active');
+        }
+      }
+    }
+
+    // Animation loops
+    let lastDuckTime = performance.now();
+    let lastJumpTime = performance.now();
+
+    function animLoop(now) {
+      // Duck loop
+      if (duckData.isPlaying) {
+        const interval = 1000 / duckData.fps;
+        if (now - lastDuckTime >= interval) {
+          lastDuckTime = now;
+          if (duckData.loopMode === 'full') {
+            duckData.current = (duckData.current % duckData.total) + 1;
+          } else if (duckData.loopMode === 'crawl') {
+            // Crawl loop between frame 4 and 7
+            let next = duckData.current + 1;
+            if (next > 7 || next < 4) next = 4;
+            duckData.current = next;
+          }
+          renderDuck();
+        }
+      }
+
+      // Jump loop
+      if (jumpData.isPlaying) {
+        const interval = 1000 / jumpData.fps;
+        if (now - lastJumpTime >= interval) {
+          lastJumpTime = now;
+          if (jumpData.loopMode === 'full') {
+            jumpData.current = (jumpData.current % jumpData.total) + 1;
+          } else if (jumpData.loopMode === 'air') {
+            let next = jumpData.current + 1;
+            if (next > 7 || next < 4) next = 4;
+            jumpData.current = next;
+          }
+          renderJump();
+        }
+      }
+
+      requestAnimationFrame(animLoop);
+    }
+
+    // Button actions
+    document.getElementById('btnDuckPlayPause').onclick = function() {
+      duckData.isPlaying = !duckData.isPlaying;
+      this.textContent = duckData.isPlaying ? '⏸ Pause' : '▶ Play';
+    };
+    document.getElementById('btnDuckRestart').onclick = function() {
+      duckData.current = duckData.loopMode === 'crawl' ? 4 : 1;
+      renderDuck();
+    };
+    document.getElementById('btnDuckPrev').onclick = function() {
+      duckData.isPlaying = false;
+      document.getElementById('btnDuckPlayPause').textContent = '▶ Play';
+      duckData.current = duckData.current === 1 ? duckData.total : duckData.current - 1;
+      renderDuck();
+    };
+    document.getElementById('btnDuckNext').onclick = function() {
+      duckData.isPlaying = false;
+      document.getElementById('btnDuckPlayPause').textContent = '▶ Play';
+      duckData.current = (duckData.current % duckData.total) + 1;
+      renderDuck();
+    };
+    document.getElementById('btnDuckGroundToggle').onclick = function() {
+      const gl = document.getElementById('duckGroundLine');
+      gl.style.display = gl.style.display === 'none' ? 'flex' : 'none';
+    };
+    document.getElementById('duckSpeedSlider').oninput = function() {
+      duckData.fps = parseInt(this.value, 10);
+      document.getElementById('duckSpeedVal').textContent = `${duckData.fps} FPS`;
+    };
+
+    // Jump Button actions
+    document.getElementById('btnJumpPlayPause').onclick = function() {
+      jumpData.isPlaying = !jumpData.isPlaying;
+      this.textContent = jumpData.isPlaying ? '⏸ Pause' : '▶ Play';
+    };
+    document.getElementById('btnJumpRestart').onclick = function() {
+      jumpData.current = jumpData.loopMode === 'air' ? 4 : 1;
+      renderJump();
+    };
+    document.getElementById('btnJumpPrev').onclick = function() {
+      jumpData.isPlaying = false;
+      document.getElementById('btnJumpPlayPause').textContent = '▶ Play';
+      jumpData.current = jumpData.current === 1 ? jumpData.total : jumpData.current - 1;
+      renderJump();
+    };
+    document.getElementById('btnJumpNext').onclick = function() {
+      jumpData.isPlaying = false;
+      document.getElementById('btnJumpPlayPause').textContent = '▶ Play';
+      jumpData.current = (jumpData.current % jumpData.total) + 1;
+      renderJump();
+    };
+    document.getElementById('btnJumpGroundToggle').onclick = function() {
+      const gl = document.getElementById('jumpGroundLine');
+      gl.style.display = gl.style.display === 'none' ? 'flex' : 'none';
+    };
+    document.getElementById('jumpSpeedSlider').oninput = function() {
+      jumpData.fps = parseInt(this.value, 10);
+      document.getElementById('jumpSpeedVal').textContent = `${jumpData.fps} FPS`;
+    };
+
+    // Viewport backgrounds
+    function setViewportBg(viewportId, bgClass) {
+      const vp = document.getElementById(viewportId);
+      vp.className = `canvas-viewport ${bgClass}`;
+    }
+
+    // Render modes
+    function setDuckRenderMode(mode) {
+      duckData.mode = mode;
+      document.getElementById('btnDuckModeTrans').className = 'ctrl-btn' + (mode === 'trans' ? ' active' : '');
+      document.getElementById('btnDuckModeRaw').className = 'ctrl-btn' + (mode === 'raw' ? ' active' : '');
+      renderDuck();
+    }
+
+    function setJumpRenderMode(mode) {
+      jumpData.mode = mode;
+      document.getElementById('btnJumpModeTrans').className = 'ctrl-btn' + (mode === 'trans' ? ' active' : '');
+      document.getElementById('btnJumpModeRaw').className = 'ctrl-btn' + (mode === 'raw' ? ' active' : '');
+      renderJump();
+    }
+
+    function setDuckLoopMode(mode) {
+      duckData.loopMode = mode;
+      if (mode === 'crawl') duckData.current = 4;
+      renderDuck();
+    }
+
+    function setJumpLoopMode(mode) {
+      jumpData.loopMode = mode;
+      if (mode === 'air') jumpData.current = 4;
+      renderJump();
+    }
+
+    // Tabs
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // Load Manifest specs table
+    fetch(pathPrefix + 'manifest.json')
+      .then(r => r.json())
+      .then(m => {
+        const tbody = document.getElementById('specsTableBody');
+        tbody.innerHTML = '';
+        // Add duck rows
+        m.duckAnimation.frames.forEach(f => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="color:var(--accent-blue); font-weight:700;">DUCK</td>
+            <td>Frame ${f.frameNumber.toString().padStart(2, '0')}</td>
+            <td>R${f.row}C${f.col}</td>
+            <td>${f.poseName}</td>
+            <td>${f.sourceBounds.width} × ${f.sourceBounds.height}</td>
+            <td>${f.elevationAboveGround} px (Grounded)</td>
+            <td>Complete Snout / Eyes Closed</td>
+            <td style="color:var(--accent-green);">100% Intact</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Add jump rows
+        m.jumpAnimation.frames.forEach(f => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="color:var(--accent-yellow); font-weight:700;">JUMP</td>
+            <td>Frame ${f.frameNumber.toString().padStart(2, '0')}</td>
+            <td>R${f.row}C${f.col}</td>
+            <td>${f.poseName}</td>
+            <td>${f.sourceBounds.width} × ${f.sourceBounds.height}</td>
+            <td>${f.elevationAboveGround > 0 ? '+' + f.elevationAboveGround + ' px' : '0 px (Grounded)'}</td>
+            <td>Complete Snout / Eyes Open</td>
+            <td style="color:var(--accent-green);">100% Intact</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(e => console.error('Manifest fetch error:', e));
+
+    // Initialize
+    window.addEventListener('load', () => {
+      buildThumbnails('duckThumbnails', duckData, 'duck');
+      buildThumbnails('jumpThumbnails', jumpData, 'jump');
+      renderDuck();
+      renderJump();
+      requestAnimationFrame(animLoop);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,779 @@
+
+--- STREAM / PAGE 1 ---
+
+
+OFFLINE DINO
+Detailed Implementation Requirements & Acceptance Specification
+A structured handoff for Antigravity \177 Version 1.0 \177 14 October 2026
+Primary objective Improve three existing areas without redesigning the game or replacing the approved 2D cartoon dinosaur.
+01 Home Page cursor interactions 02 Skin-selection rotation 03 Running animation and difficulty progression
+MANDATORY DESIGN RULE Preserve the exact approved dinosaur artwork, proportions, colors, outlines, shading, and cartoon identity.
+
+--- STREAM / PAGE 2 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 2
+Prepared from the 60-question requirements-gathering process. This specification defines expected behavior, implementation boundaries, verification methods, and evidence needed for an honest completion report.
+
+--- STREAM / PAGE 3 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 3
+Document Control
+
+Field
+Specification
+Project
+OFFLINE DINO \227 existing 2D cartoon endless-runner game
+Implementation environment
+Google Antigravity working in the existing project
+Purpose
+Implementation-ready requirements and acceptance criteria; not a request to rebuild the game
+Scope
+Home Page cursor interactions; skin-selection rotation; running animation and associated gradual difficulty progression
+Language level
+Beginner-friendly English, with technical terms explained
+Version / date
+Version 1.0 \227 14 October 2026
+Status
+Requirements finalized; implementation and verification remain to be performed
+
+Important: This PDF is a requirements specification, not proof that code has been inspected, modified, or tested. Antigravity must record actual results and evidence during implementation.
+Table of Contents
+
+Section
+Contents
+1
+Executive Summary
+2
+Scope, Priorities, and Non-Negotiable Rules
+3
+Required Workflow Before Editing
+4
+Priority 1 \227 Home Page Cursor Interactions
+5
+Priority 2 \227 Skin-Selection Rotation and Skin Consistency
+6
+Priority 3 \227 Running Animation and Difficulty Progression
+7
+Asset Handling and Visual Reference Requirements
+8
+Implementation Guidance and Animation-State Coordination
+9
+Performance, Browser, and Regression Testing
+10
+Acceptance Criteria and Requirement Traceability
+11
+Defect Handling and Final Report Template
+12
+Antigravity Execution Checklist
+Appendix A
+Reference-image and evidence inventory
+Appendix B
+Glossary of technical terms
+
+--- STREAM / PAGE 4 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 4
+1. Executive Summary
+OFFLINE DINO is an existing offline-first, no-ads endless-runner game inspired by the Chrome Dino concept. The project already has an approved colorful 2D cartoon dinosaur and a mostly completed interface. This is targeted improvement, not a redesign.
+The work covers three areas, in this order:
+
+1
+Home Page cursor interactions:  natural pupil tracking, subtle head movement, expressions, blinking, and a small playful click reaction.
+
+2
+Skin-selection rotation:  preserve the existing skin UI and make the exact original dinosaur turn smoothly through front, left, right, back, and intermediate views where supported by available artwork.
+
+3
+Running animation:  correct leg coordination, ground contact, body rhythm, tail movement, framing, and animation timing as game speed increases. Difficulty must increase gradually and fairly.
+The overall visual style remains 2D cartoon. \2233D\224 means convincing turning and natural movement\227not a realistic 3D dinosaur. Matched 2D views or cartoon-style 2.5D techniques may be used if more reliable than continuous model rotation.
+
+Success means: the three areas look and behave correctly, the original character remains consistent, existing gameplay continues to work, and every completion claim is supported by real test results.
+2. Scope, Priorities, and Non-Negotiable Rules
+2.1 Work order
+
+Order
+Area
+Main outcome
+1
+Home Page cursor interactions
+Responsive, natural, stable cursor-driven character behavior.
+2
+Skin-selection rotation
+Smooth, accurate turning with consistent character design across skins.
+3
+Running animation
+Natural running cycle, correct framing, speed synchronization, and fair difficulty progression.
+2.2 Mandatory constraints
+\177 Keep the game 2D cartoon. Do not replace the approved dinosaur with a realistic 3D model or a different generic dinosaur.
+\177 Preserve the original proportions, silhouette, face, eyes, cream belly, outlines, highlights, shading, claws, tail shape, and defining details.
+\177 Keep the existing Home Page and skin-selection UI substantially unchanged.
+\177 Keep green as the default skin. Other skins change the intended skin color only; protected details must remain correct.
+\177 Do not expand the work into unrelated features, screen redesigns, or gameplay systems.
+\177 Preserve working features and fix regressions caused by these changes.
+\177 Use explicit instructions and observable acceptance checks instead of vague words such as \223smoother.\224
+\177 Never claim a fix, test, screenshot, or result exists unless it is genuinely available.
+2.3 Explicitly out of scope
+Do not redesign the Home Page, rebuild the skin-selection UI, add new gameplay features, change unrelated screens, or modify broader gameplay systems. Day/night transition work is a separate topic and is not included here.
+
+--- STREAM / PAGE 5 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 5
+3. Required Workflow Before Editing
+Antigravity must complete the following steps before modifying project files. The selected approach is to work directly in existing files without creating a separate backup first. This does not remove the obligation to inspect carefully and preserve working behavior.
+3.1 Inspect the full project
+Review the project structure and relevant source files, including Home Page, skin selection, character assets, sprite sheets, animation logic, input handlers, and gameplay speed/difficulty logic.
+3.2 Trace dependencies
+Identify how components, animation states, sprites, skin colors, and gameplay speed depend on one another. Record shared code that could affect multiple priorities.
+3.3 Inventory original assets
+Locate the approved gameplay dinosaur, original sprite sheets, animation frames, skin assets, and existing screenshots. Record paths and usage.
+3.4 Establish a baseline
+Run the current game and reproduce known issues before editing. Record observations and capture genuine screenshots or short recordings where possible.
+3.5 Diagnose root causes
+For each defect, state the symptom, likely or confirmed cause, relevant files, and proposed fix. Mark a cause \223suspected\224 until verified.
+3.6 Map changes to requirements
+List expected files to change and link each change to a requirement ID in Section 10. Avoid edits outside scope.
+3.7 Implement in agreed order
+Complete and test Home Page interactions, then skin rotation, then running animation. Explain any dependency that requires changing this order.
+3.8 Test each area
+Test and correct each area before proceeding to the next.
+3.9 Integrate and regression-test
+After all three areas work individually, test them together and verify existing gameplay features in Section 9.
+3.10 Report honestly
+Produce the evidence-based report in Section 11. Use Pass, Fail, or Unverified for each requirement.
+
+Editing rule: Prefer targeted changes. Refactor larger sections only when justified by the root cause; explain significant refactoring and test it for regressions.
+
+--- STREAM / PAGE 6 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 6
+4. Priority 1 \227 Home Page Cursor Interactions
+Goal: make the dinosaur feel like a responsive cartoon character while keeping the body stable and preserving the approved design. These interactions apply to the Home Page only; do not add them to gameplay unless already required.
+4.1 Required cursor behavior
+
+Cursor situation
+Expected behavior
+Cursor far away / not interacting
+Normal idle pose, calmly looking ahead. Occasional subtle blinking is allowed.
+Cursor moves left
+Pupils respond almost immediately; head turns naturally left. Body stays stable.
+Cursor moves right
+Pupils respond almost immediately; head turns naturally right. Body stays stable.
+Cursor at horizontal center
+Dinosaur faces forward with both eyes clearly visible.
+Cursor moves upward
+Pupils follow upward; head may lift subtly.
+Cursor moves downward
+Pupils follow downward; head may bend subtly down.
+Cursor at exact center
+Pupils look slightly upward, as specified.
+Cursor comes nearby
+Dinosaur may transition smoothly into a cute smile.
+Player clicks/touches dinosaur
+Small cute startled wiggle or playful reaction; a small whole-body motion is allowed, then returns smoothly.
+Cursor leaves / moves far away
+Finish expressions naturally and return smoothly to idle.
+4.2 Movement and appearance rules
+\177 Pupils respond quickly enough to feel connected to cursor movement, with enough smoothing to prevent jitter.
+\177 Head movement and pupil movement stay synchronized; the head must not noticeably lag behind the eyes.
+\177 Left/right turns show clear side profiles; center/front view shows both eyes clearly.
+\177 Preserve exact in-game pupil size and eye appearance, including white sclera and black pupils. No flickering or color changes.
+\177 Keep body shape stable during tracking and smiling. No stretching, flattening, widening, or unnatural narrowing.
+\177 Preserve the approved design during blinking, smiling, and click reactions.
+\177 Use smooth transitions rather than switching between only a few static poses. A rig or detailed frame sequence is acceptable if design fidelity is preserved.
+\177 Do not allow click, blink, smile, and head turn to conflict or overlap visibly.
+4.3 Animation priority and state handling
+Use a coordinated animation-state system or equivalent reliable method. In simple terms, the character should know which behavior is active and how to transition to another behavior.
+
+State / interaction
+Required handling
+Idle
+Default state when no active cursor reaction is needed.
+Tracking
+Pupils and head respond to cursor position without unnecessary body movement.
+Smile / blink
+Blend naturally with tracking; avoid facial distortion or abrupt resets.
+Click reaction
+Has suitable priority; smoothly interrupts compatible actions without conflicting head or facial movement.
+Return to idle/tracking
+When the reaction ends, restore the correct state based on the current cursor position.
+4.4 Acceptance checks
+\177 Move cursor slowly and rapidly in all directions; verify response without jitter or visible delay.
+\177 Move cursor left, right, center, top, and bottom; check side profiles, forward view, and vertical tracking.
+
+--- STREAM / PAGE 7 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 7
+\177 Move cursor away and return; the character transitions smoothly between idle and tracking.
+\177 Click repeatedly while moving the cursor; no freezing, stuck smile, conflicting head positions, or broken pupil tracking.
+\177 Verify body proportions and facial details across interactions.
+\177 Verify these behaviors are restricted to the Home Page.
+
+--- STREAM / PAGE 8 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 8
+5. Priority 2 \227 Skin-Selection Rotation and Skin Consistency
+Goal: preserve the existing skin-selection interface and make the original dinosaur turn smoothly and consistently. A smoothly rotating generic dinosaur is not acceptable; rotation must use the approved character design.
+5.1 Rotation behavior
+\177 Preserve the existing rotation controls and UI.
+\177 Support front, left, right, and back directions plus intermediate views where available.
+\177 Test slow input, fast input, reversing direction, repeated input, stopping midway, and resuming.
+\177 Prevent sudden snapping, skipped views, flickering, visible gaps, inconsistent outlines, or changes to body proportions.
+\177 Allow rotation to be interrupted and resumed without a broken pose.
+\177 If current artwork cannot support reliable continuous rotation, use carefully matched 2D views and intermediate frames rather than an inaccurate invented model.
+5.2 Preserve character proportions and facial features
+\177 Use original gameplay dinosaur and original sprite/animation frames as equally important references.
+\177 Check front, left, right, back, and intermediate views against silhouette, head size, body length, belly shape, tail, feet, and claws.
+\177 Allow natural perspective only if it does not make the character appear stretched, flattened, or changed in identity.
+\177 Preserve eye whites and black pupils, outline thickness, highlights, shading, and facial expression as closely as original assets allow.
+\177 Do not substitute a different dinosaur model or make an unapproved redesign.
+5.3 Skin behavior
+All skins use the same character design. The skin system changes the intended skin color only. The cream belly, eye whites, black pupils, outlines, claws, highlights, shading, facial details, and transparent background must remain correct.
+
+Requirement
+Verification
+Default skin
+Green is selected by default.
+Skin color
+Each available color is applied consistently without changing character identity.
+Protected details
+Belly, eyes, pupils, outlines, claws, shading, and highlights remain intact.
+Transparency
+No white halo, opaque rectangle, or unwanted background around transparent sprites.
+Cross-screen consistency
+Preview, Home Page, animation frames, and gameplay show the same selected skin.
+Rotation consistency
+Turning does not change skin colors, erase details, or introduce mismatched frames.
+5.4 Acceptance checks
+\177 Rotate through every supported direction and intermediate view; inspect for snapping, flicker, gaps, and distortion.
+\177 Interrupt rotation, reverse direction, stop midway, and resume.
+\177 Test every available skin: green, blue, red, yellow, orange, purple, pink, brown, and charcoal.
+\177 Check green default and verify the selected skin appears consistently across relevant screens and animations.
+\177 Inspect transparent edges and protected details at normal size and, where useful, enlarged.
+\177 Compare each view against original gameplay dinosaur and sprite frames.
+
+--- STREAM / PAGE 9 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 9
+6. Priority 3 \227 Running Animation and Difficulty Progression
+Goal: repair the existing running cycle first, then add missing frames or improve the animation technique only when needed. The result remains a natural 2D cartoon, not a realistic 3D dinosaur.
+6.1 Running cycle requirements
+\177 Legs alternate correctly; neither leg may appear frozen, disconnected, or permanently floating.
+\177 Feet make believable ground contact. Avoid obvious inconsistent foot sliding.
+\177 Body remains coordinated and stable, with a natural cartoon rhythm.
+\177 Tail moves gently in coordination with the running rhythm and preserves its original shape and proportions.
+\177 Tail must never be clipped by canvas, sprite bounds, viewport, or animation frame.
+\177 Correct frame timing, missing/defective frames, and unwanted jumps between poses.
+\177 Do not introduce eye flicker, eye color changes, white halos, or unrelated facial distortions.
+\177 Review the complete cycle repeatedly at actual gameplay speed and compare with the original dinosaur.
+6.2 Tail, framing, and edge handling
+The tail shape must remain unchanged. Motion may be gentle and fluid, but it must not swing excessively, stretch, change thickness, or clip. Check the complete silhouette at every frame, including the tail tip and poses that move the body vertically.
+If sprite bounds or canvas sizing cause clipping, identify and correct the relevant bounds, padding, frame alignment, or rendering logic. Do not shrink or distort the dinosaur just to hide the problem.
+6.3 Animation timing as game speed increases
+\177 Synchronize animation playback with gameplay speed while preserving natural cartoon movement.
+\177 Test low, medium, and high gameplay speeds. The cycle must not become excessively fast at high scores.
+\177 Keep leg motion coordinated with ground contact and tail motion synchronized with the running rhythm.
+\177 Avoid sudden jumps in animation speed or timing.
+\177 Test the full cycle repeatedly at actual gameplay speed, not only in a paused editor or static preview.
+6.4 Gradual difficulty progression
+Both dinosaur speed and obstacle frequency should increase gradually with score. The beginning should feel calm; the increase should be almost imperceptible at first, then progressively noticeable at higher scores. Avoid sudden difficulty spikes.
+\177 Test at low, medium, and high scores.
+\177 Ensure obstacle spacing leaves fair reaction time.
+\177 Avoid impossible obstacle combinations or obstacles that become unavoidable solely because speed increased.
+\177 Keep dinosaur animation synchronized with movement speed.
+\177 Confirm difficulty progression does not cause stuttering or tail/body clipping.
+6.5 Acceptance checks
+\177 Watch multiple complete running cycles at low, medium, and high speeds.
+\177 Confirm both legs alternate and feet contact the ground plausibly.
+\177 Check tail in every frame and during vertical movement; no clipping is allowed.
+\177 Look for frozen, disconnected, duplicated, or out-of-rhythm frames.
+
+--- STREAM / PAGE 10 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 10
+\177 Check eyes and outlines for flickering or white halos.
+\177 Test low, medium, and high score progression and confirm fair obstacle spacing.
+
+--- STREAM / PAGE 11 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 11
+7. Asset Handling and Visual Reference Requirements
+The document must not pretend to contain screenshots or source assets that are unavailable. Antigravity must locate and use real project assets and capture genuine screenshots during testing.
+7.1 Required reference inventory
+
+Reference ID
+Reference type
+What it should establish
+REF-01
+Original gameplay dinosaur screenshot
+Approved appearance, silhouette, face, proportions, and colors.
+REF-02
+Original sprite sheet / animation frames
+Original poses, frame design, outlines, shading, and running-cycle reference.
+REF-03
+Current Home Page screenshot
+Existing layout and starting idle appearance.
+REF-04
+Current skin-selection screenshot
+Existing UI and current rotation preview.
+REF-05
+Current running gameplay screenshot/recording
+Baseline for animation and clipping defects.
+REF-06
+Before-and-after screenshots
+Genuine comparison of same or comparable view/state, when available.
+REF-07
+Animation/state diagram
+Expected cursor, expression, click, rotation, and running-state transitions.
+REF-08
+Test evidence screenshots/recordings
+Actual results for each acceptance test.
+7.2 Image and evidence rules
+\177 Use actual project screenshots and assets when available; record file paths or evidence IDs.
+\177 Illustrative diagrams may explain expected behavior but must be labeled as illustrations, not actual screenshots.
+\177 Do not invent before-and-after results or present a generated concept as the current game.
+\177 If a needed source image is missing, write \223Source asset not found\224 and identify what must be located or supplied.
+\177 If a screenshot cannot prove a behavior by itself, use a short recording or document the manual test.
+\177 Link each reference image to the requirement it supports.
+7.3 Suggested visual diagrams
+Include labeled diagrams for: 1 cursor position  \256  pupil/head response  \256  idle return; 2 rotation direction and view checkpoints; 3 running-cycle sequence with leg alternation and tail bounds; and 4 requirement  \256  test  \256  evidence  \256 final status. These diagrams explain intended behavior and must not be mislabeled as captured game output.
+
+--- STREAM / PAGE 12 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 12
+8. Implementation Guidance and Animation-State Coordination
+This guidance is technology-neutral. Antigravity should use the existing project architecture unless inspection reveals a clear reason to change it.
+8.1 General implementation rules
+\177 Identify exact files and components responsible for each requirement before editing.
+\177 Reuse existing character assets and animation logic where possible.
+\177 Avoid duplicate character definitions or inconsistent versions of the dinosaur.
+\177 Keep skin color selection separate from protected details and transparency.
+\177 Keep animation state changes explicit and predictable.
+\177 Prefer small, testable changes over a large rewrite.
+\177 Explain significant refactoring in plain English and list affected files.
+8.2 Example Home Page state flow
+
+Current condition
+Next state / behavior
+Exit condition
+No nearby cursor action
+Idle; occasional blink
+Cursor enters tracking range or user clicks
+Cursor moves
+Track pupils and subtly move head
+Cursor changes direction or leaves
+Cursor nearby
+Blend into a cute smile
+Cursor moves away or another action begins
+User clicks/touches
+Play small playful reaction
+Reaction completes
+Reaction completes
+Return to tracking if cursor is present; otherwise idle
+New input or idle continues
+8.3 Example rotation flow
+Rotation input  \256  determine direction and progress  \256  display matching view or interpolate between matching views  \256 keep proportions and protected details consistent  \256  handle interruption/reversal  \256  settle at the requested view. If continuous interpolation causes visual errors, use matched intermediate 2D frames.
+8.4 Example running flow
+Read gameplay speed  \256  choose an appropriate running-cycle playback rate  \256  advance coordinated leg/body/tail frames  \256  verify ground contact and sprite bounds  \256  repeat without jumps or clipping. Difficulty progression must be gradual and separate from arbitrary animation distortion.
+8.5 Avoiding animation conflicts
+When a click, blink, smile, cursor movement, or rotation interrupts another animation, the implementation should transition cleanly. Do not let two animations write conflicting values to the same feature at the same time. When an action ends, calculate the correct next state from current input and gameplay context.
+
+--- STREAM / PAGE 13 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 13
+9. Performance, Browser, and Regression Testing
+Testing must include automated checks where practical and actual browser inspection. Automated tests can verify logic, but do not replace visual inspection of appearance and animation.
+9.1 Performance and interaction tests
+\177 Test rapid/slow cursor movement, repeated clicks, continuous rotation, reversals, and interruptions.
+\177 Test every skin and the full running cycle at low, medium, and high gameplay speeds.
+\177 Look for frame drops, stuttering, flickering, memory problems, and animation conflicts.
+\177 Fix performance problems without sacrificing the original cartoon design.
+\177 Do not invent numeric frame-rate guarantees unless an existing or agreed target provides them. Record the actual test environment and observed result.
+9.2 Browser and screen conditions
+\177 Test in the current browser at different window sizes and in fullscreen.
+\177 Test other supported desktop browsers where available.
+\177 Resize the window while animations are running.
+\177 Test fullscreen transitions and switching tabs or minimizing the window.
+\177 Verify character positioning and animation stability.
+\177 Verify existing pause/resume behavior and report environments that could not be tested.
+9.3 Required regression checks
+Verify these existing features still work after changes. This is a regression check, not permission to redesign them.
+
+Feature
+Regression check
+Game launch
+Game starts without new errors or a broken screen.
+Controls
+Existing keyboard and mobile controls still behave as before where applicable.
+Running / jumping / crouching
+Movement works; character does not freeze or distort.
+Obstacles and scoring
+Obstacle behavior and score progression remain functional.
+High scores
+Existing high-score behavior remains intact.
+Pause / resume
+Existing pause and resume behavior remains intact.
+Game Over
+Game-over screen and final character pose remain correct.
+Sound
+Existing sound behavior remains functional.
+Offline operation
+Game remains usable without runtime internet access.
+Skins
+Selected skin remains consistent across preview and gameplay.
+9.4 Defect and retest procedure
+
+1
+Record the exact defect and reproduction steps.
+
+2
+Identify whether it existed before changes or was introduced by them.
+
+3
+Investigate the root cause; mark it confirmed, suspected, or unknown.
+
+4
+Apply a justified fix and identify changed files.
+
+5
+Repeat the failed test and related tests.
+
+6
+Run regression checks on potentially affected features.
+
+7
+Record Pass, Fail, or Unverified with evidence.
+
+--- STREAM / PAGE 14 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 14
+10. Acceptance Criteria and Requirement Traceability
+Every requirement must have a unique ID. These are the minimum acceptance requirements. Antigravity may add sub-IDs but must not silently remove a requirement.
+
+ID
+Requirement
+Expected result
+Test method
+Status
+HOME-01
+Cursor tracking
+Pupils follow horizontal and vertical cursor movement quickly without jitter.
+Manual browser test
+Not tested
+HOME-02
+Head movement
+Head follows naturally; front and side profiles remain accurate.
+Visual comparison
+Not tested
+HOME-03
+Stable body
+Body proportions stay stable except for the small click reaction.
+Visual inspection
+Not tested
+HOME-04
+Expressions
+Smile, blink, and click reaction preserve the approved face.
+Repeated interaction test
+Not tested
+HOME-05
+State transitions
+No stuck, overlapping, frozen, or snapping animations.
+Rapid input / idle-return test
+Not tested
+SKIN-01
+Rotation coverage
+Front, left, right, back, and supported intermediate views are correct.
+Rotation test
+Not tested
+SKIN-02
+Rotation smoothness
+No unwanted snapping, flicker, gaps, or proportion distortion.
+Slow/fast/reversal test
+Not tested
+SKIN-03
+Design fidelity
+All views match original gameplay and sprite references.
+Reference comparison
+Not tested
+SKIN-04
+Skin consistency
+All nine skins preserve protected details; green is default.
+All-skins test
+Not tested
+SKIN-05
+Transparency
+No unwanted white halo or opaque rectangle.
+Edge inspection
+Not tested
+RUN-01
+Leg alternation
+Both legs alternate; neither is frozen or disconnected.
+Full-cycle inspection
+Not tested
+RUN-02
+Ground contact
+Feet contact ground plausibly without inconsistent sliding.
+Gameplay-speed inspection
+Not tested
+RUN-03
+Tail motion
+Tail is coordinated, shape-preserving, and never clipped.
+Frame/gameplay inspection
+Not tested
+RUN-04
+Cycle integrity
+No broken, duplicated, skipped, or out-of-rhythm frames.
+Repeated full-cycle test
+Not tested
+RUN-05
+Speed synchronization
+Running cycle remains natural at low/medium/high speeds.
+Speed-tier test
+Not tested
+DIFF-01
+Gradual difficulty
+Speed and obstacle frequency increase gradually with score.
+Low/medium/high-score test
+Not tested
+DIFF-02
+Fair obstacles
+Spacing and combinations remain avoidable with reasonable reaction time.
+Gameplay test
+Not tested
+PERF-01
+Responsiveness
+No noticeable lag, stuttering, or conflicts during interactions.
+Stress/manual test
+Not tested
+REG-01
+Existing features
+Controls, scoring, obstacles, pause/resume, Game Over, sound, offline mode work.
+Regression checklist
+Not tested
+DOC-01
+Evidence report
+Every requirement has honest status and evidence reference where available.
+Report review
+Not tested
+Status values:  Pass = expected result tested and achieved; Fail = test performed and expected result not achieved; Unverified = not adequately tested or evidence unavailable. Never use Pass for an assumption.
+
+--- STREAM / PAGE 15 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 15
+11. Defect Handling and Final Report Template
+Complete this report after implementation. Do not fill in results before testing. Keep fields marked \223Not yet tested\224 until evidence exists.
+11.1 Implementation summary
+
+Field
+Required entry
+Files inspected
+List actual files and folders inspected.
+Files modified
+List each changed file and why.
+Assets reused or added
+List asset paths and explain any new frames/views.
+Root causes
+Separate confirmed causes from suspected causes.
+Major implementation decisions
+Explain technical choices or justified changes to planned order.
+11.2 Test results summary
+
+Requirement ID
+Test environment
+Actual result
+Status
+Evidence ID/path
+Defect/retest
+HOME-01
+Not yet tested
+Not yet tested
+Unverified
+\227
+\227
+SKIN-01
+Not yet tested
+Not yet tested
+Unverified
+\227
+\227
+RUN-01
+Not yet tested
+Not yet tested
+Unverified
+\227
+\227
+11.3 Defect log
+
+Defect ID
+Requirement ID
+Observed issue / reproduction
+Root cause
+Fix applied
+Retest
+BUG-001
+\227
+Fill after observing a real defect.
+Confirmed/suspected /unknown
+Actual change or none
+Pass/Fail/Unverif ied
+BUG-002
+\227
+Fill after observing a real defect.
+Confirmed/suspected /unknown
+Actual change or none
+Pass/Fail/Unverif ied
+11.4 Before-and-after evidence
+\177 Capture genuine evidence from the same or comparable view/state where possible.
+\177 Label each image with requirement ID, state, skin, and gameplay speed if relevant.
+\177 Do not alter evidence in a way that misrepresents the result.
+\177 If no before image exists, say so; do not manufacture one.
+\177 If a still image cannot show the behavior, use a short recording or documented test.
+11.5 Final completion statement
+Summarize passed, failed, and unverified requirements; remaining limitations; browser/environment coverage; regression results; and whether the original dinosaur design was preserved. Do not declare full completion if a critical requirement fails or remains unverified; explain the blocker.
+
+Honesty rule: \223Implemented\224 is not the same as \223verified.\224 A feature remains Unverified until the relevant test is actually performed.
+
+--- STREAM / PAGE 16 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 16
+12. Antigravity Execution Checklist
+Before editing
+\177  n  Inspect full project and trace dependencies.
+\177  n  Locate original gameplay screenshots, sprite sheets, and animation frames.
+\177  n  Reproduce and document baseline defects.
+\177  n  Identify root causes and relevant files before editing.
+\177  n  Map each planned change to a requirement ID.
+Priority 1 \227 Home Page
+\177  n  Implement accurate pupil tracking and natural head movement.
+\177  n  Preserve body proportions and approved facial details.
+\177  n  Add smooth smile, blink, and playful click reaction.
+\177  n  Coordinate animation states and test rapid/repeated input.
+\177  n  Verify smooth return to idle or current cursor tracking.
+Priority 2 \227 Skin selection
+\177  n  Preserve existing UI and rotation controls.
+\177  n  Use original dinosaur artwork as visual reference.
+\177  n  Verify front/left/right/back and supported intermediate views.
+\177  n  Test rotation reversal, interruption, and resume.
+\177  n  Test all nine skins; confirm green default and protected details.
+\177  n  Inspect transparency; no unwanted halo or rectangle.
+Priority 3 \227 Running
+\177  n  Repair leg alternation, ground contact, and body rhythm.
+\177  n  Repair tail movement and guarantee no clipping.
+\177  n  Check full cycles at actual gameplay speed.
+\177  n  Synchronize animation at low/medium/high speeds.
+\177  n  Verify gradual difficulty and fair obstacle spacing.
+Final verification
+\177  n  Test performance, browsers, resizing, fullscreen, tab/minimize where available.
+\177  n  Run regression checks for controls, scoring, obstacles, pause/resume, Game Over, sound, and offline mode.
+\177  n  Fix regressions and retest.
+\177  n  Complete traceability table and defect log.
+\177  n  Provide genuine visual evidence and honest final report.
+
+--- STREAM / PAGE 17 ---
+
+
+OFFLINE DINO \177 Implementation Requirements \177 v1.0
+Page 17
+Appendix A \227 Reference-Image and Evidence Inventory
+Complete this inventory during project inspection. Original project images were not available to this document-generation step, so none are fabricated or represented as embedded project screenshots. Antigravity must locate or capture genuine evidence.
+
+ID
+Asset / evidence needed
+Path / evidence reference
+Status
+REF-01
+Approved gameplay dinosaur screenshot
+To be filled by Antigravity
+Not yet located
+REF-02
+Original sprite sheet / animation frames
+To be filled by Antigravity
+Not yet located
+REF-03
+Current Home Page screenshot
+To be captured or located
+Not yet captured
+REF-04
+Current skin-selection screenshot
+To be captured or located
+Not yet captured
+REF-05
+Current running gameplay screenshot/recording
+To be captured or located
+Not yet captured
+REF-06
+Before/after comparisons
+Capture after implementation
+Not yet available
+REF-07
+State and animation diagrams
+Create from requirements
+Required
+REF-08
+Final test evidence
+Capture during testing
+Not yet available
+
+Visual-reference limitation: Original project images are not embedded because verified source files were not available during PDF creation. The required evidence is listed explicitly rather than replaced with invented screenshots.
+Appendix B \227 Glossary of Technical Terms
+
+Term
+Simple explanation
+Asset
+A file used by the game, such as an image, sprite sheet, sound, or animation frame.
+Sprite
+A 2D image used to draw a character or object.
+Sprite sheet
+One image containing multiple animation frames.
+Frame
+One still image or pose in an animation.
+Interpolation
+Creating smooth intermediate movement between two poses or values.
+2.5D
+A technique adding some depth/turning while keeping a 2D cartoon appearance.
+Animation state
+The current behavior, such as idle, tracking, smiling, clicking, rotating, or running.
+Regression
+A problem where a previously working feature breaks after a change.
+Root cause
+The underlying reason a defect happens, rather than only its visible symptom.
+Acceptance criteria
+Clear conditions that must be met before a requirement is complete.
+Traceability
+Linking a requirement to its test, evidence, and final status.
+Unverified
+Not adequately tested or lacking enough evidence to confirm success.
+Transparent background
+An image background that lets the game scene show through rather than drawing a solid rectangle.
+Ground contact
+The point where a foot appears to meet the ground during a running step.
+End of specification \227 OFFLINE DINO, Version 1.0

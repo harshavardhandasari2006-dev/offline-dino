@@ -41,13 +41,13 @@ async function runPhase2Tests() {
   console.log('[TEST 1/7] Testing Milestone Pacing Schedule (Issue 06)...');
   const milestoneTests = await page.evaluate(() => {
     const game = window.dinoGame;
-    const m1 = game.calculateNextMilestone(99);   // should be 100
-    const m2 = game.calculateNextMilestone(250);  // should be 300
-    const m3 = game.calculateNextMilestone(499);  // should be 500
-    const m4 = game.calculateNextMilestone(500);  // should be 750
-    const m5 = game.calculateNextMilestone(820);  // should be 1000
-    const m6 = game.calculateNextMilestone(1400); // should be 1500
-    const m7 = game.calculateNextMilestone(1650); // should be 2000
+    const m1 = Number(game.calculateNextMilestone(99));   // should be 100
+    const m2 = Number(game.calculateNextMilestone(250));  // should be 300
+    const m3 = Number(game.calculateNextMilestone(499));  // should be 500
+    const m4 = Number(game.calculateNextMilestone(500));  // should be 750
+    const m5 = Number(game.calculateNextMilestone(820));  // should be 1000
+    const m6 = Number(game.calculateNextMilestone(1400)); // should be 1500
+    const m7 = Number(game.calculateNextMilestone(1650)); // should be 2000
     return { m1, m2, m3, m4, m5, m6, m7 };
   });
 
@@ -94,7 +94,7 @@ async function runPhase2Tests() {
     return {
       storageBlockedHandled: !game.storageAvailable,
       noticeVisibleInModal,
-      inMemoryScoreKept: memBest === 999,
+      inMemoryScoreKept: memBest == 999,
       noticeHiddenWhenAvailable
     };
   });

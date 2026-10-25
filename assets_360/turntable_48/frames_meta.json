@@ -1,0 +1,338 @@
+[
+  {
+    "frameNumber": 1,
+    "fileName": "frame_01.png",
+    "angleDeg": 0,
+    "angleRad": 0,
+    "description": "Front (0°)"
+  },
+  {
+    "frameNumber": 2,
+    "fileName": "frame_02.png",
+    "angleDeg": 7.5,
+    "angleRad": 0.1309,
+    "description": "Yaw 7.5°"
+  },
+  {
+    "frameNumber": 3,
+    "fileName": "frame_03.png",
+    "angleDeg": 15,
+    "angleRad": 0.2618,
+    "description": "Yaw 15.0°"
+  },
+  {
+    "frameNumber": 4,
+    "fileName": "frame_04.png",
+    "angleDeg": 22.5,
+    "angleRad": 0.3927,
+    "description": "Yaw 22.5°"
+  },
+  {
+    "frameNumber": 5,
+    "fileName": "frame_05.png",
+    "angleDeg": 30,
+    "angleRad": 0.5236,
+    "description": "Yaw 30.0°"
+  },
+  {
+    "frameNumber": 6,
+    "fileName": "frame_06.png",
+    "angleDeg": 37.5,
+    "angleRad": 0.6545,
+    "description": "Yaw 37.5°"
+  },
+  {
+    "frameNumber": 7,
+    "fileName": "frame_07.png",
+    "angleDeg": 45,
+    "angleRad": 0.7854,
+    "description": "Front-Right 3/4 (45°)"
+  },
+  {
+    "frameNumber": 8,
+    "fileName": "frame_08.png",
+    "angleDeg": 52.5,
+    "angleRad": 0.9163,
+    "description": "Yaw 52.5°"
+  },
+  {
+    "frameNumber": 9,
+    "fileName": "frame_09.png",
+    "angleDeg": 60,
+    "angleRad": 1.0472,
+    "description": "Yaw 60.0°"
+  },
+  {
+    "frameNumber": 10,
+    "fileName": "frame_10.png",
+    "angleDeg": 67.5,
+    "angleRad": 1.1781,
+    "description": "Yaw 67.5°"
+  },
+  {
+    "frameNumber": 11,
+    "fileName": "frame_11.png",
+    "angleDeg": 75,
+    "angleRad": 1.309,
+    "description": "Yaw 75.0°"
+  },
+  {
+    "frameNumber": 12,
+    "fileName": "frame_12.png",
+    "angleDeg": 82.5,
+    "angleRad": 1.4399,
+    "description": "Yaw 82.5°"
+  },
+  {
+    "frameNumber": 13,
+    "fileName": "frame_13.png",
+    "angleDeg": 90,
+    "angleRad": 1.5708,
+    "description": "Right Profile (90°)"
+  },
+  {
+    "frameNumber": 14,
+    "fileName": "frame_14.png",
+    "angleDeg": 97.5,
+    "angleRad": 1.7017,
+    "description": "Yaw 97.5°"
+  },
+  {
+    "frameNumber": 15,
+    "fileName": "frame_15.png",
+    "angleDeg": 105,
+    "angleRad": 1.8326,
+    "description": "Yaw 105.0°"
+  },
+  {
+    "frameNumber": 16,
+    "fileName": "frame_16.png",
+    "angleDeg": 112.5,
+    "angleRad": 1.9635,
+    "description": "Yaw 112.5°"
+  },
+  {
+    "frameNumber": 17,
+    "fileName": "frame_17.png",
+    "angleDeg": 120,
+    "angleRad": 2.0944,
+    "description": "Yaw 120.0°"
+  },
+  {
+    "frameNumber": 18,
+    "fileName": "frame_18.png",
+    "angleDeg": 127.5,
+    "angleRad": 2.2253,
+    "description": "Yaw 127.5°"
+  },
+  {
+    "frameNumber": 19,
+    "fileName": "frame_19.png",
+    "angleDeg": 135,
+    "angleRad": 2.3562,
+    "description": "Rear-Right 3/4 (135°)"
+  },
+  {
+    "frameNumber": 20,
+    "fileName": "frame_20.png",
+    "angleDeg": 142.5,
+    "angleRad": 2.4871,
+    "description": "Yaw 142.5°"
+  },
+  {
+    "frameNumber": 21,
+    "fileName": "frame_21.png",
+    "angleDeg": 150,
+    "angleRad": 2.618,
+    "description": "Yaw 150.0°"
+  },
+  {
+    "frameNumber": 22,
+    "fileName": "frame_22.png",
+    "angleDeg": 157.5,
+    "angleRad": 2.7489,
+    "description": "Yaw 157.5°"
+  },
+  {
+    "frameNumber": 23,
+    "fileName": "frame_23.png",
+    "angleDeg": 165,
+    "angleRad": 2.8798,
+    "description": "Yaw 165.0°"
+  },
+  {
+    "frameNumber": 24,
+    "fileName": "frame_24.png",
+    "angleDeg": 172.5,
+    "angleRad": 3.0107,
+    "description": "Yaw 172.5°"
+  },
+  {
+    "frameNumber": 25,
+    "fileName": "frame_25.png",
+    "angleDeg": 180,
+    "angleRad": 3.1416,
+    "description": "Direct Back (180°)"
+  },
+  {
+    "frameNumber": 26,
+    "fileName": "frame_26.png",
+    "angleDeg": 187.5,
+    "angleRad": 3.2725,
+    "description": "Yaw 187.5°"
+  },
+  {
+    "frameNumber": 27,
+    "fileName": "frame_27.png",
+    "angleDeg": 195,
+    "angleRad": 3.4034,
+    "description": "Yaw 195.0°"
+  },
+  {
+    "frameNumber": 28,
+    "fileName": "frame_28.png",
+    "angleDeg": 202.5,
+    "angleRad": 3.5343,
+    "description": "Yaw 202.5°"
+  },
+  {
+    "frameNumber": 29,
+    "fileName": "frame_29.png",
+    "angleDeg": 210,
+    "angleRad": 3.6652,
+    "description": "Yaw 210.0°"
+  },
+  {
+    "frameNumber": 30,
+    "fileName": "frame_30.png",
+    "angleDeg": 217.5,
+    "angleRad": 3.7961,
+    "description": "Yaw 217.5°"
+  },
+  {
+    "frameNumber": 31,
+    "fileName": "frame_31.png",
+    "angleDeg": 225,
+    "angleRad": 3.927,
+    "description": "Rear-Left 3/4 (225°)"
+  },
+  {
+    "frameNumber": 32,
+    "fileName": "frame_32.png",
+    "angleDeg": 232.5,
+    "angleRad": 4.0579,
+    "description": "Yaw 232.5°"
+  },
+  {
+    "frameNumber": 33,
+    "fileName": "frame_33.png",
+    "angleDeg": 240,
+    "angleRad": 4.1888,
+    "description": "Yaw 240.0°"
+  },
+  {
+    "frameNumber": 34,
+    "fileName": "frame_34.png",
+    "angleDeg": 247.5,
+    "angleRad": 4.3197,
+    "description": "Yaw 247.5°"
+  },
+  {
+    "frameNumber": 35,
+    "fileName": "frame_35.png",
+    "angleDeg": 255,
+    "angleRad": 4.4506,
+    "description": "Yaw 255.0°"
+  },
+  {
+    "frameNumber": 36,
+    "fileName": "frame_36.png",
+    "angleDeg": 262.5,
+    "angleRad": 4.5815,
+    "description": "Yaw 262.5°"
+  },
+  {
+    "frameNumber": 37,
+    "fileName": "frame_37.png",
+    "angleDeg": 270,
+    "angleRad": 4.7124,
+    "description": "Left Profile (270°)"
+  },
+  {
+    "frameNumber": 38,
+    "fileName": "frame_38.png",
+    "angleDeg": 277.5,
+    "angleRad": 4.8433,
+    "description": "Yaw 277.5°"
+  },
+  {
+    "frameNumber": 39,
+    "fileName": "frame_39.png",
+    "angleDeg": 285,
+    "angleRad": 4.9742,
+    "description": "Yaw 285.0°"
+  },
+  {
+    "frameNumber": 40,
+    "fileName": "frame_40.png",
+    "angleDeg": 292.5,
+    "angleRad": 5.1051,
+    "description": "Yaw 292.5°"
+  },
+  {
+    "frameNumber": 41,
+    "fileName": "frame_41.png",
+    "angleDeg": 300,
+    "angleRad": 5.236,
+    "description": "Yaw 300.0°"
+  },
+  {
+    "frameNumber": 42,
+    "fileName": "frame_42.png",
+    "angleDeg": 307.5,
+    "angleRad": 5.3669,
+    "description": "Yaw 307.5°"
+  },
+  {
+    "frameNumber": 43,
+    "fileName": "frame_43.png",
+    "angleDeg": 315,
+    "angleRad": 5.4978,
+    "description": "Front-Left 3/4 (315°)"
+  },
+  {
+    "frameNumber": 44,
+    "fileName": "frame_44.png",
+    "angleDeg": 322.5,
+    "angleRad": 5.6287,
+    "description": "Yaw 322.5°"
+  },
+  {
+    "frameNumber": 45,
+    "fileName": "frame_45.png",
+    "angleDeg": 330,
+    "angleRad": 5.7596,
+    "description": "Yaw 330.0°"
+  },
+  {
+    "frameNumber": 46,
+    "fileName": "frame_46.png",
+    "angleDeg": 337.5,
+    "angleRad": 5.8905,
+    "description": "Yaw 337.5°"
+  },
+  {
+    "frameNumber": 47,
+    "fileName": "frame_47.png",
+    "angleDeg": 345,
+    "angleRad": 6.0214,
+    "description": "Yaw 345.0°"
+  },
+  {
+    "frameNumber": 48,
+    "fileName": "frame_48.png",
+    "angleDeg": 352.5,
+    "angleRad": 6.1523,
+    "description": "Yaw 352.5°"
+  }
+]

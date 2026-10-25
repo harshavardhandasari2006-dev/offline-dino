@@ -24,6 +24,7 @@ class DinoGame {
 
     // Game states
     this.STATE_HOME = 'HOME';
+    this.STATE_LOADING = 'LOADING';
     this.STATE_COUNTDOWN = 'COUNTDOWN';
     this.STATE_PLAYING = 'PLAYING';
     this.STATE_PAUSED = 'PAUSED';
@@ -66,16 +67,20 @@ class DinoGame {
     this.maxSpeed = 780;
     this.speed = this.startSpeed;
     this.distance = 0;
-    this.score = 0;
-    this.milestoneStep = 100;
-    this.nextMilestone = 100;
+    this.score = 0n;
+    this.scoreFraction = 0.0;
+    this.milestoneStep = 100n;
+    this.nextMilestone = 100n;
     this.hasCelebratedNewHigh = false;
-    this.sessionInitialBest = 0;
+    this.sessionInitialBest = 0n;
 
-    // Day/Night cycle (Preserved abrupt transition per Section 30)
+    // Day/Night cinematic transition (2.0s duration)
     this.isNight = false;
     this.dayNightCycleLength = 1000;
     this.nightDuration = 280;
+    this.nightProgress = 0.0; // 0.0 = full daytime, 1.0 = full nighttime
+    this.nightTarget = 0.0;
+    this.nightTransitionDuration = 2.0; // 2.0s cinematic transition
 
     // Obstacles
     this.obstacles = [];
@@ -83,10 +88,11 @@ class DinoGame {
     this.nextObstacleDistance = 380;
 
     // Statistics persistence (Graceful fallback if localStorage is blocked - ISSUE-07)
+    // Uses exact unbounded BigInt representation without application limits
     this.storageAvailable = true;
     this.stats = {
-      bestScore: 0,
-      lastScore: 0,
+      bestScore: 0n,
+      lastScore: 0n,
       gamesPlayed: 0
     };
     this.loadStats();
@@ -107,7 +113,7 @@ class DinoGame {
 
   // ==========================================
   // PERSISTENCE & STATS (DINO-006 & ISSUE-07 FIX)
-  // In-memory during active gameplay; graceful fallback if blocked
+  // Exact BigInt representation without predefined maximum
   // ==========================================
   checkStorageAvailability() {
     try {
@@ -124,24 +130,28 @@ class DinoGame {
     this.storageAvailable = this.checkStorageAvailability();
     if (this.storageAvailable) {
       try {
-        this.stats.bestScore = parseInt(localStorage.getItem('offline_dino_best') || '0', 10);
-        this.stats.lastScore = parseInt(localStorage.getItem('offline_dino_last') || '0', 10);
-        this.stats.gamesPlayed = parseInt(localStorage.getItem('offline_dino_games_played') || '0', 10);
+        const rawBest = localStorage.getItem('offline_dino_best') || '0';
+        const rawLast = localStorage.getItem('offline_dino_last') || '0';
+        const rawGames = localStorage.getItem('offline_dino_games_played') || '0';
+
+        this.stats.bestScore = window.ScoreMath ? window.ScoreMath.toBigInt(rawBest) : BigInt(rawBest.replace(/[^\d]/g, '') || '0');
+        this.stats.lastScore = window.ScoreMath ? window.ScoreMath.toBigInt(rawLast) : BigInt(rawLast.replace(/[^\d]/g, '') || '0');
+        this.stats.gamesPlayed = parseInt(rawGames, 10) || 0;
       } catch (e) {
         this.storageAvailable = false;
       }
     }
     if (!this.storageAvailable) {
       if (!this.stats) {
-        this.stats = { bestScore: 0, lastScore: 0, gamesPlayed: 0 };
+        this.stats = { bestScore: 0n, lastScore: 0n, gamesPlayed: 0 };
       }
     }
   }
 
   saveBestScore(newBest) {
-    const intBest = Math.floor(newBest);
-    if (intBest > this.stats.bestScore) {
-      this.stats.bestScore = intBest;
+    const bBest = window.ScoreMath ? window.ScoreMath.toBigInt(newBest) : BigInt(newBest);
+    if (bBest > this.stats.bestScore) {
+      this.stats.bestScore = bBest;
       // In-memory update keeps HUD responsive without 60Hz storage spam (DINO-006)
     }
   }
@@ -162,7 +172,7 @@ class DinoGame {
   }
 
   recordCompletedRun() {
-    const finalScore = Math.floor(this.score);
+    const finalScore = this.score;
     this.stats.lastScore = finalScore;
     this.stats.gamesPlayed += 1;
     if (finalScore > this.stats.bestScore) {
@@ -194,7 +204,8 @@ class DinoGame {
     this.resetDino();
     this.speed = this.startSpeed;
     this.distance = 0;
-    this.score = 0;
+    this.score = 0n;
+    this.scoreFraction = 0.0;
     this.nextMilestone = this.milestoneStep;
     this.sessionInitialBest = this.stats.bestScore; // Snapshot best at start of run (DINO-008)
     this.hasCelebratedNewHigh = false;
@@ -202,47 +213,61 @@ class DinoGame {
     this.lastSpawnedObstacle = null;
     this.nextObstacleDistance = 380; // Safe initial runway
     this.isNight = false;
+    this.nightProgress = 0.0;
+    this.nightTarget = 0.0;
     this.keys.jump = false;
     this.keys.duck = false;
+    // Reset footstep and dragon audio synchronization state for clean restart
+    if (window.soundEngine) {
+      window.soundEngine.resetFootsteps();
+      window.soundEngine.stopDragonAudio();
+    }
   }
 
-  // Progressive speed curve
+  // Progressive speed curve (DIFF-01: smooth asymptotic progression avoiding sharp jumps)
   calculateSpeed(score) {
-    const s = Math.max(0, score);
-    if (s <= 200) {
-      return 260 + (s / 200) * 60;
-    } else if (s <= 500) {
-      return 320 + ((s - 200) / 300) * 120;
-    } else if (s <= 600) {
-      return 440 + ((s - 500) / 100) * 80;
-    } else if (s <= 1000) {
-      return 520 + ((s - 600) / 400) * 160;
+    let s = 0;
+    if (typeof score === 'bigint') {
+      s = score > 100000n ? 100000 : Number(score);
     } else {
-      const excess = s - 1000;
-      return Math.min(this.maxSpeed, 680 + 100 * (1 - Math.exp(-excess / 800)));
+      s = Math.max(0, Math.min(100000, Number(score) || 0));
     }
+    // Smooth asymptotic progression from 250 px/s up to 680 px/s
+    // Starts calm and gradual, accelerating smoothly without abrupt threshold bumps
+    const progress = 1.0 - (1.0 / (1.0 + Math.pow(s / 680.0, 1.32)));
+    return 250.0 + 430.0 * progress;
   }
 
   // Score-aware milestone schedule to reduce excessive chimes at high speeds (ISSUE-06)
   calculateNextMilestone(score) {
-    if (score < 500) {
-      return (Math.floor(score / 100) + 1) * 100;
-    } else if (score < 1500) {
-      return (Math.floor(score / 250) + 1) * 250;
+    const b = window.ScoreMath ? window.ScoreMath.toBigInt(score) : BigInt(score);
+    if (b < 500n) {
+      return (b / 100n + 1n) * 100n;
+    } else if (b < 1500n) {
+      return (b / 250n + 1n) * 250n;
     } else {
-      return (Math.floor(score / 500) + 1) * 500;
+      return (b / 500n + 1n) * 500n;
     }
+  }
+
+  getViewWidth() {
+    return this.canvas.width / (this.scale * (this.dpr || 1));
+  }
+
+  getViewHeight() {
+    return this.canvas.height / (this.scale * (this.dpr || 1));
   }
 
   resize() {
     const container = document.getElementById('gameContainer');
     if (!container) return;
-    const cw = container.clientWidth;
-    const ch = container.clientHeight;
+    const cw = container.clientWidth || window.innerWidth;
+    const ch = container.clientHeight || window.innerHeight;
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
-    this.canvas.width = cw * dpr;
-    this.canvas.height = ch * dpr;
+    this.dpr = dpr;
+    this.canvas.width = Math.round(cw * dpr);
+    this.canvas.height = Math.round(ch * dpr);
     this.canvas.style.width = cw + 'px';
     this.canvas.style.height = ch + 'px';
 
@@ -262,7 +287,7 @@ class DinoGame {
       if (this.scale < 0.65) this.scale = 0.65;
 
       // Align ground to bottom with standard padding
-      this.groundY = (ch / this.scale) - 68;
+      this.groundY = Math.round((ch / this.scale) - 68);
     }
     if (this.groundY < 240) this.groundY = 240;
 
@@ -281,6 +306,9 @@ class DinoGame {
 
   setupWindowListeners() {
     window.addEventListener('resize', () => this.resize());
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.resize(), 100);
+    });
 
     // Auto-pause and recovery on tab change / minimize
     document.addEventListener('visibilitychange', () => {
@@ -308,6 +336,10 @@ class DinoGame {
     if (this.state === this.STATE_PLAYING || this.state === this.STATE_COUNTDOWN) {
       this.persistStats();
       this.state = this.STATE_PAUSED;
+      if (window.soundEngine) {
+        window.soundEngine.stopAmbience();
+        window.soundEngine.stopDragonAudio();
+      }
       if (window.uiManager) {
         window.uiManager.showAutoPauseOverlay();
       }
@@ -326,7 +358,12 @@ class DinoGame {
   setJumpInput(isPressed) {
     this.keys.jump = isPressed;
     if (isPressed && this.state === this.STATE_PLAYING && !this.isDyingMidAir) {
-      if (this.dino.isGrounded && !this.keys.duck) {
+      if (this.dino.isGrounded) {
+        if (this.dino.isDucking) {
+          this.dino.isDucking = false;
+          this.dino.duckDuration = 0;
+          this.dino.duckEndingTimer = 0;
+        }
         this.triggerJump();
       }
     }
@@ -347,7 +384,7 @@ class DinoGame {
     this.dino.isGrounded = false;
     this.dino.isJumping = true;
     this.dino.jumpPhase = 'TAKE_OFF';
-    this.dino.takeOffTimer = 0.06;
+    this.dino.takeOffTimer = 0.08;
     this.dino.jumpCount = (this.dino.jumpCount || 0) + 1;
     if (this.dino.isDucking) {
       this.dino.isDucking = false;
@@ -382,7 +419,7 @@ class DinoGame {
       if (this.dino.isDucking) {
         this.dino.isDucking = false;
         this.dino.duckDuration = 0;
-        this.dino.duckEndingTimer = 0.08;
+        this.dino.duckEndingTimer = 0.14;
       }
     }
   }
@@ -392,28 +429,27 @@ class DinoGame {
   // Chrome Dino spacing philosophy:
   // Must account for player speed, jump airtime (0.76s), and human reaction time (>=0.54s).
   // Landing from a jump will NEVER immediately collide with the next obstacle.
-  // Dynamic buffer accounts for fast flying dragons following cacti (ISSUE-03).
+  // ==========================================
+  // SAFE OBSTACLE DISTANCE CALCULATION
+  // Chrome Dino spacing philosophy:
+  // Must account for player speed, jump airtime (0.69s), and human reaction time (>=0.58s).
+  // Landing from a jump will NEVER immediately collide with the next obstacle.
   // ==========================================
   calculateNextObstacleDistance(lastObs) {
     const obsWidth = lastObs ? lastObs.width : 40;
     const airTime = 0.69;
-    const minReactionTime = 0.54;
+    const minReactionTime = 0.58; // Guarantees >= 0.56s fair reaction time
     const baseJumpDist = this.speed * airTime;
     const reactionDist = this.speed * minReactionTime;
 
-    let minSafeGap = obsWidth + baseJumpDist + reactionDist + 60;
+    let minSafeGap = obsWidth + baseJumpDist + reactionDist + 80;
 
     if (lastObs) {
       if (lastObs.type === 'CACTUS_LARGE_TRIPLE' || lastObs.type === 'CACTUS_SMALL_TRIPLE') {
-        minSafeGap += 95;
+        minSafeGap += 110;
       } else if (lastObs.type === 'PTERODACTYL') {
-        minSafeGap += 85;
-      } else {
-        // Preceding cactus with potential fast pterodactyl following (ISSUE-03):
-        // Account for speed differential ((speed * 1.35 + 80) - speed) across visible runway
-        const pteroFlightDiff = (this.speed * 1.35 + 80) - this.speed;
-        const runwayTime = Math.min(1.8, (this.canvas.width / this.scale) / Math.max(1, this.speed));
-        minSafeGap += Math.min(180, pteroFlightDiff * runwayTime * 0.35);
+        // Ample safe spacing after dragon obstacle to ensure player has clear runway
+        minSafeGap += 110;
       }
     }
 
@@ -422,12 +458,35 @@ class DinoGame {
   }
 
   // ==========================================
+  // REACTION TIME & COLLISION PREDICTION
+  // Time to collision = Available horizontal distance / Relative closing speed
+  // Strict boundary calculation between dinosaur collision front and obstacle collision front
+  // ==========================================
+  calculateTimeToCollision(spawnX, obstacleWidth = 60, obsSpeed = this.speed) {
+    // Standing multi-box collision front boundary: dino.x + 26 + 28 = dino.x + 54
+    const dinoFrontBoundary = this.dino.x + 54;
+    // Approaching obstacle collision front boundary: obs.x + 6
+    const obsFrontBoundary = spawnX + 6;
+    const availableDistance = obsFrontBoundary - dinoFrontBoundary;
+
+    // Relative closing speed: dinosaur moves right at this.speed, obstacle moves left at obsSpeed
+    // In game screen space, dinosaur is fixed and obstacle closes at obsSpeed
+    const closingSpeed = obsSpeed;
+    if (closingSpeed <= 0) {
+      return Infinity; // Safe handling if speed is zero or negative
+    }
+
+    return availableDistance / closingSpeed;
+  }
+
+  // ==========================================
   // OBSTACLE SPAWNING (DINO-001 & DINO-004 SUPPORT)
   // Stores relative groundOffset for robust resizing
+  // Enforces fair reaction time and jump opportunity
   // ==========================================
   spawnObstacle() {
-    const isPterodactylAllowed = this.score > 40;
-    const isLargeCactusAllowed = this.score > 60;
+    const isPterodactylAllowed = this.score > 40n;
+    const isLargeCactusAllowed = this.score > 60n;
 
     const rand = Math.random();
     let obstacle = null;
@@ -435,18 +494,58 @@ class DinoGame {
     const prevWasPtero = this.lastSpawnedObstacle && this.lastSpawnedObstacle.type === 'PTERODACTYL';
     const prevWasTriple = this.lastSpawnedObstacle && (this.lastSpawnedObstacle.type === 'CACTUS_LARGE_TRIPLE' || this.lastSpawnedObstacle.type === 'CACTUS_SMALL_TRIPLE');
 
-    // Spawn Head-Level Flying Obstacle (Pterodactyl)
-    if (isPterodactylAllowed && rand < 0.35 && !(prevWasPtero && this.score < 300)) {
-      const groundOffset = -74; // Head-height flying obstacle (must duck to avoid!)
-      const pHeightLabel = 'HEAD';
+    const spawnX = this.getViewWidth() + 40;
+
+    // Brisk, balanced dragon flight velocity:
+    // Moves actively toward player with a clean speed boost while preserving fair defense runway
+    const dragonFlightVelocity = Math.max(120, this.speed * 0.38);
+    const dragonClosingSpeed = this.speed + dragonFlightVelocity;
+    const timeToCollision = this.calculateTimeToCollision(spawnX, 60, dragonClosingSpeed);
+    const hasFairReactionTime = timeToCollision >= 1.25;
+
+    // Safe runway buffer after escaping a cactus:
+    // If dinosaur is currently escaping or jumping the preceding cactus,
+    // prevent spawning a dragon right behind it so the player has ample space and time to land and defend.
+    let hasPrecedingRunway = true;
+    if (this.lastSpawnedObstacle && this.obstacles.includes(this.lastSpawnedObstacle)) {
+      const prev = this.lastSpawnedObstacle;
+      const gapToPrev = spawnX - (prev.x + (prev.width || 40));
+      if (gapToPrev < 460) {
+        hasPrecedingRunway = false;
+      }
+    }
+
+    // Spawn Flying Obstacle (Pterodactyl / Dragon):
+    // 1. Dragon unlocked (score > 40)
+    // 2. Probabilistic roll (35%)
+    // 3. Not back-to-back at lower scores (score < 300)
+    // 4. Fair reaction time available from spawn point to dinosaur (guaranteed >= 1.25s)
+    // 5. Generous clear runway after escaping cactus (no overlapping/crowding hazards)
+    if (isPterodactylAllowed && rand < 0.35 && !(prevWasPtero && this.score < 300n) && hasFairReactionTime && hasPrecedingRunway) {
+      // 2 Genuine airborne flight altitudes elevated off the ground:
+      // Both altitudes allow the dinosaur to cleanly escape by ducking underneath,
+      // while colliding with a standing runner (not flying over top).
+      // MID (-84, 50%): Upper-body flight (12px clean clearance under dragon while ducking).
+      // HIGH (-90, 50%): Head-grazing flight (18px clean clearance under dragon while ducking).
+      const altRoll = Math.random();
+      let groundOffset = -84;
+      let pHeightLabel = 'MID';
+      if (altRoll >= 0.50) {
+        groundOffset = -90;
+        pHeightLabel = 'HIGH';
+      }
 
       obstacle = {
         type: 'PTERODACTYL',
-        x: (this.canvas.width / this.scale) + 40,
+        worldX: this.distance + spawnX,
+        x: spawnX,
+        prevX: spawnX,
         y: this.groundY + groundOffset,
         groundOffset: groundOffset,
         width: 60,
         height: 46,
+        flightSpeed: dragonFlightVelocity,
+        speed: dragonClosingSpeed,
         flapTimer: 0,
         flapFrame: 0,
         heightLabel: pHeightLabel
@@ -488,7 +587,7 @@ class DinoGame {
 
     obstacle = {
       type: type,
-      x: (this.canvas.width / this.scale) + 40,
+      x: this.getViewWidth() + 40,
       y: this.groundY - h,
       groundOffset: -h,
       width: w,
@@ -507,7 +606,7 @@ class DinoGame {
     const dino = this.dino;
 
     let dinoBoxes = [];
-    if (dino.isDucking && dino.duckDuration >= 0.04) {
+    if (dino.isDucking || dino.duckEndingTimer > 0) {
       // Ducking pose: lower, horizontal box anchored to ground baseline (DINO-002)
       // Visible top of dino_duck_3 is at y = 292
       const duckCollisionTop = dino.y + (dino.height - dino.duckHeight) + 8;
@@ -547,12 +646,15 @@ class DinoGame {
 
       let obsBox;
       if (obs.type === 'PTERODACTYL') {
-        // Synchronized with visible 60x46 sprite at head height (y=246..292)
-        // Hitbox covers body & wings at y in [254..288]
+        // Synchronized with visible 60x46 sprite
+        // Swept horizontal check prevents tunnelling at high speeds while preserving exact boundary
+        const prevX = (typeof obs.prevX === 'number') ? obs.prevX : obs.x;
+        const leftEdge = Math.min(obs.x + 6, prevX + 6);
+        const rightEdge = Math.max(obs.x + obs.width - 6, prevX + obs.width - 6);
         obsBox = {
-          x: obs.x + 6,
+          x: leftEdge,
           y: obs.y + 8,
-          w: obs.width - 12,
+          w: Math.max(obs.width - 12, rightEdge - leftEdge),
           h: obs.height - 12
         };
       } else {
@@ -617,7 +719,12 @@ class DinoGame {
     // Score & Distance progression
     const moveDist = this.speed * dt;
     this.distance += moveDist;
-    this.score += dt * (this.speed * 0.024);
+    this.scoreFraction += dt * (this.speed * 0.024);
+    if (this.scoreFraction >= 1.0) {
+      const whole = Math.floor(this.scoreFraction);
+      this.scoreFraction -= whole;
+      this.score += BigInt(whole);
+    }
 
     // Milestone sound (score-aware schedule: 100 pts below 500, 250 pts below 1500, 500 pts above - ISSUE-06)
     if (this.score >= this.nextMilestone) {
@@ -633,7 +740,7 @@ class DinoGame {
       this.saveBestScore(this.score);
       // Celebrate ONLY if player beats an actual meaningful prior best score (>= 20 points)
       // and only ONCE per run (DINO-008)
-      if (!this.hasCelebratedNewHigh && this.sessionInitialBest >= 20 && this.score > this.sessionInitialBest) {
+      if (!this.hasCelebratedNewHigh && this.sessionInitialBest >= 20n && this.score > this.sessionInitialBest) {
         this.hasCelebratedNewHigh = true;
         if (window.soundEngine) {
           window.soundEngine.playNewHighScore();
@@ -644,9 +751,21 @@ class DinoGame {
       }
     }
 
-    // Day / Night cycle (Preserved abrupt transition per Section 30)
-    const cyclePos = Math.floor(this.score) % this.dayNightCycleLength;
-    this.isNight = (cyclePos >= 720 && cyclePos < (720 + this.nightDuration));
+    // Day / Night cycle trigger (Preserved score thresholds)
+    const cyclePos = Number(this.score % BigInt(this.dayNightCycleLength));
+    const shouldBeNight = (cyclePos >= 720 && cyclePos < (720 + this.nightDuration));
+    this.nightTarget = shouldBeNight ? 1.0 : 0.0;
+
+    // Smooth frame-rate-independent 2.0-second cinematic transition
+    if (this.nightProgress !== this.nightTarget) {
+      const step = dt / this.nightTransitionDuration;
+      if (this.nightProgress < this.nightTarget) {
+        this.nightProgress = Math.min(this.nightTarget, this.nightProgress + step);
+      } else {
+        this.nightProgress = Math.max(this.nightTarget, this.nightProgress - step);
+      }
+    }
+    this.isNight = this.nightProgress >= 0.5;
 
     // Dino Physics & Jump Phase Sequence
     this.dino.animTime += dt;
@@ -692,8 +811,8 @@ class DinoGame {
         this.dino.vy = 0;
         this.dino.isGrounded = true;
         this.dino.isJumping = false;
-        this.dino.jumpPhase = 'LANDING';
-        this.dino.landingTimer = 0.08;
+        this.dino.jumpPhase = 'IN_AIR';
+        this.dino.landingTimer = 0;
 
         if (this.keys.duck) {
           this.dino.isDucking = true;
@@ -718,7 +837,7 @@ class DinoGame {
       } else if (!this.keys.duck && this.dino.isDucking) {
         this.dino.isDucking = false;
         this.dino.duckDuration = 0;
-        this.dino.duckEndingTimer = 0.08;
+        this.dino.duckEndingTimer = 0.12;
       }
     }
 
@@ -727,46 +846,49 @@ class DinoGame {
       const obs = this.obstacles[i];
 
       if (obs.type === 'PTERODACTYL') {
-        // Flying obstacle actively flies toward player (ground speed + active flight velocity)
-        let pteroFlightSpeed = this.speed * 1.35 + 80;
+        // Dragon / Pterodactyl moves with strict, continuous linear motion:
+        // Genuine non-zero movement velocity in world coordinates flying toward dinosaur:
+        // worldX = worldX - flightVelocity * dt
+        // Rendered screen position strictly follows changing world position:
+        // obs.x = worldX - this.distance
+        const flightVelocity = (typeof obs.flightSpeed === 'number' && obs.flightSpeed > 0)
+          ? obs.flightSpeed
+          : Math.max(120, this.speed * 0.38);
+        obs.flightSpeed = flightVelocity;
+        obs.speed = this.speed + flightVelocity;
 
-        // In-flight minimum separation rule (ISSUE-03):
-        // Prevent dragon from bunching into a preceding obstacle closer than minimum reaction distance
-        let precedingObstacle = null;
-        for (let j = 0; j < this.obstacles.length; j++) {
-          if (j !== i) {
-            const other = this.obstacles[j];
-            if (other.x < obs.x && (!precedingObstacle || other.x > precedingObstacle.x)) {
-              precedingObstacle = other;
-            }
-          }
+        obs.prevX = obs.x;
+
+        if (typeof obs.worldX !== 'number') {
+          obs.worldX = this.distance + obs.x;
         }
 
-        if (precedingObstacle) {
-          const gap = obs.x - (precedingObstacle.x + (precedingObstacle.width || 40));
-          const minSafeBuffer = Math.max(220, this.speed * 0.55);
-          if (gap < minSafeBuffer) {
-            // Match ground speed so dragon never overlaps or bunches into preceding cactus
-            pteroFlightSpeed = this.speed;
-          }
-        }
+        // Update dragon's actual world position every frame
+        obs.worldX -= flightVelocity * dt;
+        // Rendered screen coordinates strictly connected to world position
+        obs.x = obs.worldX - this.distance;
 
-        obs.x -= pteroFlightSpeed * dt;
-
-        // Smooth synchronized wing flapping (Wings Up <-> Wings Down)
+        // Smooth continuous wing-flapping animation matching brisk flight velocity
         obs.flapTimer += dt;
-        if (obs.flapTimer >= 0.14) {
+        if (obs.flapTimer >= 0.10) {
           obs.flapTimer = 0;
           obs.flapFrame = obs.flapFrame === 0 ? 1 : 0;
         }
       } else {
         // Ground cacti move at ground scrolling speed
+        obs.prevX = obs.x;
         obs.x -= moveDist;
       }
 
       if (obs.x + (obs.width || 60) < -70) {
         this.obstacles.splice(i, 1);
       }
+    }
+
+    // Update dragon wing-flapping audio synchronized with flight and wing animation
+    if (window.soundEngine && this.state === this.STATE_PLAYING) {
+      const viewW = this.getViewWidth();
+      window.soundEngine.updateDragonAudio(this.obstacles, viewW, dt);
     }
 
     // Spawn Obstacle check with safe spacing
@@ -779,6 +901,17 @@ class DinoGame {
     // Check Collision
     if (this.checkCollisions()) {
       this.handleGameOver();
+      return;
+    }
+    // Update frame-synchronized footsteps and desert rustling
+    if (window.soundEngine) {
+      window.soundEngine.updateFootsteps(
+        this.dino.animTime,
+        this.speed,
+        this.dino.isGrounded && !this.isDyingMidAir,
+        this.dino.isDucking || this.dino.duckEndingTimer > 0,
+        dt
+      );
     }
   }
 
@@ -789,6 +922,13 @@ class DinoGame {
   handleGameOver() {
     this.keys.jump = false;
     this.keys.duck = false;
+
+    // Stop footsteps, dragon audio, and ambience immediately on collision
+    if (window.soundEngine) {
+      window.soundEngine.stopAmbience();
+      window.soundEngine.stopDragonAudio();
+      window.soundEngine._lastRunFrame = -1;
+    }
 
     if (window.soundEngine) {
       window.soundEngine.playHit();
@@ -811,7 +951,7 @@ class DinoGame {
     this.recordCompletedRun();
 
     if (window.uiManager) {
-      window.uiManager.showGameOver(Math.floor(this.score), this.stats.bestScore);
+      window.uiManager.showGameOver(this.score, this.stats.bestScore);
     }
   }
 
@@ -827,20 +967,25 @@ class DinoGame {
     ctx.clearRect(0, 0, cw, ch);
 
     ctx.save();
-    ctx.scale(this.scale, this.scale);
+    const dpr = this.dpr || 1;
+    ctx.scale(this.scale * dpr, this.scale * dpr);
 
-    const viewW = cw / this.scale;
-    const viewH = ch / this.scale;
+    const viewW = this.getViewWidth();
+    const viewH = this.getViewHeight();
 
-    // 1. SKY & BACKGROUND PANORAMA (Zero per-frame blur cost)
+    // Compute smooth cubic ease-in/ease-out transition progress (2.0s duration)
+    const t = this.nightProgress;
+    const easedNight = t <= 0 ? 0 : (t >= 1 ? 1 : (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
+
+    // 1. SKY & BACKGROUND PANORAMA (Smooth cinematic day-to-night crossfade)
     const scrollDist = (this.state === this.STATE_PLAYING || this.state === this.STATE_COUNTDOWN) ? this.distance : 0;
     if (window.spriteRenderer) {
-      window.spriteRenderer.drawBackground(ctx, scrollDist, viewW, this.groundY, this.isNight);
+      window.spriteRenderer.drawBackground(ctx, scrollDist, viewW, this.groundY, easedNight);
     }
 
-    // 2. GROUND & DESERT TERRAIN
+    // 2. GROUND & DESERT TERRAIN (Smooth color gradient interpolation)
     if (window.spriteRenderer) {
-      window.spriteRenderer.drawGround(ctx, scrollDist, viewW, viewH, this.groundY, this.isNight);
+      window.spriteRenderer.drawGround(ctx, scrollDist, viewW, viewH, this.groundY, easedNight);
     }
 
     // 3. OBSTACLES (Multi-body cactus clusters & pterosaurs) (DINO-001)
@@ -848,9 +993,9 @@ class DinoGame {
       for (let i = 0; i < this.obstacles.length; i++) {
         const obs = this.obstacles[i];
         if (obs.type === 'PTERODACTYL') {
-          window.spriteRenderer.drawPterodactyl(ctx, obs.x, obs.y, obs.flapFrame, this.isNight);
+          window.spriteRenderer.drawPterodactyl(ctx, obs.x, obs.y, obs.flapFrame, easedNight);
         } else {
-          window.spriteRenderer.drawCactus(ctx, obs.x, obs.y, obs.width, obs.height, obs.type, this.isNight);
+          window.spriteRenderer.drawCactus(ctx, obs.x, obs.y, obs.width, obs.height, obs.type, easedNight);
         }
       }
     }
@@ -862,10 +1007,11 @@ class DinoGame {
         dinoVisualState = 'HIT'; // Stumbling impact pose falling to ground (DINO-012)
       } else if (this.state === this.STATE_GAMEOVER) {
         dinoVisualState = 'DEAD'; // Standardized 128x112 dead pose flat on belly
-      } else if (!this.dino.isGrounded) {
-        // Airborne jump poses take strict precedence while in the air (prevents jump/duck overlap)
+      } else if (!this.dino.isGrounded || this.dino.landingTimer > 0) {
+        // Airborne jump poses and landing compression take precedence
         dinoVisualState = 'JUMPING';
-      } else if (this.dino.isDucking) {
+      } else if (this.dino.isDucking || this.dino.duckEndingTimer > 0) {
+        // Active ducking crawl and smooth rise recovery
         dinoVisualState = 'DUCKING';
       } else if (this.state === this.STATE_PLAYING || this.state === this.STATE_COUNTDOWN) {
         dinoVisualState = 'RUNNING';
@@ -882,7 +1028,11 @@ class DinoGame {
         this.dino.jumpPhase,
         this.dino.duckDuration,
         this.dino.duckEndingTimer > 0,
-        this.speed
+        this.speed,
+        this.dino.landingTimer,
+        this.dino.vy,
+        this.dino.takeOffTimer,
+        this.dino.duckEndingTimer
       );
     }
 
@@ -904,7 +1054,7 @@ class DinoGame {
       this.render();
 
       if (window.uiManager && (this.state === this.STATE_PLAYING || this.state === this.STATE_COUNTDOWN)) {
-        window.uiManager.updateHUD(Math.floor(this.score), this.stats.bestScore);
+        window.uiManager.updateHUD(this.score, this.stats.bestScore);
       }
 
       this.animFrameId = requestAnimationFrame(loop);

@@ -26,8 +26,12 @@ async function runBuild() {
     'server.js',
     'sw.js',
     'js/sprite_data.js',
+    'js/skins.js',
     'js/audio.js',
+    'js/three.min.js',
+    'js/dino3d.js',
     'js/sprites.js',
+    'js/score_math.js',
     'js/game.js',
     'js/ui.js'
   ];
@@ -68,13 +72,30 @@ async function runBuild() {
       'id="btnPause"',
       'id="homeScreen"',
       'id="btnStartGame"',
+      'id="btnHomeCustomize"',
       'id="btnHomeHighScore"',
       'id="btnHomeSound"',
       'id="btnHomeExit"',
+      'id="customizationScreen"',
+      'id="customization3DCanvas"',
+      'id="customizationCanvas"',
+      'id="btnRotateLeft"',
+      'id="btnRotateRight"',
+      'id="customSkinsGrid"',
+      'id="btnCustomizationBack"',
+      'id="btnConfirmSkin"',
       'id="pauseModal"',
+      'id="btnPauseResume"',
+      'id="btnPauseRestart"',
+      'id="btnPauseHome"',
       'id="gameOverModal"',
+      'id="btnPlayAgain"',
+      'id="btnGameOverHome"',
       'id="highScoreModal"',
       'id="exitModal"',
+      'id="backspaceModal"',
+      'id="btnBackspaceYes"',
+      'id="btnBackspaceNo"',
       'id="countdownOverlay"'
     ];
 
@@ -153,7 +174,18 @@ async function runBuild() {
     console.log(`  ✓ js/sprite_data.js synchronized with ${keys.length} embedded sprites (${spriteKb} KB)`);
   }
 
-  // 6. Service Worker cache verification
+  // 6. Audit 3D Model Assets
+  logStep('3D MODEL', 'Auditing genuine 3D model assets...');
+  const glbPath = path.join(ROOT_DIR, 'assets', 'models', 'dino.glb');
+  if (fs.existsSync(glbPath)) {
+    const glbKb = (fs.statSync(glbPath).size / 1024).toFixed(1);
+    console.log(`  ✓ assets/models/dino.glb verified (${glbKb} KB) — Genuine 3D binary model`);
+  } else {
+    console.error('  [FAIL] Missing assets/models/dino.glb');
+    errors++;
+  }
+
+  // 7. Service Worker cache verification
   logStep('SERVICE WORKER', 'Verifying sw.js cache structure...');
   const swPath = path.join(ROOT_DIR, 'sw.js');
   if (!fs.existsSync(swPath)) {

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OFFLINE DINO — Running Animation Diagnostic Audit & Pose Repair</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --accent: #22c55e;
+    --danger: #ef4444;
+    --gold: #f59e0b;
+    --sky: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 26px; margin-bottom: 6px; color: var(--sky); text-align: center; }
+  .subtitle { text-align: center; color: var(--muted); margin-bottom: 24px; font-size: 14px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  .tag-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+  .tag-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+  .tag-info { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+
+  .strip-container {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: flex-end;
+    overflow-x: auto;
+    padding: 12px 0;
+  }
+  .frame-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 135px;
+  }
+  .frame-box.duplicate {
+    border-color: var(--danger);
+    background: rgba(239, 68, 68, 0.08);
+  }
+  .frame-box.repaired {
+    border-color: var(--accent);
+    background: rgba(34, 197, 94, 0.08);
+  }
+  .frame-box img {
+    image-rendering: pixelated;
+    background: #38bdf820;
+    border: 1px dashed #64748b;
+    border-radius: 4px;
+  }
+  .frame-box .label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 8px;
+    font-family: monospace;
+  }
+  .frame-box .subtext {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .badge-dup {
+    color: var(--danger);
+    font-weight: bold;
+    font-size: 11px;
+  }
+  .badge-rep {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 11px;
+  }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+  }
+  .preview-panel {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .preview-panel.panel-danger { border-color: rgba(239, 68, 68, 0.4); }
+  .preview-panel.panel-success { border-color: rgba(34, 197, 94, 0.4); }
+  .preview-panel h3 { font-size: 16px; margin-bottom: 8px; }
+  canvas.preview-canvas {
+    background: #38bdf8;
+    border: 2px solid #64748b;
+    border-radius: 8px;
+    image-rendering: pixelated;
+    display: block;
+    margin: 0 auto 12px auto;
+  }
+  .speed-ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--muted);
+    background: #0f172a;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  input[type=range] { accent-color: var(--sky); width: 200px; }
+
+  table.diag-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  table.diag-table th, table.diag-table td {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  table.diag-table th { background: #0f172a; color: var(--sky); font-weight: bold; }
+  table.diag-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .status-pass { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+  .status-warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+  .status-fail { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+</style>
+</head>
+<body>
+
+<h1>OFFLINE DINO — RUNNING ANIMATION DIAGNOSTIC AUDIT</h1>
+<p class="subtitle">Authoritative Comparison of Master Artwork vs Existing Extracted Sprites</p>
+
+<!-- SECTION 1: MASTER ARTWORK REFERENCE -->
+<div class="card">
+  <div class="card-title">
+    <span>1. Master Source Artwork (assets/style1_reference.jpg — Panel 2)</span>
+    <span class="tag tag-info">Authoritative Reference</span>
+  </div>
+  <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">
+    The original reference sheet contains an explicit 5-figure "Run Animation" sequence with an explicit cycle arrow spanning Figures 1 through 5.
+  </p>
+  <div style="text-align: center; margin-bottom: 16px;">
+    <img src="panel_2_crop_test.png" style="max-width: 100%; border-radius: 6px; border: 1px solid var(--border);" alt="Panel 2 Run Animation">
+  </div>
+  <div class="strip-container">
+    <div class="frame-box">
+      <img src="panel_2_fig_1.png" width="128" height="112" style="object-fit: contain;">
+      <span class="label">Figure 1</span>
+      <span class="subtext">Stride A Contact<br>Near leg planted</span>
+    </div>
+    <div class="frame-box">
+      <img src="panel_2_fig_2.png" width="128" height="112" style="object-fit: contain;">
+      <span class="label">Figure 2</span>
+      <span class="subtext">Stride A Push-off<br>Near foot curls back</span>
+    </div>
+    <div class="frame-box">
+      <img src="panel_2_fig_3.png" width="128" height="112" style="object-fit: contain;">
+      <span class="label">Figure 3</span>
+      <span class="subtext">Double Flight / Passing<br>Far knee drives high</span>
+    </div>
+    <div class="frame-box">
+      <img src="panel_2_fig_4.png" width="128" height="112" style="object-fit: contain;">
+      <span class="label">Figure 4</span>
+      <span class="subtext">Stride B Contact<br>Far foot touches ground</span>
+    </div>
+    <div class="frame-box">
+      <img src="panel_2_fig_5.png" width="128" height="112" style="object-fit: contain;">
+      <span class="label">Figure 5</span>
+      <span class="subtext">Stride B Push-off<br>Near leg reaches forward</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: EXISTING 6-FRAME RUNNING ASSETS -->
+<div class="card">
+  <div class="card-title">
+    <span>2. Existing Running Sprites (assets/sprites/dino_run_0.png through dino_run_5.png)</span>
+    <span class="tag tag-danger">Critical Defect: Frame 5 is a Duplicate</span>
+  </div>
+  <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">
+    Existing Frames 0 to 5 shown side by side at original size (128x112). <strong>Notice that Frame 5 is an artificial duplicate of Frame 0</strong>.
+  </p>
+  <div class="strip-container" id="stripCurrent1x"></div>
+  <div style="margin-top: 16px; text-align: center;">
+    <h4 style="font-size: 14px; margin-bottom: 8px; color: var(--muted);">2x Enlarged with Ground Baseline (maxY = 103):</h4>
+    <img src="inspection_run_strip_2x.png" style="max-width: 100%; border-radius: 6px; border: 1px solid var(--border);" alt="2x Strip">
+  </div>
+</div>
+
+<!-- SECTION 3: PROPOSED REPAIRED RUNNING POSES -->
+<div class="card">
+  <div class="card-title">
+    <span>3. Proposed Repaired Running Cycle (candidate_repaired_run/)</span>
+    <span class="tag tag-success">Candidate Repair Staged</span>
+  </div>
+  <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">
+    Repaired poses preserve 100% of the original dinosaur design, eliminate the duplicate frame, restore the authentic vertical sine wave arc ($103 \to 100 \to 101 \to 103 \to 102$), and repair the front foot claw contour on Fig 5.
+  </p>
+  <div class="strip-container">
+    <div class="frame-box repaired">
+      <img src="candidate_repaired_run/repaired_5frame_0.png" width="128" height="112">
+      <span class="label">Repaired Frame 0</span>
+      <span class="subtext">Near Leg Contact<br><strong style="color:#4ade80;">maxY = 103 (Grounded)</strong></span>
+    </div>
+    <div class="frame-box repaired">
+      <img src="candidate_repaired_run/repaired_5frame_1.png" width="128" height="112">
+      <span class="label">Repaired Frame 1</span>
+      <span class="subtext">Near Push-off / Hover<br><strong style="color:#38bdf8;">maxY = 100 (Airborne)</strong></span>
+    </div>
+    <div class="frame-box repaired">
+      <img src="candidate_repaired_run/repaired_5frame_2.png" width="128" height="112">
+      <span class="label">Repaired Frame 2</span>
+      <span class="subtext">Flight Passing Pose<br><strong style="color:#38bdf8;">maxY = 101 (Airborne)</strong></span>
+    </div>
+    <div class="frame-box repaired">
+      <img src="candidate_repaired_run/repaired_5frame_3.png" width="128" height="112">
+      <span class="label">Repaired Frame 3</span>
+      <span class="subtext">Far Leg Contact<br><strong style="color:#4ade80;">maxY = 103 (Grounded)</strong></span>
+    </div>
+    <div class="frame-box repaired">
+      <img src="candidate_repaired_run/repaired_5frame_4.png" width="128" height="112">
+      <span class="label">Repaired Frame 4</span>
+      <span class="subtext">Far Push-off / Reach<br><strong style="color:#38bdf8;">maxY = 102 (Extension)</strong></span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: LIVE RUNTIME CANVAS COMPARISON -->
+<div class="card">
+  <div class="card-title">
+    <span>4. Runtime Looping Previews at Current Gameplay Speed</span>
+    <span class="tag tag-info">Realtime Canvas Simulation</span>
+  </div>
+  <div class="speed-ctrl">
+    <span>Simulation Speed:</span>
+    <input type="range" id="speedSlider" min="50" max="200" value="105">
+    <span id="speedVal" style="font-family: monospace; font-weight: bold; color: var(--sky);">105 ms/frame (~9.5 FPS)</span>
+  </div>
+  <div class="preview-grid">
+    <div class="preview-panel panel-danger">
+      <h3 style="color: #f87171;">Existing 6-Frame Cycle [0, 1, 2, 3, 4, 5]</h3>
+      <p style="font-size: 12px; color: #f87171; margin-bottom: 8px;">Notice hitch/stutter at Frame 5 &rarr; 0 (Pose 1 repeated twice)</p>
+      <canvas id="c6Frame" class="preview-canvas" width="256" height="224"></canvas>
+      <div id="c6Meta" style="font-family: monospace; font-size: 13px; color: var(--gold);">Frame: 0</div>
+    </div>
+    <div class="preview-panel panel-success">
+      <h3 style="color: #4ade80;">Proposed Repaired 5-Frame Loop [0, 1, 2, 3, 4]</h3>
+      <p style="font-size: 12px; color: #4ade80; margin-bottom: 8px;">Smooth continuous alternating bipedal stride with zero stutter</p>
+      <canvas id="c5Frame" class="preview-canvas" width="256" height="224"></canvas>
+      <div id="c5Meta" style="font-family: monospace; font-size: 13px; color: #4ade80;">Frame: 0</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: FORENSIC DIAGNOSTIC TABLE -->
+<div class="card">
+  <div class="card-title">
+    <span>5. Frame-by-Frame Diagnostic Table</span>
+  </div>
+  <table class="diag-table">
+    <thead>
+      <tr>
+        <th>Frame</th>
+        <th>Source Reference</th>
+        <th>Canvas & Bounds</th>
+        <th>Baseline (maxY)</th>
+        <th>Anatomy & Motion Inspection</th>
+        <th>Diagnosis & Correction Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>dino_run_0</strong></td>
+        <td>Panel 2 Fig 1</td>
+        <td>128x112 (W=101, H=83)</td>
+        <td>103 (Grounded)</td>
+        <td>Near leg planted flat, 3 cream claws forward. Far leg trailing lifted. Full head, eye, tail intact.</td>
+        <td><span class="status-badge status-pass">CORRECT</span> Keep as Stride A Contact.</td>
+      </tr>
+      <tr>
+        <td><strong>dino_run_1</strong></td>
+        <td>Panel 2 Fig 2</td>
+        <td>128x112 (W=101, H=86)</td>
+        <td>103 (Grounded)</td>
+        <td>Near foot pushes off and curls back under rear hip; far leg swings forward. Both feet airborne in master art. Forcing to maxY=103 pulls torso down 3px.</td>
+        <td><span class="status-badge status-warn">REPAIRED IN STAGING</span> Adjusted to maxY=100 so curled foot hovers naturally in push-off arc.</td>
+      </tr>
+      <tr>
+        <td><strong>dino_run_2</strong></td>
+        <td>Panel 2 Fig 3</td>
+        <td>128x112 (W=98, H=87)</td>
+        <td>102 (Airborne)</td>
+        <td>Double flight passing pose. Far knee driving high forward, near foot curled back. Full anatomy.</td>
+        <td><span class="status-badge status-pass">CORRECT</span> Staged at natural maxY=101 flight passing height.</td>
+      </tr>
+      <tr>
+        <td><strong>dino_run_3</strong></td>
+        <td>Panel 2 Fig 4</td>
+        <td>128x112 (W=102, H=88)</td>
+        <td>103 (Grounded)</td>
+        <td>Far leg swings down to plant firmly on ground (Stride B Contact). Near leg swinging forward under hip.</td>
+        <td><span class="status-badge status-pass">CORRECT</span> Keep as Stride B Contact.</td>
+      </tr>
+      <tr>
+        <td><strong>dino_run_4</strong></td>
+        <td>Panel 2 Fig 5</td>
+        <td>128x112 (W=99, H=89)</td>
+        <td>103 (Grounded)</td>
+        <td>Far leg pushes off backward. Near leg reaches forward for heel strike. Previous build script used artificial blunt green fill on front foot.</td>
+        <td><span class="status-badge status-warn">REPAIRED IN STAGING</span> Restored natural cream claw contour and curved foot sole directly from Fig 5.</td>
+      </tr>
+      <tr>
+        <td><strong>dino_run_5</strong></td>
+        <td>Synthesized Duplicate</td>
+        <td>128x112 (W=101, H=83)</td>
+        <td>101 (Lifted)</td>
+        <td><strong>Artificial duplicate of Fig 1 (Frame 0)</strong> with 2px vertical lift and 1px shift. Causes a visible freeze/hitch before looping back to Frame 0.</td>
+        <td><span class="status-badge status-fail">DEFECT IDENTIFIED</span> Eliminate duplicate. Master Panel 2 specifies 5-figure cycle.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+const curImgs = [];
+for (let i = 0; i <= 5; i++) {
+  const img = new Image();
+  img.src = 'assets/sprites/dino_run_' + i + '.png';
+  curImgs.push(img);
+}
+
+const repImgs = [];
+for (let i = 0; i < 5; i++) {
+  const img = new Image();
+  img.src = 'candidate_repaired_run/repaired_5frame_' + i + '.png';
+  repImgs.push(img);
+}
+
+const strip1x = document.getElementById('stripCurrent1x');
+for (let i = 0; i <= 5; i++) {
+  const box = document.createElement('div');
+  box.className = 'frame-box' + (i === 5 ? ' duplicate' : '');
+  box.innerHTML = `
+    <img src="assets/sprites/dino_run_${i}.png" width="128" height="112">
+    <span class="label">Frame ${i}</span>
+    <span class="subtext">${i === 5 ? '<span class=\"badge-dup\">DUPLICATE OF FIG 1</span>' : 'Mapped from Fig ' + (i + 1)}</span>
+  `;
+  strip1x.appendChild(box);
+}
+
+const ctx6 = document.getElementById('c6Frame').getContext('2d');
+const ctx5 = document.getElementById('c5Frame').getContext('2d');
+ctx6.imageSmoothingEnabled = false;
+ctx5.imageSmoothingEnabled = false;
+
+let idx6 = 0;
+let idx5 = 0;
+let timerMs = 105;
+
+const meta6 = document.getElementById('c6Meta');
+const meta5 = document.getElementById('c5Meta');
+const slider = document.getElementById('speedSlider');
+const speedVal = document.getElementById('speedVal');
+
+slider.addEventListener('input', (e) => {
+  timerMs = parseInt(e.target.value);
+  speedVal.innerText = `${timerMs} ms/frame (~${(1000 / timerMs).toFixed(1)} FPS)`;
+  restartLoops();
+});
+
+function drawGround(ctx) {
+  ctx.strokeStyle = '#d97706';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(0, 206);
+  ctx.lineTo(256, 206);
+  ctx.stroke();
+}
+
+let int6, int5;
+function restartLoops() {
+  clearInterval(int6);
+  clearInterval(int5);
+
+  int6 = setInterval(() => {
+    idx6 = (idx6 + 1) % 6;
+    ctx6.clearRect(0, 0, 256, 224);
+    drawGround(ctx6);
+    if (curImgs[idx6].complete) {
+      ctx6.drawImage(curImgs[idx6], 0, 0, 256, 224);
+    }
+    meta6.innerText = `Frame: ${idx6} ${idx6 === 5 ? '(! DUPLICATE OF FRAME 0)' : ''}`;
+  }, timerMs);
+
+  int5 = setInterval(() => {
+    idx5 = (idx5 + 1) % 5;
+    ctx5.clearRect(0, 0, 256, 224);
+    drawGround(ctx5);
+    if (repImgs[idx5].complete) {
+      ctx5.drawImage(repImgs[idx5], 0, 0, 256, 224);
+    }
+    meta5.innerText = `Repaired Frame: ${idx5}`;
+  }, timerMs);
+}
+
+restartLoops();
+</script>
+</body>
+</html>

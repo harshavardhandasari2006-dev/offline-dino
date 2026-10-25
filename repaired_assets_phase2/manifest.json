@@ -1,0 +1,1386 @@
+{
+  "task": "OFFLINE DINO - Phase 2 Source Artwork Repair & Frame Extraction",
+  "canonicalCanvas": {
+    "width": 136,
+    "height": 116,
+    "groundBaselineY": 108
+  },
+  "categories": {
+    "running": [
+      {
+        "frameIndex": 1,
+        "filename": "run_01.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 17,
+          "y": 35,
+          "width": 123,
+          "height": 101
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 7,
+          "y": 8
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 2,
+        "filename": "run_02.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 142,
+          "y": 35,
+          "width": 121,
+          "height": 102
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 8,
+          "y": 7
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 3,
+        "filename": "run_03.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 256,
+          "y": 35,
+          "width": 122,
+          "height": 102
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 7,
+          "y": 7
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 4,
+        "filename": "run_04.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 378,
+          "y": 35,
+          "width": 119,
+          "height": 102
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 9,
+          "y": 7
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 5,
+        "filename": "run_05.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 498,
+          "y": 35,
+          "width": 123,
+          "height": 100
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 7,
+          "y": 9
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 6,
+        "filename": "run_06.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 622,
+          "y": 35,
+          "width": 125,
+          "height": 102
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 6,
+          "y": 7
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 7,
+        "filename": "run_07.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 748,
+          "y": 35,
+          "width": 123,
+          "height": 102
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 7,
+          "y": 7
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 8,
+        "filename": "run_08.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 878,
+          "y": 35,
+          "width": 126,
+          "height": 102
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 5,
+          "y": 7
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 9,
+        "filename": "run_09.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 15,
+          "y": 210,
+          "width": 118,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 9,
+          "y": 11
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 10,
+        "filename": "run_10.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 138,
+          "y": 210,
+          "width": 121,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 8,
+          "y": 11
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 11,
+        "filename": "run_11.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 259,
+          "y": 210,
+          "width": 120,
+          "height": 97
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 8,
+          "y": 12
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 12,
+        "filename": "run_12.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 382,
+          "y": 210,
+          "width": 117,
+          "height": 97
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 10,
+          "y": 12
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 13,
+        "filename": "run_13.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 501,
+          "y": 210,
+          "width": 120,
+          "height": 97
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 8,
+          "y": 12
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 14,
+        "filename": "run_14.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 621,
+          "y": 210,
+          "width": 124,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 6,
+          "y": 11
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 15,
+        "filename": "run_15.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 751,
+          "y": 210,
+          "width": 123,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 7,
+          "y": 11
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 16,
+        "filename": "run_16.png",
+        "sourceFile": "media_1792043577245.png",
+        "sourceBBox": {
+          "x": 878,
+          "y": 210,
+          "width": 122,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 7,
+          "y": 11
+        },
+        "footBottomY": 108,
+        "status": "VERIFIED_CLEAN"
+      }
+    ],
+    "ducking": [
+      {
+        "frameIndex": 0,
+        "filename": "duck_00.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 10,
+          "y": 25,
+          "width": 106,
+          "height": 93
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 15,
+          "y": 16
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 1,
+        "filename": "duck_01.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 122,
+          "y": 26,
+          "width": 104,
+          "height": 93
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 16,
+          "y": 16
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 2,
+        "filename": "duck_02.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 234,
+          "y": 32,
+          "width": 106,
+          "height": 88
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 15,
+          "y": 21
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 3,
+        "filename": "duck_03.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 348,
+          "y": 39,
+          "width": 109,
+          "height": 82
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 14,
+          "y": 27
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 4,
+        "filename": "duck_04.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 468,
+          "y": 46,
+          "width": 110,
+          "height": 75
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 13,
+          "y": 34
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 5,
+        "filename": "duck_05.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 585,
+          "y": 54,
+          "width": 111,
+          "height": 68
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 13,
+          "y": 41
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 6,
+        "filename": "duck_06.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 699,
+          "y": 58,
+          "width": 109,
+          "height": 67
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 14,
+          "y": 42
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 7,
+        "filename": "duck_07.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 812,
+          "y": 59,
+          "width": 102,
+          "height": 66
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 17,
+          "y": 43
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 8,
+        "filename": "duck_08.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 917,
+          "y": 62,
+          "width": 99,
+          "height": 62
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 47
+        },
+        "footBottomY": 108,
+        "crouchPhase": "ENTRY_DROP",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 9,
+        "filename": "duck_09.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 9,
+          "y": 155,
+          "width": 107,
+          "height": 50
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 15,
+          "y": 59
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 10,
+        "filename": "duck_10.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 128,
+          "y": 159,
+          "width": 106,
+          "height": 47
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 15,
+          "y": 62
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 11,
+        "filename": "duck_11.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 239,
+          "y": 160,
+          "width": 114,
+          "height": 47
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 11,
+          "y": 62
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 12,
+        "filename": "duck_12.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 363,
+          "y": 164,
+          "width": 111,
+          "height": 44
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 13,
+          "y": 65
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 13,
+        "filename": "duck_13.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 484,
+          "y": 165,
+          "width": 118,
+          "height": 45
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 9,
+          "y": 64
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 14,
+        "filename": "duck_14.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 609,
+          "y": 167,
+          "width": 113,
+          "height": 43
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 12,
+          "y": 66
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 15,
+        "filename": "duck_15.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 728,
+          "y": 167,
+          "width": 104,
+          "height": 43
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 16,
+          "y": 66
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 16,
+        "filename": "duck_16.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 839,
+          "y": 169,
+          "width": 95,
+          "height": 41
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 21,
+          "y": 68
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 17,
+        "filename": "duck_17.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 943,
+          "y": 167,
+          "width": 80,
+          "height": 43
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 28,
+          "y": 66
+        },
+        "footBottomY": 108,
+        "crouchPhase": "SUSTAINED_SLIDE",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 18,
+        "filename": "duck_18.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 15,
+          "y": 250,
+          "width": 114,
+          "height": 74
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 11,
+          "y": 35
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 19,
+        "filename": "duck_19.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 138,
+          "y": 250,
+          "width": 112,
+          "height": 74
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 12,
+          "y": 35
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 20,
+        "filename": "duck_20.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 255,
+          "y": 250,
+          "width": 112,
+          "height": 74
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 12,
+          "y": 35
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 21,
+        "filename": "duck_21.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 373,
+          "y": 250,
+          "width": 110,
+          "height": 74
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 13,
+          "y": 35
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 22,
+        "filename": "duck_22.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 489,
+          "y": 245,
+          "width": 105,
+          "height": 80
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 16,
+          "y": 29
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 23,
+        "filename": "duck_23.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 600,
+          "y": 241,
+          "width": 105,
+          "height": 85
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 16,
+          "y": 24
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 24,
+        "filename": "duck_24.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 710,
+          "y": 240,
+          "width": 102,
+          "height": 86
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 17,
+          "y": 23
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 25,
+        "filename": "duck_25.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 816,
+          "y": 239,
+          "width": 99,
+          "height": 87
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 22
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 26,
+        "filename": "duck_26.png",
+        "sourceFile": "media_1792039315447.png",
+        "sourceBBox": {
+          "x": 917,
+          "y": 239,
+          "width": 98,
+          "height": 87
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 22
+        },
+        "footBottomY": 108,
+        "crouchPhase": "RISE_RECOVERY",
+        "status": "VERIFIED_CLEAN"
+      }
+    ],
+    "jumping": [
+      {
+        "frameIndex": 0,
+        "filename": "jump_00.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 7,
+          "y": 72,
+          "width": 100,
+          "height": 84
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 25
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 1,
+        "filename": "jump_01.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 103,
+          "y": 86,
+          "width": 111,
+          "height": 71
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 13,
+          "y": 38
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 2,
+        "filename": "jump_02.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 199,
+          "y": 83,
+          "width": 106,
+          "height": 75
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 15,
+          "y": 34
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 3,
+        "filename": "jump_03.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 293,
+          "y": 70,
+          "width": 102,
+          "height": 86
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 17,
+          "y": 20
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 3,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 4,
+        "filename": "jump_04.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 385,
+          "y": 56,
+          "width": 99,
+          "height": 90
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 14
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 5,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 5,
+        "filename": "jump_05.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 478,
+          "y": 38,
+          "width": 97,
+          "height": 95
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 20,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 9,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 6,
+        "filename": "jump_06.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 588,
+          "y": 23,
+          "width": 99,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 6,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 7,
+        "filename": "jump_07.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 695,
+          "y": 22,
+          "width": 101,
+          "height": 96
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 8,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 8,
+        "filename": "jump_08.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 799,
+          "y": 37,
+          "width": 100,
+          "height": 96
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 8,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 9,
+        "filename": "jump_09.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 902,
+          "y": 58,
+          "width": 100,
+          "height": 93
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 11
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 5,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 10,
+        "filename": "jump_10.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 10,
+          "y": 191,
+          "width": 100,
+          "height": 98
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 6,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 11,
+        "filename": "jump_11.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 104,
+          "y": 188,
+          "width": 100,
+          "height": 93
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 11,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 12,
+        "filename": "jump_12.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 208,
+          "y": 201,
+          "width": 98,
+          "height": 88
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 16,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 13,
+        "filename": "jump_13.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 313,
+          "y": 209,
+          "width": 98,
+          "height": 93
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 5
+        },
+        "grounded": false,
+        "elevationAboveBaseline": 11,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 14,
+        "filename": "jump_14.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 419,
+          "y": 224,
+          "width": 98,
+          "height": 104
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 19,
+          "y": 24
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 15,
+        "filename": "jump_15.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 517,
+          "y": 233,
+          "width": 101,
+          "height": 95
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 21
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 16,
+        "filename": "jump_16.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 607,
+          "y": 241,
+          "width": 101,
+          "height": 87
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 18,
+          "y": 22
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 17,
+        "filename": "jump_17.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 698,
+          "y": 245,
+          "width": 103,
+          "height": 83
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 17,
+          "y": 26
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 18,
+        "filename": "jump_18.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 794,
+          "y": 249,
+          "width": 105,
+          "height": 79
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 16,
+          "y": 30
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      },
+      {
+        "frameIndex": 19,
+        "filename": "jump_19.png",
+        "sourceFile": "media_1792039332642.png",
+        "sourceBBox": {
+          "x": 903,
+          "y": 234,
+          "width": 104,
+          "height": 93
+        },
+        "canvas": {
+          "width": 136,
+          "height": 116
+        },
+        "placedAt": {
+          "x": 16,
+          "y": 16
+        },
+        "grounded": true,
+        "elevationAboveBaseline": 0,
+        "status": "VERIFIED_CLEAN"
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+const fs = require('fs');
+
+const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Turnaround Frames Inspection</title>
+  <style>
+    body { background: #1a202c; color: #fff; font-family: 'Segoe UI', sans-serif; padding: 25px; }
+    h2 { color: #e2e8f0; margin-bottom: 15px; }
+    .frames-row { display: flex; gap: 15px; background: #2d3748; padding: 20px; border-radius: 10px; align-items: flex-end; }
+    .frame-card { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: center; }
+    .frame-card img { height: 120px; display: block; margin: 0 auto 8px; }
+    .label { font-size: 13px; font-weight: bold; color: #cbd5e0; }
+  </style>
+</head>
+<body>
+  <h2>Master Turnaround Animation (7 Frames from Sheet)</h2>
+  <div class="frames-row">
+    <div class="frame-card"><img src="test_turnaround/frame_1.png"><div class="label">1. Profile Right (0°)</div></div>
+    <div class="frame-card"><img src="test_turnaround/frame_2.png"><div class="label">2. Back-Right 3/4 (~30°)</div></div>
+    <div class="frame-card"><img src="test_turnaround/frame_3.png"><div class="label">3. Rear-Right (~60°)</div></div>
+    <div class="frame-card"><img src="test_turnaround/frame_4.png"><div class="label">4. Direct Back (90°)</div></div>
+    <div class="frame-card"><img src="test_turnaround/frame_5.png"><div class="label">5. Rear-Left (~120°)</div></div>
+    <div class="frame-card"><img src="test_turnaround/frame_6.png"><div class="label">6. Back-Left 3/4 (~150°)</div></div>
+    <div class="frame-card"><img src="test_turnaround/frame_7.png"><div class="label">7. Profile Left (180°)</div></div>
+  </div>
+</body>
+</html>`;
+
+fs.writeFileSync('preview_turnaround.html', html);
+console.log('preview_turnaround.html generated');
