@@ -1,7 +1,7 @@
 // OFFLINE DINO - Authentic Offline Service Worker (Cache-First)
 // Caches all static resources, scripts, stylesheets, and sprites for 100% offline gameplay.
 
-const CACHE_NAME = 'offline-dino-v39';
+const CACHE_NAME = 'offline-dino-v40';
 
 const ASSETS_TO_CACHE = [
   './',

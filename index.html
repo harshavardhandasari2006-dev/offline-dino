@@ -18,11 +18,11 @@
   <link rel="shortcut icon" href="favicon.ico?v=34">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=34">
   <link rel="manifest" href="manifest.json?v=34">
-  <link rel="stylesheet" href="css/style.css?v=39">
+  <link rel="stylesheet" href="css/style.css?v=40">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=39').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=40').catch(function() {});
         navigator.serviceWorker.addEventListener('controllerchange', function() {
           var bg = document.getElementById('homeMasterBg');
           if (bg) bg.src = 'assets/sprites/homepage_seamless_panorama.jpg?v=' + Date.now();
@@ -88,13 +88,13 @@
 
       <div class="homepage-stage">
         <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
-        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=39" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=40" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
 
         <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
         <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
 
         <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
-        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=39" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=40" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
 
         <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
