@@ -1231,19 +1231,14 @@ class UIManager {
     }
   }
 
-  // Synchronize homepage dinosaur mascot to selected skin (Requirement 7)
+  // Synchronize homepage dinosaur mascot to selected skin
   updateHomeDinoSkin(skinId) {
     if (this.homeTitleSignImg) {
       this.homeTitleSignImg.src = `assets/sprites/home_title_sign_${skinId}.png`;
     }
     const skinOverlay = document.getElementById('homeDinoSkinOverlay');
     if (skinOverlay) {
-      if (skinId === 'green') {
-        skinOverlay.classList.add('hidden');
-      } else {
-        skinOverlay.src = `assets/sprites/home_dino_skin_${skinId}.png`;
-        skinOverlay.classList.remove('hidden');
-      }
+      skinOverlay.classList.add('hidden');
     }
   }
 

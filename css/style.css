@@ -558,17 +558,9 @@ html, body {
   backface-visibility: hidden;
 }
 
-/* Stationary Skin Synchronization Layer (Desktop) */
+/* Stationary Skin Synchronization Layer (Disabled to prevent duplicate/overlapping layers) */
 .home-dino-skin-overlay {
-  position: absolute;
-  left: 43.020833%;
-  top: 8.981481%;
-  width: 19.322917%;
-  height: 28.518519%;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-  z-index: 4;
+  display: none !important;
 }
 
 /* Sound OFF Patch (Desktop) */
@@ -587,16 +579,23 @@ html, body {
   image-rendering: high-quality;
 }
 
-/* Responsive title graphic wrapper */
+/* Master Title & Mascot Graphic Layer (546x288 scaled to 1024x540 at 449,75 in 1920x1080 stage) */
 .home-title-wrapper {
-  display: none;
+  position: absolute;
+  left: 23.385417%;
+  top: 6.944444%;
+  width: 53.333333%;
+  height: 50%;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  z-index: 4;
 }
 
 .home-title-sign-img {
   display: block;
   width: 100%;
-  height: auto;
-  max-width: 100%;
+  height: 100%;
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;

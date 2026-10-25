@@ -124,20 +124,15 @@
   const DEFAULT_SKIN_ID = 'green';
   let activeSkinId = DEFAULT_SKIN_ID;
 
-  // Handle any previously saved Yellow, Purple, or Pink selection safely: fall back to Green
+  // Restore previously saved skin from localStorage safely
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && (REMOVED_SKIN_IDS.includes(saved) || !DINO_SKINS.some(s => s.id === saved))) {
+    if (saved && !REMOVED_SKIN_IDS.includes(saved) && DINO_SKINS.some(s => s.id === saved)) {
+      activeSkinId = saved;
+    } else if (saved) {
       localStorage.setItem(STORAGE_KEY, DEFAULT_SKIN_ID);
+      activeSkinId = DEFAULT_SKIN_ID;
     }
-  } catch (e) {
-    // Storage restricted or disabled
-  }
-
-  // On page initialization/refresh, purge any previously stored skin from localStorage
-  // Requirement: A full browser refresh must restore the default Green skin without persisting across refresh.
-  try {
-    localStorage.removeItem(STORAGE_KEY);
   } catch (e) {
     // Storage restricted or disabled
   }
