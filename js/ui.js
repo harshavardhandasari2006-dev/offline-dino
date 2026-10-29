@@ -121,13 +121,25 @@ class UIManager {
     this.customSkinsGrid = document.getElementById('customSkinsGrid');
     this.homeTitleSignImg = document.getElementById('homeTitleSignImg');
     this.customDinoPreviewImg = document.getElementById('customDinoPreviewImg');
+    this.skinSelectToast = document.getElementById('skinSelectToast');
+    this.skinNotifyTimer = null;
+    this.skinNotifyFadeTimer = null;
+    // Intro Video Startup Sequence
+    this.introVideoScreen = document.getElementById('introVideoScreen');
+    this.introVideo = document.getElementById('introVideo');
+    this.introBlackVeil = document.getElementById('introBlackVeil');
+    this.introTransitioning = false;
+    this._cleanupIntroAudioListeners = null;
+        this.introEnded = false;
+    this.introSafetyTimer = null;
+    this.isIntroPlaying = false;
 
     // Customization state (Forward-facing 9-colour dinosaur sync)
     this.confirmedSkinId = (window.SkinManager) ? window.SkinManager.getSelectedSkinId() : 'green';
     this.previewSkinId = this.confirmedSkinId;
 
     this.preloadSkinAssets();
-    this.updateHomeDinoSkin(this.confirmedSkinId);
+    this.updateHomeDinoSkin();
     if (this.customDinoPreviewImg) {
       this.customDinoPreviewImg.src = `assets/sprites/skin_${this.confirmedSkinId}.png`;
     }
@@ -160,7 +172,7 @@ class UIManager {
     this.initCustomizationUI();
     this.bindEvents();
     this.updateSoundButtons();
-    this.startMascotAnimation();
+    this.initIntroVideo();
     this.setupHistoryNavigation();
   }
 
@@ -972,6 +984,7 @@ class UIManager {
   // ==========================================
   isGameplayActive() {
     if (!this.game) return false;
+    if (this.isIntroPlaying) return false;
     // If homepage is visible, we are on the homepage
     if (this.homeScreen && !this.homeScreen.classList.contains('hidden')) {
       return false;
@@ -1157,7 +1170,7 @@ class UIManager {
     this.currentLook.x = 0;
     this.currentLook.y = 0;
     this.turnTimer = 0;
-    this.updateHomeDinoSkin(this.confirmedSkinId);
+    this.updateHomeDinoSkin();
     this.startMascotAnimation();
 
     // Clean up history state back to home
@@ -1231,10 +1244,10 @@ class UIManager {
     }
   }
 
-  // Synchronize homepage dinosaur mascot to selected skin
-  updateHomeDinoSkin(skinId) {
+  // Homepage dinosaur mascot permanently remains original default green skin
+  updateHomeDinoSkin() {
     if (this.homeTitleSignImg) {
-      this.homeTitleSignImg.src = `assets/sprites/home_title_sign_${skinId}.png`;
+      this.homeTitleSignImg.src = 'assets/sprites/home_title_sign_green.png?v=51';
     }
     const skinOverlay = document.getElementById('homeDinoSkinOverlay');
     if (skinOverlay) {
@@ -1246,7 +1259,7 @@ class UIManager {
   preloadSkinAssets() {
     const skins = (window.SkinManager && window.SkinManager.skins)
       ? window.SkinManager.skins.map(s => s.id)
-      : ['green', 'blue', 'red', 'orange', 'brown', 'black'];
+      : ['green', 'blue', 'red', 'orange', 'black'];
     skins.forEach((s) => {
       const img1 = new Image();
       img1.src = `assets/sprites/skin_${s}.png`;
@@ -1357,6 +1370,267 @@ class UIManager {
   // DINOSAUR CUSTOMIZATION LOGIC & PREVIEW (SKIN-01 .. SKIN-05)
   // Continuous 360-degree rotation of the approved 2D cartoon dinosaur
   // ==========================================
+  // ==========================================
+  // STARTUP INTRO VIDEO (Responsive 16:9, Solid White Background)
+  // ==========================================
+  initIntroVideo() {
+    if (!this.introVideoScreen || !this.introVideo) {
+      this.dismissIntroVideo(true);
+      return;
+    }
+
+    this.isIntroPlaying = true;
+    this.introEnded = false;
+    if (typeof document !== 'undefined' && document.body) {
+      document.documentElement.classList.add('intro-active');
+      document.body.classList.add('intro-active');
+    }
+
+    // Respect user Sound ON/OFF setting
+    const isAppMuted = !!(this.sound && this.sound.isMuted);
+    this.introVideo.volume = 1.0;
+    if (isAppMuted) {
+      this.introVideo.muted = true;
+      this.introVideo.defaultMuted = true;
+    } else {
+      this.introVideo.muted = false;
+      this.introVideo.defaultMuted = false;
+    }
+
+    // Transparent, clean interaction unlock handler:
+    // If the browser blocks audible autoplay, any user interaction (click/tap/key)
+    // seamlessly unmutes the audio track without requiring a separate button or overlay.
+    const interactionEvents = ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click', 'keydown', 'keyup'];
+    const handleFirstInteraction = () => {
+      if (this.introEnded || this.introTransitioning || !this.introVideo) {
+        cleanupInteraction();
+        return;
+      }
+      const currentAppMuted = !!(this.sound && this.sound.isMuted);
+      if (!currentAppMuted && this.introVideo.muted) {
+        this.introVideo.muted = false;
+        this.introVideo.volume = 1.0;
+      }
+      if (this.introVideo.paused) {
+        try { this.introVideo.play(); } catch (e) {}
+      }
+      if (this.sound && typeof this.sound.unlockAudio === 'function') {
+        this.sound.unlockAudio();
+      }
+      cleanupInteraction();
+    };
+
+    const cleanupInteraction = () => {
+      interactionEvents.forEach(evt => {
+        window.removeEventListener(evt, handleFirstInteraction, true);
+        document.removeEventListener(evt, handleFirstInteraction, true);
+      });
+      this._cleanupIntroAudioListeners = null;
+    };
+    this._cleanupIntroAudioListeners = cleanupInteraction;
+
+    interactionEvents.forEach(evt => {
+      window.addEventListener(evt, handleFirstInteraction, { capture: true, passive: true });
+      document.addEventListener(evt, handleFirstInteraction, { capture: true, passive: true });
+    });
+
+    // Fullscreen and resize adaptation
+    this._handleFullscreenResize = () => {
+      if (this.introVideo && !this.introEnded) {
+        // Keep video playing uninterrupted
+      }
+    };
+    window.addEventListener('resize', this._handleFullscreenResize, { passive: true });
+    document.addEventListener('fullscreenchange', this._handleFullscreenResize, { passive: true });
+    document.addEventListener('webkitfullscreenchange', this._handleFullscreenResize, { passive: true });
+
+    // Precise frame monitoring to catch stable completion before any decoder glitch
+    const checkStableEnd = () => {
+      if (!this.introEnded && !this.introTransitioning && this.introVideo) {
+        if (this.introVideo.currentTime >= 10.00 || this.introVideo.ended) {
+          try { this.introVideo.pause(); } catch (e) {}
+          this.dismissIntroVideo(false);
+        }
+      }
+    };
+
+    if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+      const onFrame = (now, metadata) => {
+        if (this.introEnded || this.introTransitioning) return;
+        if (metadata && metadata.mediaTime >= 10.00) {
+          try { this.introVideo.pause(); } catch (e) {}
+          this.dismissIntroVideo(false);
+          return;
+        }
+        if (this.introVideo && !this.introEnded && !this.introTransitioning) {
+          this.introVideo.requestVideoFrameCallback(onFrame);
+        }
+      };
+      this.introVideo.requestVideoFrameCallback(onFrame);
+    }
+
+    this.introVideo.addEventListener('timeupdate', checkStableEnd);
+
+    // Natural playback completion -> smooth transition to homepage
+    this.introVideo.addEventListener('ended', () => {
+      try { this.introVideo.pause(); } catch (e) {}
+      this.dismissIntroVideo(false);
+    });
+
+    // Error handling -> immediately transition to home, never leave stuck
+    this.introVideo.addEventListener('error', () => {
+      this.dismissIntroVideo(true);
+    });
+
+    // Safety timeout: in case video stalls or hangs (14s max for 10s video)
+    this.introSafetyTimer = setTimeout(() => {
+      if (!this.introEnded) {
+        this.dismissIntroVideo(false);
+      }
+    }, 14000);
+
+    // Attempt playback: unmuted first if sound is enabled; fallback to muted if browser blocks
+    try {
+      const playPromise = this.introVideo.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Unmuted autoplay succeeded natively
+          })
+          .catch((err) => {
+            // Autoplay policy prevented unmuted playback: fall back cleanly to muted playback
+            if (!this.introEnded && !this.introTransitioning && this.introVideo) {
+              this.introVideo.muted = true;
+              this.introVideo.play().catch(() => {
+                this.dismissIntroVideo(false);
+              });
+            }
+          });
+      }
+    } catch (e) {
+      this.dismissIntroVideo(true);
+    }
+  }
+
+  unmuteIntroVideo() {
+    if (this.introVideo) {
+      this.introVideo.muted = false;
+      this.introVideo.volume = 1.0;
+    }
+  }
+
+  dismissIntroVideo(immediate = false) {
+    if (this.introEnded || this.introTransitioning) return;
+    this.introTransitioning = true;
+    this.isIntroPlaying = false;
+
+    // Immediately pause the video so it stays frozen on the stable final frame
+    if (this.introVideo) {
+      try { this.introVideo.pause(); } catch (e) {}
+    }
+
+    if (this._cleanupIntroAudioListeners) {
+      this._cleanupIntroAudioListeners();
+    }
+
+    if (this.introSafetyTimer) {
+      clearTimeout(this.introSafetyTimer);
+      this.introSafetyTimer = null;
+    }
+
+    if (this._handleFullscreenResize) {
+      window.removeEventListener('resize', this._handleFullscreenResize);
+      document.removeEventListener('fullscreenchange', this._handleFullscreenResize);
+      document.removeEventListener('webkitfullscreenchange', this._handleFullscreenResize);
+      this._handleFullscreenResize = null;
+    }
+
+    const blackVeil = this.introBlackVeil || document.getElementById('introBlackVeil');
+
+    // Immediate fallback (e.g. video load error or safety timeout after stall)
+    if (immediate || !this.introVideoScreen) {
+      this.introEnded = true;
+      this.introTransitioning = false;
+      this.updateHomeDinoSkin();
+      if (typeof document !== 'undefined' && document.body) {
+        document.documentElement.classList.remove('intro-active');
+        document.body.classList.remove('intro-active');
+      }
+      if (this.introVideoScreen) {
+        this.introVideoScreen.classList.add('hidden');
+        this.introVideoScreen.style.display = 'none';
+      }
+      if (blackVeil) {
+        blackVeil.classList.add('hidden');
+        blackVeil.style.display = 'none';
+      }
+      this.startMascotAnimation();
+      return;
+    }
+
+    // ============================================================
+    // CONTROLLED CINEMATIC TRANSITION SEQUENCE:
+    // 1. Video playback reaches actual end on stable final frame.
+    // 2. Video is frozen on stable frame and smoothly faded out (opacity only, 400ms).
+    // 3. Briefly hold pure clean black screen (200ms).
+    // 4. Smoothly fade in Offline Dino homepage (850ms).
+    // 5. Cleanly detach veil and remove intro-active only after homepage is visible.
+    // ============================================================
+    const prefersReduced = (typeof window !== 'undefined' && window.matchMedia)
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+
+    const fadeOutDuration = prefersReduced ? 200 : 400;
+    const holdDuration = prefersReduced ? 100 : 200;
+    const revealDuration = prefersReduced ? 350 : 850;
+
+    // Step 1: Place solid black veil directly behind the video screen (at z-index 9998)
+    if (blackVeil) {
+      blackVeil.classList.remove('hidden');
+      blackVeil.classList.remove('veil-fade-out');
+      blackVeil.classList.add('veil-solid');
+      blackVeil.style.display = 'block';
+    }
+
+    // Step 2: Smoothly fade video screen out to deep black (opacity only, zero scale or dimensional change)
+    this.introVideoScreen.classList.add('fade-to-black');
+
+    // Step 3: Once video is fully faded out into black screen
+    setTimeout(() => {
+      if (this.introVideoScreen) {
+        this.introVideoScreen.classList.add('hidden');
+        this.introVideoScreen.style.display = 'none';
+      }
+
+      // Initialize homepage underneath opaque black veil
+      this.updateHomeDinoSkin();
+      this.startMascotAnimation();
+
+      // Step 4: Hold pure black screen intentionally (200ms)
+      setTimeout(() => {
+        // Step 5: Refined gradual fade-in revealing homepage emerging from black (850ms)
+        if (blackVeil) {
+          blackVeil.classList.remove('veil-solid');
+          blackVeil.classList.add('veil-fade-out');
+        }
+
+        // Step 6: After reveal animation completes, cleanly detach veil and remove intro-active
+        setTimeout(() => {
+          this.introEnded = true;
+          this.introTransitioning = false;
+          if (blackVeil) {
+            blackVeil.classList.add('hidden');
+            blackVeil.style.display = 'none';
+          }
+          if (typeof document !== 'undefined' && document.body) {
+            document.documentElement.classList.remove('intro-active');
+            document.body.classList.remove('intro-active');
+          }
+        }, revealDuration);
+      }, holdDuration);
+    }, fadeOutDuration);
+  }
+
   initCustomizationUI() {
     // Strictly disable invented 3D generic model; use authoritative 2D turnaround (Section 5 & 2.2)
     this.has3D = false;
@@ -1433,15 +1707,14 @@ class UIManager {
 
   openCustomizationScreen() {
     this.stopMascotAnimation();
+    this.hideSkinNotification(true);
     this.confirmedSkinId = (window.SkinManager) ? window.SkinManager.getSelectedSkinId() : 'green';
     this.previewSkinId = this.confirmedSkinId;
 
     if (this.customDinoPreviewImg) {
       this.customDinoPreviewImg.src = `assets/sprites/skin_${this.previewSkinId}.png`;
     }
-    if (this.homeTitleSignImg) {
-      this.homeTitleSignImg.src = `assets/sprites/home_title_sign_${this.previewSkinId}.png`;
-    }
+    this.updateHomeDinoSkin();
 
     this.customRotationAngle = 0; // Profile Right
     this.customPreviewFrame = 0;
@@ -1460,11 +1733,9 @@ class UIManager {
   }
 
   closeCustomizationScreen() {
-    // If a new skin was selected in preview, persist and apply it upon closing
-    if (this.previewSkinId) {
-      this.confirmSelectedSkin();
-    }
-    this.updateHomeDinoSkin(this.confirmedSkinId);
+    // Keep notification visible on the homepage for its full ~3s duration (do not hide/cancel it)
+    // Do not auto-confirm previewed skin
+    this.updateHomeDinoSkin();
     if (window.spriteRenderer && window.SkinManager) {
       window.spriteRenderer.setSkin(window.SkinManager.getSelectedSkinId());
     }
@@ -1484,33 +1755,60 @@ class UIManager {
 
     skins.forEach((s) => {
       const card = document.createElement('div');
-      const isSelected = (s.id === this.previewSkinId);
+      const isPreviewed = (s.id === this.previewSkinId);
       const isConfirmed = (s.id === this.confirmedSkinId);
 
-      card.className = `skin-card ${isSelected ? 'active-skin' : ''}`;
+      card.className = `skin-card ${isPreviewed ? 'preview-active' : ''}`;
       card.setAttribute('data-skin-id', s.id);
-      card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'region');
       card.setAttribute('aria-label', `${s.name} Skin`);
 
-      const cleanName = s.name.replace(/^(CLASSIC|SAPPHIRE|CRIMSON|GOLDEN|SUNSET|AMETHYST|ROSE|CHOCOLATE|CHARCOAL)\s*/, '');
+      const cleanName = s.name.replace(/^(CLASSIC|SAPPHIRE|CRIMSON|GOLDEN|SUNSET|AMETHYST|ROSE|CHOCOLATE|CHARCOAL)\s*/i, '');
 
       card.innerHTML = `
-        ${isConfirmed ? '<span class="skin-selected-badge" title="Active in Game">✓</span>' : ''}
-        <div class="skin-swatch-circle" style="background: ${s.swatchColor}; border-color: ${s.accentColor};"></div>
-        <span class="skin-card-name">${cleanName}</span>
+        <div class="skin-card-preview-area" role="button" tabindex="0" title="Preview ${cleanName}">
+          <div class="skin-swatch-circle" style="background: ${s.swatchColor}; border-color: ${s.accentColor};"></div>
+          <span class="skin-card-name">${cleanName}</span>
+        </div>
+        <button type="button" class="skin-select-btn ${isConfirmed ? 'selected-btn' : ''}" data-skin-id="${s.id}" ${isConfirmed ? 'disabled' : ''} aria-label="${isConfirmed ? `${cleanName} skin selected` : `Select ${cleanName} skin`}">
+          ${isConfirmed ? '✓ SELECTED' : 'SELECT'}
+        </button>
       `;
 
-      card.addEventListener('click', () => {
-        this.selectSkinPreview(s.id);
-      });
+      // Clicking preview area previews skin without confirming
+      const previewArea = card.querySelector('.skin-card-preview-area');
+      if (previewArea) {
+        previewArea.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.previewSkin(s.id);
+        });
+        previewArea.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            this.previewSkin(s.id);
+          }
+        });
+      }
 
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.selectSkinPreview(s.id);
+      // Clicking card outside the select button previews skin without confirming
+      card.addEventListener('click', (e) => {
+        if (!e.target.closest('.skin-select-btn')) {
+          this.previewSkin(s.id);
         }
       });
+
+      // Clicking SELECT button confirms skin
+      const selectBtn = card.querySelector('.skin-select-btn');
+      if (selectBtn) {
+        selectBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (s.id !== this.confirmedSkinId) {
+            this.confirmSkinSelection(s.id);
+          }
+        });
+      }
 
       this.customSkinsGrid.appendChild(card);
     });
@@ -1519,12 +1817,33 @@ class UIManager {
     if (this.customSkinLabel && activeSkinObj) {
       this.customSkinLabel.textContent = activeSkinObj.name;
       this.customSkinLabel.style.background = activeSkinObj.swatchColor;
-      this.customSkinLabel.style.color = (activeSkinObj.id === 'black' || activeSkinObj.id === 'brown' || activeSkinObj.id === 'red' || activeSkinObj.id === 'blue') ? '#ffffff' : '#0f172a';
+      this.customSkinLabel.style.color = (activeSkinObj.id === 'black' || activeSkinObj.id === 'red' || activeSkinObj.id === 'blue') ? '#ffffff' : '#0f172a';
     }
   }
 
-  selectSkinPreview(skinId) {
+  // Previews a skin without selecting or confirming it
+  previewSkin(skinId) {
     if (!window.SkinManager) return;
+    this.previewSkinId = skinId;
+
+    if (this.customDinoPreviewImg) {
+      this.customDinoPreviewImg.src = `assets/sprites/skin_${skinId}.png`;
+    }
+    this.triggerCustomReaction();
+    this.renderCustomSkinsGrid();
+    this.updateConfirmButtonState();
+  }
+
+  // Backward compatibility: calls previewSkin
+  selectSkinPreview(skinId) {
+    this.previewSkin(skinId);
+  }
+
+  // Confirms and applies a skin selection
+  confirmSkinSelection(skinId) {
+    if (!window.SkinManager) return;
+    if (this.confirmedSkinId === skinId) return; // Prevent duplicate selection/sound
+
     this.previewSkinId = skinId;
     this.confirmedSkinId = skinId;
     window.SkinManager.setSelectedSkinId(skinId);
@@ -1532,40 +1851,115 @@ class UIManager {
     if (this.customDinoPreviewImg) {
       this.customDinoPreviewImg.src = `assets/sprites/skin_${skinId}.png`;
     }
-    this.updateHomeDinoSkin(skinId);
+    this.updateHomeDinoSkin();
+
     if (window.spriteRenderer) {
       window.spriteRenderer.setSkin(skinId);
     }
 
-    this.sound.playClick();
-    this.triggerCustomReaction();
-    this.renderCustomSkinsGrid();
-    this.updateConfirmButtonState();
-  }
-
-  confirmSelectedSkin() {
-    if (!window.SkinManager) return;
-
-    window.SkinManager.setSelectedSkinId(this.previewSkinId);
-    this.confirmedSkinId = this.previewSkinId;
-
-    if (this.customDinoPreviewImg) {
-      this.customDinoPreviewImg.src = `assets/sprites/skin_${this.confirmedSkinId}.png`;
-    }
-    this.updateHomeDinoSkin(this.confirmedSkinId);
-
-    if (window.spriteRenderer) {
-      window.spriteRenderer.setSkin(this.confirmedSkinId);
-    }
-
-    if (this.sound && typeof this.sound.playMilestone === 'function') {
-      this.sound.playMilestone(); // Pleasant confirmation feedback
-    } else if (this.sound && typeof this.sound.playClick === 'function') {
+    // Play confirmation sound ONCE (respects Sound ON/OFF)
+    if (this.sound && !this.sound.isMuted && typeof this.sound.playMilestone === 'function') {
+      this.sound.playMilestone();
+    } else if (this.sound && !this.sound.isMuted && typeof this.sound.playClick === 'function') {
       this.sound.playClick();
     }
+
     this.triggerCustomReaction();
     this.renderCustomSkinsGrid();
     this.updateConfirmButtonState();
+
+    // Show dynamic notification (~3s duration)
+    this.showSkinNotification(skinId);
+  }
+
+  confirmSelectedSkin(showNotification = true) {
+    if (this.previewSkinId) {
+      this.confirmSkinSelection(this.previewSkinId);
+    }
+  }
+
+  getSkinNotificationMessage(skinId) {
+    const displayName = this.getSkinDisplayName(skinId);
+    return `${displayName} skin is selected ✅`;
+  }
+
+  showSkinNotification(skinId) {
+    if (!this.skinSelectToast) {
+      this.skinSelectToast = document.getElementById('skinSelectToast');
+    }
+    if (!this.skinSelectToast) return;
+
+    if (this.skinNotifyTimer) {
+      clearTimeout(this.skinNotifyTimer);
+      this.skinNotifyTimer = null;
+    }
+    if (this.skinNotifyFadeTimer) {
+      clearTimeout(this.skinNotifyFadeTimer);
+      this.skinNotifyFadeTimer = null;
+    }
+
+    this.skinSelectToast.textContent = this.getSkinNotificationMessage(skinId);
+
+    this.skinSelectToast.classList.remove('hidden');
+    void this.skinSelectToast.offsetWidth;
+    this.skinSelectToast.classList.add('toast-visible');
+
+    // Begin smooth fade-out after ~2.6 seconds so it finishes fading out by ~2.9-3.0 seconds
+    this.skinNotifyFadeTimer = setTimeout(() => {
+      if (this.skinSelectToast) {
+        this.skinSelectToast.classList.remove('toast-visible');
+      }
+    }, 2600);
+
+    // Completely hide after fade-out transition completes (~2.95 seconds total)
+    this.skinNotifyTimer = setTimeout(() => {
+      if (this.skinSelectToast) {
+        this.skinSelectToast.classList.add('hidden');
+      }
+      this.skinNotifyTimer = null;
+      this.skinNotifyFadeTimer = null;
+    }, 2950);
+  }
+
+  hideSkinNotification(immediate = false) {
+    if (this.skinNotifyTimer) {
+      clearTimeout(this.skinNotifyTimer);
+      this.skinNotifyTimer = null;
+    }
+    if (this.skinNotifyFadeTimer) {
+      clearTimeout(this.skinNotifyFadeTimer);
+      this.skinNotifyFadeTimer = null;
+    }
+    if (!this.skinSelectToast) {
+      this.skinSelectToast = document.getElementById('skinSelectToast');
+    }
+    if (!this.skinSelectToast) return;
+
+    this.skinSelectToast.classList.remove('toast-visible');
+    if (immediate) {
+      this.skinSelectToast.classList.add('hidden');
+    } else {
+      this.skinNotifyTimer = setTimeout(() => {
+        if (this.skinSelectToast) {
+          this.skinSelectToast.classList.add('hidden');
+        }
+        this.skinNotifyTimer = null;
+      }, 250);
+    }
+  }
+
+  getSkinDisplayName(skinId) {
+    if (window.SkinManager && typeof window.SkinManager.getSkinById === 'function') {
+      const skin = window.SkinManager.getSkinById(skinId);
+      if (skin && skin.name) {
+        const clean = skin.name.replace(/^(CLASSIC|SAPPHIRE|CRIMSON|GOLDEN|SUNSET|AMETHYST|ROSE|CHOCOLATE|CHARCOAL)\s*/i, '').trim();
+        if (clean) {
+          return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+        }
+      }
+    }
+    if (!skinId) return 'Green';
+    return skinId.charAt(0).toUpperCase() + skinId.slice(1).toLowerCase();
   }
 
   updateConfirmButtonState() {
@@ -1703,6 +2097,7 @@ class UIManager {
 
 window.addEventListener('DOMContentLoaded', () => {
   window.uiManager = new UIManager();
+  window.ui = window.uiManager;
   window.dinoGame.resize();
   window.dinoGame.startLoop();
 });

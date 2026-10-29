@@ -96,17 +96,6 @@
       lMul: 1.0
     },
     {
-      id: 'brown',
-      name: 'CHOCOLATE BROWN',
-      subtitle: 'Earth Rover',
-      swatchColor: '#8c593b',
-      accentColor: '#3d2516',
-      borderGrad: 'linear-gradient(135deg, #b7791f, #744210)',
-      targetH: 28,
-      sMul: 0.65,
-      lMul: 0.78
-    },
-    {
       id: 'black',
       name: 'CHARCOAL BLACK',
       subtitle: 'Shadow Stalker',
@@ -119,7 +108,7 @@
     }
   ];
 
-  const REMOVED_SKIN_IDS = ['yellow', 'purple', 'pink'];
+  const REMOVED_SKIN_IDS = ['yellow', 'purple', 'pink', 'brown'];
   const STORAGE_KEY = 'offline_dino_selected_skin';
   const DEFAULT_SKIN_ID = 'green';
   let activeSkinId = DEFAULT_SKIN_ID;
@@ -217,8 +206,9 @@
         const isEyeWhite = (sat < 0.18 && lit > 0.40) ||
                            (sat < 0.28 && lit > 0.65 && (hue < 75 || hue > 175));
 
-        // 3. Black Pupil & Deep Shadows & Dark Nostrils
-        const isPupilOrNostril = (lit < 0.11) || (r < 28 && g < 28 && b < 28);
+        // 3. Black Pupil & Deep Shadows & Dark Nostrils (must be neutral, not green)
+        const isPupilOrNostril = (r < 28 && g < 28 && b < 28) ||
+                                 (lit < 0.11 && Math.abs(r - g) <= 6 && Math.abs(g - b) <= 6);
 
         // 4. Cream Belly, Chest, Chin & Tail Underside (pastel cream requires b >= 38)
         const isBelly = (b >= 38) && (
@@ -261,10 +251,6 @@
             newH = 48;
             newL = Math.min(0.92, lit * 1.12);
             newS = Math.min(0.98, sat * 1.15);
-          } else if (skin.id === 'brown') {
-            newH = 28;
-            newS = sat * 0.68;
-            newL = lit * 0.82;
           }
 
           const [newR, newG, newB] = hslToRgb(newH, newS, newL);

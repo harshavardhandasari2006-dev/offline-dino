@@ -1359,21 +1359,25 @@ html, body {
 }
 
 .custom-skins-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
 }
 
 .skin-card {
+  flex: 0 0 calc((100% - 16px) / 3);
+  max-width: calc((100% - 16px) / 3);
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.88);
+  justify-content: space-between;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.92);
   border: 2.5px solid #cbd5e1;
   border-radius: 14px;
-  padding: 8px 6px;
+  padding: 8px 6px 7px 6px;
   cursor: pointer;
   position: relative;
   transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
@@ -1382,16 +1386,24 @@ html, body {
 
 .skin-card:hover {
   transform: translateY(-2px);
-  border-color: #64748b;
+  border-color: #94a3b8;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
-.skin-card.active-skin {
-  border-color: #f59e0b;
-  border-width: 3px;
-  background: #fffbeb;
-  box-shadow: 0 4px 0 #b45309, 0 6px 14px rgba(245, 158, 11, 0.35);
-  transform: scale(1.02);
+.skin-card.preview-active {
+  border-color: #3b82f6;
+  border-width: 2.5px;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
+.skin-card-preview-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  cursor: pointer;
 }
 
 .skin-swatch-circle {
@@ -1412,22 +1424,45 @@ html, body {
   white-space: nowrap;
 }
 
-.skin-selected-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
+/* Individual Card "SELECT" / "✓ SELECTED" Button */
+.skin-select-btn {
+  width: 100%;
+  padding: 5px 6px;
   background: #f59e0b;
-  color: #ffffff;
-  border: 1.5px solid #0f172a;
-  border-radius: 50%;
-  width: 17px;
-  height: 17px;
-  font-size: 10px;
+  color: #0f172a;
+  border: 2px solid #0f172a;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 11px;
   font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  letter-spacing: 0.5px;
+  text-align: center;
+  cursor: pointer;
   box-shadow: 0 2px 0 #0f172a;
+  transition: transform 0.08s ease, background-color 0.15s ease, box-shadow 0.08s ease, opacity 0.15s ease;
+  user-select: none;
+}
+
+.skin-select-btn:hover:not(:disabled) {
+  background: #fbbf24;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #0f172a;
+}
+
+.skin-select-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #0f172a;
+}
+
+.skin-select-btn.selected-btn {
+  background: #94a3b8 !important;
+  color: #334155 !important;
+  border-color: #475569 !important;
+  box-shadow: none !important;
+  opacity: 0.82 !important;
+  cursor: default !important;
+  pointer-events: none;
+  transform: none !important;
 }
 
 /* Actions Bar */
@@ -1439,6 +1474,7 @@ html, body {
 
 .btn-custom-back {
   flex: 1;
+  width: 100%;
   padding: 12px;
   font-size: 16px;
 }
@@ -1460,6 +1496,54 @@ html, body {
 .btn-selected-state:hover {
   transform: none !important;
   box-shadow: 0 5px 0 #475569 !important;
+}
+
+/* ==========================================================================
+   Skin Selection Notification Toast
+   ========================================================================== */
+.skin-select-toast {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 100;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+}
+
+.skin-select-toast.toast-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 480px) {
+  .skin-select-toast {
+    bottom: 16px;
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .skin-select-toast {
+    bottom: 10px;
+    padding: 6px 16px;
+    font-size: 12px;
+  }
 }
 
 /* ==========================================================================
@@ -1564,6 +1648,8 @@ html, body {
     gap: 5px;
   }
   .skin-card {
+    flex: 0 0 calc((100% - 10px) / 3);
+    max-width: calc((100% - 10px) / 3);
     padding: 4px 3px;
     border-radius: 10px;
     gap: 2px;
@@ -1591,6 +1677,8 @@ html, body {
     gap: 4px;
   }
   .skin-card {
+    flex: 0 0 calc((100% - 8px) / 3);
+    max-width: calc((100% - 8px) / 3);
     padding: 6px 2px;
   }
   .skin-swatch-circle {
@@ -1602,3 +1690,221 @@ html, body {
   }
 }
 
+
+/* ==========================================================================
+   Intro Video Screen (Zero Zoom Glitch, Pure Opacity Transition, Responsive Fitting)
+   ========================================================================== */
+html.intro-active,
+body.intro-active,
+body.intro-active .game-container {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.intro-video-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background-color: #f1ebe4 !important;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  /* Animate opacity only; strictly NO transform or dimensional transitions */
+  transform: none !important;
+  transition: opacity 0.40s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.intro-video-screen.fade-to-black {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.intro-video-screen.hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.intro-video-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background-color: #f1ebe4 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: none !important;
+  transition: none !important;
+}
+
+.intro-video-element {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 100vw;
+  max-height: 100vh;
+  max-height: 100dvh;
+  object-fit: cover !important;
+  background-color: #f1ebe4 !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  /* Strictly NO transform transitions or exit scaling */
+  transform: none !important;
+  transition: none !important;
+}
+
+/* 1. Laptop & Desktop (Normal & Fullscreen): fills screen naturally without letterbox borders */
+@media (min-width: 1025px) {
+  .intro-video-element {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: cover !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+:fullscreen .intro-video-screen,
+:-webkit-full-screen .intro-video-screen,
+:fullscreen .intro-video-stage,
+:-webkit-full-screen .intro-video-stage {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f1ebe4 !important;
+}
+
+:fullscreen .intro-video-element,
+:-webkit-full-screen .intro-video-element {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: cover !important;
+  transform: none !important;
+  transition: none !important;
+  background-color: #f1ebe4 !important;
+}
+
+/* 2. Tablet: tailored scale specifically for tablet landscape & portrait */
+/* Tablet Landscape: fills entire screen with ZERO borders */
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: landscape) {
+  .intro-video-element {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: cover !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Tablet Portrait (e.g. iPad 768x1024) */
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+  .intro-video-element {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+    transform: scale(1.15) !important;
+    transform-origin: center center;
+    transition: none !important;
+  }
+}
+
+/* 3. Mobile Phones: natural fit in portrait mode without requiring device rotation; scale(1.28) keeps 100% of key branding/animation visible while filling screen prominently */
+@media (max-width: 600px) and (orientation: portrait) {
+  .intro-video-element {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 100vw;
+    max-height: 100vh;
+    max-height: 100dvh;
+    object-fit: contain;
+    transform: scale(1.28) !important;
+    transform-origin: center center;
+    transition: none !important;
+  }
+}
+
+/* Mobile Phones in Landscape: fills screen with ZERO borders */
+@media (max-height: 520px) and (orientation: landscape) {
+  .intro-video-element {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 100vw;
+    max-height: 100vh;
+    max-height: 100dvh;
+    object-fit: cover !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Cinematic Black Transition Veil (Holds pure black between video fade-out and homepage gradual reveal) */
+.intro-black-veil {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #000000 !important;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  transform: none !important;
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+
+.intro-black-veil.veil-solid {
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+.intro-black-veil.veil-fade-out {
+  opacity: 0 !important;
+}
+
+.intro-black-veil.hidden {
+  display: none !important;
+}
+
+/* Respect user's reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .intro-video-screen {
+    transition: opacity 0.20s linear;
+  }
+  .intro-black-veil {
+    transition: opacity 0.35s linear;
+  }
+  .intro-video-element {
+    transition: none !important;
+  }
+}

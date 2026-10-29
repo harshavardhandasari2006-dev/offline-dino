@@ -221,6 +221,7 @@ class DinoGame {
     if (window.soundEngine) {
       window.soundEngine.resetFootsteps();
       window.soundEngine.stopDragonAudio();
+      window.soundEngine.stopSandSlide(true);
     }
   }
 
@@ -339,6 +340,7 @@ class DinoGame {
       if (window.soundEngine) {
         window.soundEngine.stopAmbience();
         window.soundEngine.stopDragonAudio();
+        window.soundEngine.stopSandSlide(true);
       }
       if (window.uiManager) {
         window.uiManager.showAutoPauseOverlay();
@@ -391,6 +393,7 @@ class DinoGame {
       this.dino.duckDuration = 0;
     }
     if (window.soundEngine) {
+      window.soundEngine.stopSandSlide(true);
       window.soundEngine.playJump();
     }
   }
@@ -408,7 +411,7 @@ class DinoGame {
           this.dino.duckDuration = 0;
           this.dino.duckEndingTimer = 0;
           if (window.soundEngine) {
-            window.soundEngine.playDuck();
+            window.soundEngine.startSandSlide(this.speed);
           }
         }
       } else {
@@ -420,6 +423,9 @@ class DinoGame {
         this.dino.isDucking = false;
         this.dino.duckDuration = 0;
         this.dino.duckEndingTimer = 0.14;
+        if (window.soundEngine) {
+          window.soundEngine.stopSandSlide(false);
+        }
       }
     }
   }
@@ -912,6 +918,12 @@ class DinoGame {
         this.dino.isDucking || this.dino.duckEndingTimer > 0,
         dt
       );
+      // Synchronize continuous sand-sliding sound while ducking along sandy ground
+      const isSliding = (this.state === this.STATE_PLAYING) &&
+                        this.dino.isGrounded &&
+                        !this.isDyingMidAir &&
+                        this.dino.isDucking;
+      window.soundEngine.updateSandSlide(isSliding, this.speed);
     }
   }
 
@@ -923,10 +935,11 @@ class DinoGame {
     this.keys.jump = false;
     this.keys.duck = false;
 
-    // Stop footsteps, dragon audio, and ambience immediately on collision
+    // Stop footsteps, dragon audio, ambience, and sand sliding immediately on collision
     if (window.soundEngine) {
       window.soundEngine.stopAmbience();
       window.soundEngine.stopDragonAudio();
+      window.soundEngine.stopSandSlide(true);
       window.soundEngine._lastRunFrame = -1;
     }
 

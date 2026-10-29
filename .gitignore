@@ -22,3 +22,19 @@ test_output_*/
 test_screenshots_customization/
 test_black_skin_verification/
 test_50_frames_validation/
+
+# Tooling and local agent metadata
+.agent/
+.agents/
+.gemini/
+.gsd/
+GSD-STYLE.md
+PROJECT_RULES.md
+model_capabilities.yaml
+adapters/
+scripts/
+# Video working copies and backups (keep only canonical intro.mp4)
+assets/videos/intro_original.mp4
+assets/videos/intro_trimmed.mp4
+*.corrupted_backup_*
+assets/sprites/*.corrupted_backup_*

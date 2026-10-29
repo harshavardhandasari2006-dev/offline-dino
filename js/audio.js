@@ -46,6 +46,15 @@ class SoundEffects {
     this.dragonGain = null;
     this._dragonAudioActive = false;
 
+    // Dedicated sand sliding audio state & gain node
+    this.sandSlideGain = null;
+    this._sandSlideBuffer = null;
+    this._sandSlideSource = null;
+    this._sandSlideSourceGain = null;
+    this._sandSlideFilter = null;
+    this._isSliding = false;
+    this._sandSlideBaseGain = 0.24;
+
     // Rustling: next scheduled time offset from now (seconds)
     this._nextRustleDelay = 4 + Math.random() * 8;
     this._rustleAccum = 0;
@@ -91,8 +100,14 @@ class SoundEffects {
         this.dragonGain.gain.value = this.isMuted ? 0 : 0.85;
         this.dragonGain.connect(this.ctx.destination);
 
+        // Dedicated sand slide gain node connected to masterGain
+        this.sandSlideGain = this.ctx.createGain();
+        this.sandSlideGain.gain.value = this.isMuted ? 0 : this._sandSlideBaseGain;
+        this.sandSlideGain.connect(this.masterGain);
+
         this.initNoiseBuffer();
         this._buildWindNoiseBuffer();
+        this._buildSandSlideBuffer();
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
@@ -322,6 +337,16 @@ class SoundEffects {
       this.dragonGain.gain.value = this.isMuted ? 0 : 0.85;
     }
 
+    if (this.sandSlideGain && this.ctx) {
+      this.sandSlideGain.gain.cancelScheduledValues(this.ctx.currentTime);
+      this.sandSlideGain.gain.setValueAtTime(this.isMuted ? 0 : this._sandSlideBaseGain, this.ctx.currentTime);
+      this.sandSlideGain.gain.value = this.isMuted ? 0 : this._sandSlideBaseGain;
+    }
+
+    if (this.isMuted) {
+      this.stopSandSlide(true);
+    }
+
     // Pause/resume wind ambience with mute toggle
     if (this.isMuted) {
       this._fadeOutWind(false);
@@ -486,26 +511,10 @@ class SoundEffects {
   }
 
   /**
-   * Duck Swoosh: subtle aerodynamic downward breath
+   * Duck / Sand Slide sound trigger
    */
-  playDuck() {
-    if (!this.canPlay('duck', 160)) return;
-    const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(420, t);
-    osc.frequency.exponentialRampToValueAtTime(160, t + 0.1);
-
-    gain.gain.setValueAtTime(0.18, t);
-    gain.gain.linearRampToValueAtTime(0.001, t + 0.11);
-
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-
-    osc.start(t);
-    osc.stop(t + 0.12);
+  playDuck(gameSpeed = 340) {
+    this.startSandSlide(gameSpeed);
   }
 
   /**
@@ -797,6 +806,7 @@ class SoundEffects {
     this._wasAirborne = false;
     this._rustleAccum = 0;
     this._nextRustleDelay = 4 + Math.random() * 8;
+    this.stopSandSlide(true);
   }
 
   // =========================================================================
@@ -890,6 +900,7 @@ class SoundEffects {
     this._fadeOutWind(true);
     this._lastRunFrame = -1;
     this.stopDragonAudio();
+    this.stopSandSlide(true);
   }
 
   _fadeOutWind(disconnect = false) {
@@ -1218,7 +1229,309 @@ class SoundEffects {
       } catch (e) {}
     }
   }
+
+  // =========================================================================
+  // SAND-SLIDING SOUND WHILE DUCKING
+  // Soft, natural sandy sliding sound for cartoon desert runner.
+  // Seamless loop while ducking/sliding, stops immediately on jump, release, collision, or pause.
+  // Click-free fade-in (20ms) and fade-out (35ms).
+  // =========================================================================
+
+  /**
+   * Pre-build or load seamless sand-sliding audio buffer.
+   */
+  /**
+   * Pre-build or load natural cartoon sand-sliding audio buffer.
+   * Generates a soft, airy, granular 'shhh-rrrsh' sound of loose desert sand friction,
+   * with perfectly seamless circular looping (zero seam clicks or rhythm spikes).
+   */
+  _buildSandSlideBuffer() {
+    if (!this.ctx || this._sandSlideBuffer) return;
+    try {
+      const sampleRate = this.ctx.sampleRate || 44100;
+      const loopDuration = 1.4;
+      const blendDuration = 0.15;
+      const loopSamples = Math.floor(sampleRate * loopDuration);
+      const blendSamples = Math.floor(sampleRate * blendDuration);
+      const totalSamples = loopSamples + blendSamples;
+      const raw = new Float32Array(totalSamples);
+
+      // Multi-pole pink noise foundation for soft organic sand texture
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < totalSamples; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        b6 = white * 0.115926;
+        raw[i] = pink * 0.14;
+      }
+
+      const filterBiquad = (input, type, freq, Q) => {
+        const out = new Float32Array(input.length);
+        const w0 = 2 * Math.PI * freq / sampleRate;
+        const cosw0 = Math.cos(w0);
+        const sinw0 = Math.sin(w0);
+        const alpha = sinw0 / (2 * Q);
+
+        let fb0, fb1, fb2, fa0, fa1, fa2;
+        if (type === 'bandpass') {
+          fb0 = alpha; fb1 = 0; fb2 = -alpha;
+          fa0 = 1 + alpha; fa1 = -2 * cosw0; fa2 = 1 - alpha;
+        } else if (type === 'lowpass') {
+          fb0 = (1 - cosw0) / 2; fb1 = 1 - cosw0; fb2 = (1 - cosw0) / 2;
+          fa0 = 1 + alpha; fa1 = -2 * cosw0; fa2 = 1 - alpha;
+        } else if (type === 'highpass') {
+          fb0 = (1 + cosw0) / 2; fb1 = -(1 + cosw0); fb2 = (1 + cosw0) / 2;
+          fa0 = 1 + alpha; fa1 = -2 * cosw0; fa2 = 1 - alpha;
+        }
+
+        const nfb0 = fb0 / fa0, nfb1 = fb1 / fa0, nfb2 = fb2 / fa0;
+        const nfa1 = fa1 / fa0, nfa2 = fa2 / fa0;
+
+        let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+        for (let j = 0; j < input.length; j++) {
+          const x0 = input[j];
+          const y0 = nfb0 * x0 + nfb1 * x1 + nfb2 * x2 - nfa1 * y1 - nfa2 * y2;
+          x2 = x1; x1 = x0;
+          y2 = y1; y1 = y0;
+          out[j] = y0;
+        }
+        return out;
+      };
+
+      // Three complementary spectral bands of dry cartoon desert sand:
+      // 1. Warm cushion contact (~560 Hz, Q 1.3)
+      // 2. Loose sand displacement 'shhh' (~1100 Hz, Q 1.0)
+      // 3. Light airy sand friction 'rrrsh' (~1850 Hz, Q 1.2)
+      const warmBand = filterBiquad(raw, 'bandpass', 560, 1.3);
+      const sandBand = filterBiquad(raw, 'bandpass', 1100, 1.0);
+      const airBand = filterBiquad(raw, 'bandpass', 1850, 1.2);
+
+      // Micro-granular particle texture: scattered delicate quartz grains
+      const grains = new Float32Array(totalSamples);
+      for (let i = 0; i < totalSamples; i++) {
+        if (Math.random() < 0.007) {
+          const amp = (Math.random() * 0.12 + 0.04);
+          const len = Math.min(totalSamples - i, Math.floor(sampleRate * 0.0025));
+          for (let g = 0; g < len; g++) {
+            grains[i + g] += amp * (1 - g / len) * (Math.random() * 2 - 1);
+          }
+        }
+      }
+      const filteredGrains = filterBiquad(grains, 'bandpass', 1500, 1.4);
+
+      // Combine layers with subtle natural sliding rhythm:
+      // 2.6Hz gentle wave (depth 14%) + 4.1Hz light airy shimmer (depth 7%)
+      const combined = new Float32Array(totalSamples);
+      for (let i = 0; i < totalSamples; i++) {
+        const t = i / sampleRate;
+        const swish1 = 1.0 + 0.14 * Math.sin(2 * Math.PI * 2.6 * t);
+        const swish2 = 1.0 + 0.07 * Math.sin(2 * Math.PI * 4.1 * t + 0.9);
+
+        combined[i] = (warmBand[i] * 0.30 * swish2) +
+                      (sandBand[i] * 0.65 * swish1) +
+                      (airBand[i] * 0.35 * swish1) +
+                      (filteredGrains[i] * 0.20);
+      }
+
+      // Highpass (remove rumble < 280 Hz) and gentle lowpass (remove harshness > 2200 Hz)
+      const cleanHigh = filterBiquad(combined, 'highpass', 280, 0.7);
+      const polished = filterBiquad(cleanHigh, 'lowpass', 2200, 0.7);
+
+      // Construct seamless loop of exactly loopSamples:
+      // Circular crossfade the blendSamples tail onto head for 100% clickless loop
+      const audioBuf = this.ctx.createBuffer(1, loopSamples, sampleRate);
+      const data = audioBuf.getChannelData(0);
+
+      for (let i = 0; i < blendSamples; i++) {
+        const p = i / blendSamples;
+        const gainHead = Math.sin(p * (Math.PI / 2));
+        const gainTail = Math.cos(p * (Math.PI / 2));
+        data[i] = polished[i] * gainHead + polished[loopSamples + i] * gainTail;
+      }
+      for (let i = blendSamples; i < loopSamples; i++) {
+        data[i] = polished[i];
+      }
+
+      // Peak normalization to comfortable 0.25 (RMS ~0.06)
+      let maxPeak = 0;
+      for (let i = 0; i < loopSamples; i++) {
+        const abs = Math.abs(data[i]);
+        if (abs > maxPeak) maxPeak = abs;
+      }
+      if (maxPeak > 0) {
+        const scale = 0.25 / maxPeak;
+        for (let i = 0; i < loopSamples; i++) data[i] *= scale;
+      }
+
+      this._sandSlideBuffer = audioBuf;
+
+      // Also attempt to load offline WAV asset if fetch is available
+      if (typeof fetch === 'function' && typeof window !== 'undefined') {
+        fetch('./assets/audio/sand_slide.wav')
+          .then(res => res.ok ? res.arrayBuffer() : null)
+          .then(ab => ab ? this.ctx.decodeAudioData(ab) : null)
+          .then(decoded => {
+            if (decoded) this._sandSlideBuffer = decoded;
+          })
+          .catch(() => {});
+      }
+    } catch (e) {}
+  }
+
+  /**
+   * Start sand sliding sound loop while dinosaur is ducking on the ground.
+   * Idempotent: smooth playback if already active; avoids repeated sound triggers.
+   *
+   * @param {number} gameSpeed - current game speed (px/s)
+   */
+  startSandSlide(gameSpeed = 340) {
+    if (this.isMuted) return;
+    this.unlockAudio();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+
+    if (this._isSliding && this._sandSlideSource) {
+      this._updateSandSlideSpeed(gameSpeed);
+      return;
+    }
+
+    if (!this._sandSlideBuffer) {
+      this._buildSandSlideBuffer();
+    }
+    if (!this._sandSlideBuffer) return;
+
+    if (this._sandSlideSource) {
+      try {
+        this._sandSlideSource.stop();
+        this._sandSlideSource.disconnect();
+      } catch (e) {}
+      this._sandSlideSource = null;
+    }
+
+    try {
+      const t = this.ctx.currentTime;
+      const source = this.ctx.createBufferSource();
+      source.buffer = this._sandSlideBuffer;
+      source.loop = true;
+
+      const rate = Math.min(1.15, Math.max(0.88, 0.94 + Math.max(0, gameSpeed - 250) * 0.00035));
+      source.playbackRate.setValueAtTime(rate, t);
+
+      const sourceGain = this.ctx.createGain();
+      sourceGain.gain.setValueAtTime(0.0001, t);
+      // Soft 25ms fade-in eliminates clicks and volume spikes
+      sourceGain.gain.linearRampToValueAtTime(1.0, t + 0.025);
+
+      // Gentle warm lowpass filter eliminates harsh scrape or high-frequency hiss
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(2200, t);
+      filter.Q.setValueAtTime(0.6, t);
+
+      source.connect(filter);
+      filter.connect(sourceGain);
+      sourceGain.connect(this.sandSlideGain || this.masterGain);
+
+      source.start(t);
+
+      this._sandSlideSource = source;
+      this._sandSlideSourceGain = sourceGain;
+      this._sandSlideFilter = filter;
+      this._isSliding = true;
+    } catch (e) {
+      this._isSliding = false;
+    }
+  }
+
+  /**
+   * Subtly modulate pitch/speed with game speed.
+   */
+  _updateSandSlideSpeed(gameSpeed) {
+    if (!this._sandSlideSource || !this.ctx) return;
+    try {
+      const rate = Math.min(1.15, Math.max(0.88, 0.94 + Math.max(0, gameSpeed - 250) * 0.00035));
+      this._sandSlideSource.playbackRate.setValueAtTime(rate, this.ctx.currentTime);
+    } catch (e) {}
+  }
+
+  /**
+   * Stop sand sliding loop smoothly with a fade-out to prevent audible clicks.
+   *
+   * @param {boolean} immediate - true on collision, pause, jump, or reset (10ms fast fade)
+   */
+  stopSandSlide(immediate = false) {
+    if (!this._isSliding && !this._sandSlideSource) return;
+    this._isSliding = false;
+
+    if (!this._sandSlideSource || !this.ctx) {
+      this._sandSlideSource = null;
+      this._sandSlideSourceGain = null;
+      this._sandSlideFilter = null;
+      return;
+    }
+
+    try {
+      const t = this.ctx.currentTime;
+      const fadeDur = immediate ? 0.010 : 0.045;
+      const sourceGain = this._sandSlideSourceGain;
+      const source = this._sandSlideSource;
+
+      if (sourceGain) {
+        sourceGain.gain.cancelScheduledValues(t);
+        sourceGain.gain.setValueAtTime(sourceGain.gain.value, t);
+        sourceGain.gain.linearRampToValueAtTime(0.0001, t + fadeDur);
+      }
+
+      setTimeout(() => {
+        try {
+          if (source) {
+            source.stop();
+            source.disconnect();
+          }
+        } catch (e) {}
+      }, Math.ceil((fadeDur + 0.015) * 1000));
+    } catch (e) {}
+
+    this._sandSlideSource = null;
+    this._sandSlideSourceGain = null;
+    this._sandSlideFilter = null;
+  }
+
+  /**
+   * Called every game frame while PLAYING.
+   * Continuous smooth sync: activates while grounded and ducking, stops immediately on rise, jump, or collision.
+   *
+   * @param {boolean} isSliding - whether dino is currently grounded and ducking
+   * @param {number} gameSpeed  - current game speed (px/s)
+   */
+  updateSandSlide(isSliding, gameSpeed = 340) {
+    if (this.isMuted) {
+      if (this._isSliding) {
+        this.stopSandSlide(true);
+      }
+      return;
+    }
+
+    if (isSliding) {
+      if (!this._isSliding) {
+        this.startSandSlide(gameSpeed);
+      } else {
+        this._updateSandSlideSpeed(gameSpeed);
+      }
+    } else {
+      if (this._isSliding) {
+        this.stopSandSlide(false);
+      }
+    }
+  }
 }
 
 window.soundEngine = new SoundEffects();
-

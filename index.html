@@ -12,17 +12,17 @@
   <meta property="og:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="twitter:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="apple-mobile-web-app-title" content="Offline Dino">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=34">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=34">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=34">
-  <link rel="shortcut icon" href="favicon.ico?v=34">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=34">
-  <link rel="manifest" href="manifest.json?v=34">
-  <link rel="stylesheet" href="css/style.css?v=40">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=56">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=56">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=56">
+  <link rel="shortcut icon" href="favicon.ico?v=56">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=56">
+  <link rel="manifest" href="manifest.json?v=56">
+  <link rel="stylesheet" href="css/style.css?v=56">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=40').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=56').catch(function() {});
         navigator.serviceWorker.addEventListener('controllerchange', function() {
           var bg = document.getElementById('homeMasterBg');
           if (bg) bg.src = 'assets/sprites/homepage_seamless_panorama.jpg?v=' + Date.now();
@@ -32,6 +32,18 @@
   </script>
 </head>
 <body>
+  <!-- Cinematic Black Transition Veil (Between Intro and Homepage) -->
+    <div id="introBlackVeil" class="intro-black-veil hidden" aria-hidden="true"></div>
+
+    <!-- Intro Video Screen Layer (Plays on startup before homepage) -->
+    <div id="introVideoScreen" class="intro-video-screen" aria-label="Intro Video">
+      <div class="intro-video-stage">
+        <video id="introVideo" class="intro-video-element" playsinline webkit-playsinline preload="auto">
+          <source src="assets/videos/intro.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
   <div id="gameContainer" class="game-container">
     <!-- Main High-DPI Gameplay Canvas -->
     <canvas id="gameCanvas"></canvas>
@@ -88,17 +100,17 @@
 
       <div class="homepage-stage">
         <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
-        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=40" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=56" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
 
         <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
         <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
 
         <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
-        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=40" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=56" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
 
         <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
-          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
+          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png?v=56" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
         </div>
 
         <!-- Backward Compatibility Elements for Tests -->
@@ -293,23 +305,26 @@
           <button id="btnCustomizationBack" class="cartoon-btn btn-blue btn-custom-back">
             <span class="btn-text">BACK</span>
           </button>
-          <button id="btnConfirmSkin" class="cartoon-btn btn-primary-yellow btn-custom-confirm">
+          <button id="btnConfirmSkin" class="cartoon-btn btn-primary-yellow btn-custom-confirm" style="display: none;">
             <span id="btnConfirmSkinText" class="btn-text">SELECTED</span>
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Small Skin Selection Notification Toast -->
+    <div id="skinSelectToast" class="skin-select-toast hidden" aria-live="polite"></div>
   </div>
 
   <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
-  <script src="js/sprite_data.js?v=18"></script>
-  <script src="js/skins.js?v=18"></script>
-  <script src="js/audio.js?v=20"></script>
-  <script src="js/three.min.js?v=18"></script>
-  <script src="js/dino3d.js?v=18"></script>
-  <script src="js/sprites.js?v=18"></script>
-  <script src="js/score_math.js?v=18"></script>
-  <script src="js/game.js?v=24"></script>
-  <script src="js/ui.js?v=19"></script>
+  <script src="js/sprite_data.js?v=56"></script>
+  <script src="js/skins.js?v=56"></script>
+  <script src="js/audio.js?v=56"></script>
+  <script src="js/three.min.js?v=56"></script>
+  <script src="js/dino3d.js?v=56"></script>
+  <script src="js/sprites.js?v=56"></script>
+  <script src="js/score_math.js?v=56"></script>
+  <script src="js/game.js?v=56"></script>
+  <script src="js/ui.js?v=56"></script>
 </body>
 </html>
