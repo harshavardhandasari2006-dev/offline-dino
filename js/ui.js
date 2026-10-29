@@ -29,6 +29,7 @@ class UIManager {
     this.btnBackspaceNo = document.getElementById('btnBackspaceNo');
     this.wasPlayingBeforeBackspace = false;
     this.countdownOverlay = document.getElementById('countdownOverlay');
+    this.orientationPrompt = document.getElementById('orientationPrompt');
     this.countdownText = document.getElementById('countdownText');
     this.newHighScoreBanner = document.getElementById('newHighScoreBanner');
 
@@ -673,6 +674,28 @@ class UIManager {
   // FULLSCREEN HANDLER (DINO-014 FIX)
   // Only requests fullscreen on touch/mobile devices; never on desktop
   // ==========================================
+  
+  checkOrientation() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    const isMobileOrTablet = window.innerWidth <= 1024 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+
+    if (this.orientationPrompt) {
+      if (isPortrait && isMobileOrTablet) {
+        this.orientationPrompt.classList.remove('hidden');
+      } else {
+        this.orientationPrompt.classList.add('hidden');
+      }
+    }
+  }
+
+  tryLockLandscape() {
+    try {
+      if (screen.orientation && typeof screen.orientation.lock === 'function') {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (e) {}
+  }
+
   requestGameFullscreen() {
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     if (!isTouchDevice) return; // Do not aggressively force fullscreen on desktop
@@ -681,7 +704,7 @@ class UIManager {
       const elem = document.documentElement;
       if (!document.fullscreenElement && !document.webkitFullscreenElement) {
         if (elem.requestFullscreen) {
-          elem.requestFullscreen().catch(() => {});
+          elem.requestFullscreen().then(() => this.tryLockLandscape()).catch(() => {});
         } else if (elem.webkitRequestFullscreen) {
           elem.webkitRequestFullscreen().catch(() => {});
         }

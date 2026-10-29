@@ -8,8 +8,8 @@
      Configurable Minimum Supported Game Viewport Dimensions
      Approved baseline: 1024 x 576 (standard 16:9 desktop layout)
      ========================================================================== */
-  --game-min-width: 1024px;
-  --game-min-height: 576px;
+  --game-min-width: 0px;
+  --game-min-height: 0px;
 
   --sky-day-1: #5bb2ff;
   --sky-day-2: #8fd3ff;
@@ -40,13 +40,15 @@
 html, body {
   width: 100%;
   height: 100%;
-  min-width: var(--game-min-width);
-  min-height: var(--game-min-height);
-  overflow: auto;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   background-color: #0f172a;
   font-family: var(--font-family);
-  touch-action: auto;
-  overscroll-behavior: contain;
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* ==========================================================================
@@ -56,14 +58,16 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  min-width: var(--game-min-width);
-  min-height: var(--game-min-height);
+  height: 100dvh;
+  max-width: 100vw;
+  max-height: 100dvh;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(180deg, var(--sky-day-1) 0%, var(--sky-day-2) 100%);
   container-type: size;
+  touch-action: none;
 }
 
 #gameCanvas {
@@ -74,6 +78,7 @@ html, body {
   top: 0;
   left: 0;
   z-index: 1;
+  touch-action: none;
 }
 
 /* General hidden helper */
@@ -481,12 +486,16 @@ html, body {
 .screen {
   position: absolute;
   inset: 0;
-  min-width: var(--game-min-width);
-  min-height: var(--game-min-height);
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: 100vw;
+  max-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 15;
+  overflow: hidden;
 }
 
 /* ==========================================================================
@@ -499,8 +508,11 @@ html, body {
   margin: 0;
   position: absolute;
   inset: 0;
-  min-width: var(--game-min-width);
-  min-height: var(--game-min-height);
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: 100vw;
+  max-height: 100dvh;
   z-index: 15;
   display: flex;
   align-items: center;
@@ -530,8 +542,6 @@ html, body {
   width: max(100cqw, calc(100cqh * 16 / 9));
   height: max(100%, calc(100% * 9 / 16));
   height: max(100cqh, calc(100cqw * 9 / 16));
-  min-width: var(--game-min-width);
-  min-height: var(--game-min-height);
   aspect-ratio: 16 / 9;
   user-select: none;
   -webkit-user-select: none;
@@ -1906,5 +1916,196 @@ body.intro-active .game-container {
   }
   .intro-video-element {
     transition: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   Rotate Device Overlay (Mobile & Tablet Portrait)
+   Clean, minimal prompt when landscape orientation is required
+   ========================================================================== */
+.orientation-prompt {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 100000;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+@media (orientation: portrait) and (max-width: 1024px) {
+  .orientation-prompt:not(.force-hidden) {
+    display: flex !important;
+  }
+}
+
+.orientation-prompt-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  padding: 28px 24px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 3.5px solid #ffb703;
+  border-radius: 28px;
+  box-shadow: 0 12px 0 #0f172a, 0 20px 40px rgba(0, 0, 0, 0.5);
+  gap: 14px;
+}
+
+.orientation-phone-icon-anim {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotatePhone 2.2s ease-in-out infinite;
+}
+
+@keyframes rotatePhone {
+  0%, 15% {
+    transform: rotate(0deg);
+  }
+  50%, 75% {
+    transform: rotate(90deg);
+  }
+  85%, 100% {
+    transform: rotate(0deg);
+  }
+}
+
+.phone-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.orientation-prompt-title {
+  font-family: var(--font-family);
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.orientation-prompt-desc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ==========================================================================
+   DEDICATED MOBILE LANDSCAPE RESPONSIVE SYSTEM
+   Applies to phones in landscape (height <= 540px)
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 540px) {
+  .hud-overlay {
+    padding-top: max(6px, env(safe-area-inset-top, 6px));
+    padding-left: max(16px, env(safe-area-inset-left, 16px));
+    padding-right: max(16px, env(safe-area-inset-right, 16px));
+    padding-bottom: 6px;
+  }
+  .hud-center-panel {
+    padding: 4px 14px;
+    gap: 10px;
+    border-width: 2.5px;
+    box-shadow: 0 4px 0 #0f172a;
+  }
+  .hud-score-label {
+    font-size: 8.5px;
+  }
+  .hud-score-val {
+    font-size: 15px;
+    letter-spacing: 0.8px;
+  }
+  .hud-score-divider {
+    height: 18px;
+    width: 2px;
+  }
+  .hud-pause-btn {
+    top: max(6px, env(safe-area-inset-top, 6px));
+    right: max(16px, env(safe-area-inset-right, 16px));
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border-width: 2.5px;
+    box-shadow: 0 4px 0 #0f172a;
+  }
+
+  /* Compact modals in landscape */
+  .modal-backdrop {
+    padding: 6px;
+  }
+  .cartoon-card {
+    padding: 12px 18px;
+    border-radius: 20px;
+    border-width: 3px;
+    gap: 8px;
+    max-height: 94dvh;
+    max-width: min(92vw, 380px);
+  }
+  .modal-title {
+    font-size: 19px;
+  }
+  .cartoon-btn {
+    padding: 8px 14px;
+    font-size: 13.5px;
+    border-radius: 12px;
+  }
+  .btn-primary-yellow {
+    font-size: 15px;
+    padding: 10px 18px;
+  }
+  .stats-scoreboard {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .stat-val {
+    font-size: 16px;
+  }
+  .stat-label {
+    font-size: 8.5px;
+  }
+}
+
+/* ==========================================================================
+   DEDICATED TABLET LANDSCAPE RESPONSIVE SYSTEM
+   Applies to iPads & Android tablets in landscape (aspect ~ 4:3, 16:10, 3:2)
+   ========================================================================== */
+@media (min-width: 601px) and (max-width: 1366px) and (orientation: landscape) and (min-height: 541px) {
+  .hud-center-panel {
+    padding: 8px 20px;
+    gap: 16px;
+    border-width: 3px;
+  }
+  .hud-score-label {
+    font-size: 11px;
+  }
+  .hud-score-val {
+    font-size: 20px;
+  }
+  .hud-pause-btn {
+    top: max(14px, env(safe-area-inset-top, 14px));
+    right: max(20px, env(safe-area-inset-right, 20px));
+    width: 48px;
+    height: 48px;
+  }
+  .cartoon-card {
+    max-width: min(85vw, 460px);
+    padding: 22px 26px;
   }
 }

@@ -275,20 +275,26 @@ class DinoGame {
     const isPortrait = ch > cw;
 
     if (isPortrait) {
-      // Responsive Portrait Framing (ISSUE-04):
-      // Balance character size and runway: scale dynamically based on viewport width
+      // Responsive Portrait Framing:
       this.scale = Math.max(0.68, Math.min(0.95, cw / 480));
       const viewH = ch / this.scale;
-      // Position ground comfortably at ~68% screen height so dinosaur is in lower third
-      // with ample sky above for jump arcs & pterodactyls, and rich terrain below
       this.groundY = Math.round(viewH * 0.68);
     } else {
-      // Landscape & Desktop: scale relative to standard 1000x400 virtual coordinates
-      this.scale = Math.min(cw / this.baseWidth, ch / this.baseHeight);
-      if (this.scale < 0.65) this.scale = 0.65;
-
-      // Align ground to bottom with standard padding
-      this.groundY = Math.round((ch / this.scale) - 68);
+      // Landscape Viewports:
+      const aspect = cw / ch;
+      if (aspect < 1.6) {
+        // Dedicated Tablet Landscape (4:3, 16:10, 3:2, e.g. iPad 1024x768, 1180x820):
+        // Proportion character size and runway so the ground sits comfortably at ~72% height
+        // without making the dinosaur tiny or creating an oversized empty sky
+        this.scale = Math.max(0.80, Math.min(1.35, ch / 540));
+        const viewH = ch / this.scale;
+        this.groundY = Math.round(viewH * 0.72);
+      } else {
+        // Standard Wide Landscape (Mobile Phones & Desktop Monitors, 16:9 / 19.5:9):
+        this.scale = Math.min(cw / this.baseWidth, ch / this.baseHeight);
+        if (this.scale < 0.65) this.scale = 0.65;
+        this.groundY = Math.round((ch / this.scale) - 68);
+      }
     }
     if (this.groundY < 240) this.groundY = 240;
 
@@ -306,10 +312,13 @@ class DinoGame {
   }
 
   setupWindowListeners() {
-    window.addEventListener('resize', () => this.resize());
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(() => this.resize());
+    }, { passive: true });
     window.addEventListener('orientationchange', () => {
-      setTimeout(() => this.resize(), 100);
-    });
+      requestAnimationFrame(() => this.resize());
+      setTimeout(() => this.resize(), 150);
+    }, { passive: true });
 
     // Auto-pause and recovery on tab change / minimize
     document.addEventListener('visibilitychange', () => {
