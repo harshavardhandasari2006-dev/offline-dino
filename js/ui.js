@@ -127,15 +127,9 @@ class UIManager {
     this.skinSelectToast = document.getElementById('skinSelectToast');
     this.skinNotifyTimer = null;
     this.skinNotifyFadeTimer = null;
-    // Intro Video Startup Sequence
-    this.introVideoScreen = document.getElementById('introVideoScreen');
-    this.introVideo = document.getElementById('introVideo');
-    this.introBlackVeil = document.getElementById('introBlackVeil');
-    this.introTransitioning = false;
-    this._cleanupIntroAudioListeners = null;
-        this.introEnded = false;
-    this.introSafetyTimer = null;
+    // Intro Video completely disabled — Direct Homepage startup
     this.isIntroPlaying = false;
+    this.introEnded = true;
 
     // Customization state (Forward-facing 9-colour dinosaur sync)
     this.confirmedSkinId = (window.SkinManager) ? window.SkinManager.getSelectedSkinId() : 'green';
@@ -176,7 +170,9 @@ class UIManager {
     this.bindEvents();
     this.updateSoundButtons();
     this.setupFullscreen();
-    this.initIntroVideo();
+    this.updateHomeDinoSkin();
+    this.startMascotAnimation();
+    this.showScreen(this.homeScreen);
     this.setupHistoryNavigation();
   }
 
@@ -1142,7 +1138,6 @@ class UIManager {
   // ==========================================
   isGameplayActive() {
     if (!this.game) return false;
-    if (this.isIntroPlaying) return false;
     // If homepage is visible, we are on the homepage
     if (this.homeScreen && !this.homeScreen.classList.contains('hidden')) {
       return false;
@@ -1529,267 +1524,19 @@ class UIManager {
   // Continuous 360-degree rotation of the approved 2D cartoon dinosaur
   // ==========================================
   // ==========================================
-  // STARTUP INTRO VIDEO (Responsive 16:9, Solid White Background)
+  // INTRO VIDEO REMOVED — DIRECT HOMEPAGE STUBS
   // ==========================================
-  initIntroVideo() {
-    if (!this.introVideoScreen || !this.introVideo) {
-      this.dismissIntroVideo(true);
-      return;
-    }
-
-    this.isIntroPlaying = true;
-    this.introEnded = false;
-    if (typeof document !== 'undefined' && document.body) {
-      document.documentElement.classList.add('intro-active');
-      document.body.classList.add('intro-active');
-    }
-
-    // Respect user Sound ON/OFF setting
-    const isAppMuted = !!(this.sound && this.sound.isMuted);
-    this.introVideo.volume = 1.0;
-    if (isAppMuted) {
-      this.introVideo.muted = true;
-      this.introVideo.defaultMuted = true;
-    } else {
-      this.introVideo.muted = false;
-      this.introVideo.defaultMuted = false;
-    }
-
-    // Transparent, clean interaction unlock handler:
-    // If the browser blocks audible autoplay, any user interaction (click/tap/key)
-    // seamlessly unmutes the audio track without requiring a separate button or overlay.
-    const interactionEvents = ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click', 'keydown', 'keyup'];
-    const handleFirstInteraction = () => {
-      if (this.introEnded || this.introTransitioning || !this.introVideo) {
-        cleanupInteraction();
-        return;
-      }
-      const currentAppMuted = !!(this.sound && this.sound.isMuted);
-      if (!currentAppMuted && this.introVideo.muted) {
-        this.introVideo.muted = false;
-        this.introVideo.volume = 1.0;
-      }
-      if (this.introVideo.paused) {
-        try { this.introVideo.play(); } catch (e) {}
-      }
-      if (this.sound && typeof this.sound.unlockAudio === 'function') {
-        this.sound.unlockAudio();
-      }
-      cleanupInteraction();
-    };
-
-    const cleanupInteraction = () => {
-      interactionEvents.forEach(evt => {
-        window.removeEventListener(evt, handleFirstInteraction, true);
-        document.removeEventListener(evt, handleFirstInteraction, true);
-      });
-      this._cleanupIntroAudioListeners = null;
-    };
-    this._cleanupIntroAudioListeners = cleanupInteraction;
-
-    interactionEvents.forEach(evt => {
-      window.addEventListener(evt, handleFirstInteraction, { capture: true, passive: true });
-      document.addEventListener(evt, handleFirstInteraction, { capture: true, passive: true });
-    });
-
-    // Fullscreen and resize adaptation
-    this._handleFullscreenResize = () => {
-      if (this.introVideo && !this.introEnded) {
-        // Keep video playing uninterrupted
-      }
-    };
-    window.addEventListener('resize', this._handleFullscreenResize, { passive: true });
-    document.addEventListener('fullscreenchange', this._handleFullscreenResize, { passive: true });
-    document.addEventListener('webkitfullscreenchange', this._handleFullscreenResize, { passive: true });
-
-    // Precise frame monitoring to catch stable completion before any decoder glitch
-    const checkStableEnd = () => {
-      if (!this.introEnded && !this.introTransitioning && this.introVideo) {
-        if (this.introVideo.currentTime >= 10.00 || this.introVideo.ended) {
-          try { this.introVideo.pause(); } catch (e) {}
-          this.dismissIntroVideo(false);
-        }
-      }
-    };
-
-    if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-      const onFrame = (now, metadata) => {
-        if (this.introEnded || this.introTransitioning) return;
-        if (metadata && metadata.mediaTime >= 10.00) {
-          try { this.introVideo.pause(); } catch (e) {}
-          this.dismissIntroVideo(false);
-          return;
-        }
-        if (this.introVideo && !this.introEnded && !this.introTransitioning) {
-          this.introVideo.requestVideoFrameCallback(onFrame);
-        }
-      };
-      this.introVideo.requestVideoFrameCallback(onFrame);
-    }
-
-    this.introVideo.addEventListener('timeupdate', checkStableEnd);
-
-    // Natural playback completion -> smooth transition to homepage
-    this.introVideo.addEventListener('ended', () => {
-      try { this.introVideo.pause(); } catch (e) {}
-      this.dismissIntroVideo(false);
-    });
-
-    // Error handling -> immediately transition to home, never leave stuck
-    this.introVideo.addEventListener('error', () => {
-      this.dismissIntroVideo(true);
-    });
-
-    // Safety timeout: in case video stalls or hangs (14s max for 10s video)
-    this.introSafetyTimer = setTimeout(() => {
-      if (!this.introEnded) {
-        this.dismissIntroVideo(false);
-      }
-    }, 14000);
-
-    // Attempt playback: unmuted first if sound is enabled; fallback to muted if browser blocks
-    try {
-      const playPromise = this.introVideo.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            // Unmuted autoplay succeeded natively
-          })
-          .catch((err) => {
-            // Autoplay policy prevented unmuted playback: fall back cleanly to muted playback
-            if (!this.introEnded && !this.introTransitioning && this.introVideo) {
-              this.introVideo.muted = true;
-              this.introVideo.play().catch(() => {
-                this.dismissIntroVideo(false);
-              });
-            }
-          });
-      }
-    } catch (e) {
-      this.dismissIntroVideo(true);
-    }
-  }
-
-  unmuteIntroVideo() {
-    if (this.introVideo) {
-      this.introVideo.muted = false;
-      this.introVideo.volume = 1.0;
-    }
-  }
-
+  initIntroVideo() {}
+  unmuteIntroVideo() {}
   dismissIntroVideo(immediate = false) {
-    if (this.introEnded || this.introTransitioning) return;
-    this.introTransitioning = true;
     this.isIntroPlaying = false;
-
-    // Immediately pause the video so it stays frozen on the stable final frame
-    if (this.introVideo) {
-      try { this.introVideo.pause(); } catch (e) {}
-    }
-
-    if (this._cleanupIntroAudioListeners) {
-      this._cleanupIntroAudioListeners();
-    }
-
-    if (this.introSafetyTimer) {
-      clearTimeout(this.introSafetyTimer);
-      this.introSafetyTimer = null;
-    }
-
-    if (this._handleFullscreenResize) {
-      window.removeEventListener('resize', this._handleFullscreenResize);
-      document.removeEventListener('fullscreenchange', this._handleFullscreenResize);
-      document.removeEventListener('webkitfullscreenchange', this._handleFullscreenResize);
-      this._handleFullscreenResize = null;
-    }
-
-    const blackVeil = this.introBlackVeil || document.getElementById('introBlackVeil');
-
-    // Immediate fallback (e.g. video load error or safety timeout after stall)
-    if (immediate || !this.introVideoScreen) {
-      this.introEnded = true;
-      this.introTransitioning = false;
-      this.updateHomeDinoSkin();
-      if (typeof document !== 'undefined' && document.body) {
-        document.documentElement.classList.remove('intro-active');
-        document.body.classList.remove('intro-active');
-      }
-      if (this.introVideoScreen) {
-        this.introVideoScreen.classList.add('hidden');
-        this.introVideoScreen.style.display = 'none';
-      }
-      if (blackVeil) {
-        blackVeil.classList.add('hidden');
-        blackVeil.style.display = 'none';
-      }
-      this.startMascotAnimation();
-      return;
-    }
-
-    // ============================================================
-    // CONTROLLED CINEMATIC TRANSITION SEQUENCE:
-    // 1. Video playback reaches actual end on stable final frame.
-    // 2. Video is frozen on stable frame and smoothly faded out (opacity only, 400ms).
-    // 3. Briefly hold pure clean black screen (200ms).
-    // 4. Smoothly fade in Offline Dino homepage (850ms).
-    // 5. Cleanly detach veil and remove intro-active only after homepage is visible.
-    // ============================================================
-    const prefersReduced = (typeof window !== 'undefined' && window.matchMedia)
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false;
-
-    const fadeOutDuration = prefersReduced ? 200 : 400;
-    const holdDuration = prefersReduced ? 100 : 200;
-    const revealDuration = prefersReduced ? 350 : 850;
-
-    // Step 1: Place solid black veil directly behind the video screen (at z-index 9998)
-    if (blackVeil) {
-      blackVeil.classList.remove('hidden');
-      blackVeil.classList.remove('veil-fade-out');
-      blackVeil.classList.add('veil-solid');
-      blackVeil.style.display = 'block';
-    }
-
-    // Step 2: Smoothly fade video screen out to deep black (opacity only, zero scale or dimensional change)
-    this.introVideoScreen.classList.add('fade-to-black');
-
-    // Step 3: Once video is fully faded out into black screen
-    setTimeout(() => {
-      if (this.introVideoScreen) {
-        this.introVideoScreen.classList.add('hidden');
-        this.introVideoScreen.style.display = 'none';
-      }
-
-      // Initialize homepage underneath opaque black veil
-      this.updateHomeDinoSkin();
-      this.startMascotAnimation();
-
-      // Step 4: Hold pure black screen intentionally (200ms)
-      setTimeout(() => {
-        // Step 5: Refined gradual fade-in revealing homepage emerging from black (850ms)
-        if (blackVeil) {
-          blackVeil.classList.remove('veil-solid');
-          blackVeil.classList.add('veil-fade-out');
-        }
-
-        // Step 6: After reveal animation completes, cleanly detach veil and remove intro-active
-        setTimeout(() => {
-          this.introEnded = true;
-          this.introTransitioning = false;
-          if (blackVeil) {
-            blackVeil.classList.add('hidden');
-            blackVeil.style.display = 'none';
-          }
-          if (typeof document !== 'undefined' && document.body) {
-            document.documentElement.classList.remove('intro-active');
-            document.body.classList.remove('intro-active');
-          }
-        }, revealDuration);
-      }, holdDuration);
-    }, fadeOutDuration);
+    this.introEnded = true;
+    this.updateHomeDinoSkin();
+    this.startMascotAnimation();
+    this.showScreen(this.homeScreen);
   }
 
-  initCustomizationUI() {
+    initCustomizationUI() {
     // Strictly disable invented 3D generic model; use authoritative 2D turnaround (Section 5 & 2.2)
     this.has3D = false;
     if (this.customization3DCanvas) {

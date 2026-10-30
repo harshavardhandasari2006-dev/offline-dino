@@ -1,7 +1,7 @@
 // OFFLINE DINO - Authentic Offline Service Worker (Cache-First)
 // Complete offline-first application shell, resilient precaching, and offline video streaming.
 
-const CACHE_NAME = 'offline-dino-v58';
+const CACHE_NAME = 'offline-dino-v59';
 
 // 1. Critical Application Shell (HTML, CSS, JavaScript, Manifest, Icons)
 const CORE_ASSETS = [
@@ -178,8 +178,7 @@ const MEDIA_ASSETS = [
   "./assets/sprites/loading_dino/dino_run_13.png",
   "./assets/sprites/loading_dino/dino_run_14.png",
   "./assets/sprites/loading_dino/dino_run_15.png",
-  "./assets/sprites/loading_dino.png",
-  "./assets/videos/intro.mp4"
+  "./assets/sprites/loading_dino.png"
 ];
 
 // In-memory ArrayBuffer cache to eliminate repeated 15MB disk reads & garbage collection
@@ -201,11 +200,6 @@ self.addEventListener('install', (event) => {
             const res = await fetch(url);
             if (res && res.status === 200) {
               await cache.put(url, res.clone());
-              // For intro video, also store clean pathname keys for bulletproof matching
-              if (url.includes('intro.mp4')) {
-                await cache.put('/assets/videos/intro.mp4', res.clone());
-                await cache.put('./assets/videos/intro.mp4', res.clone());
-              }
             }
           } catch (err) {
             console.warn('[SW] Non-critical precache skipped for:', url);
