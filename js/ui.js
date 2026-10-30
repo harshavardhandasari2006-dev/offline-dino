@@ -31,6 +31,8 @@ class UIManager {
     this.countdownOverlay = document.getElementById('countdownOverlay');
         this.countdownText = document.getElementById('countdownText');
     this.newHighScoreBanner = document.getElementById('newHighScoreBanner');
+    this.isPortraitFallback = false;
+    this.isReverseRotation = false;
 
     // Initial Start Game Loading Screen Elements
     this.initialLoadingScreen = document.getElementById('initialLoadingScreen');
@@ -173,6 +175,7 @@ class UIManager {
     this.startMascotAnimation();
     this.showScreen(this.homeScreen);
     this.setupHistoryNavigation();
+    this.updateOrientationMode();
   }
 
   // ==========================================
@@ -787,8 +790,21 @@ class UIManager {
 
       if (e.touches && e.touches.length > 0) {
         const touch = e.touches[0];
-        const deltaY = touch.clientY - this.touchStartY;
-        const deltaX = touch.clientX - this.touchStartX;
+        let deltaY = touch.clientY - this.touchStartY;
+        let deltaX = touch.clientX - this.touchStartX;
+
+        // In portrait fallback rotation, map screen touch delta into container coordinates:
+        if (this.isPortraitFallback) {
+          const origX = deltaX;
+          const origY = deltaY;
+          if (this.isReverseRotation) {
+            deltaY = -origX;
+            deltaX = origY;
+          } else {
+            deltaY = origX;
+            deltaX = -origY;
+          }
+        }
 
         // Detect downward swipe gesture (deltaY > 18 and predominantly downward)
         if (deltaY > 18 && Math.abs(deltaY) > Math.abs(deltaX) * 0.75) {
@@ -841,8 +857,19 @@ class UIManager {
 
     // Window resize observer for mascot canvas DPR
     window.addEventListener('resize', () => {
-      this.initMascotCanvasResolution();
-    });
+      this.updateOrientationMode();
+    }, { passive: true });
+
+    window.addEventListener('orientationchange', () => {
+      this.updateOrientationMode();
+      setTimeout(() => this.updateOrientationMode(), 150);
+    }, { passive: true });
+
+    if (screen.orientation && typeof screen.orientation.addEventListener === 'function') {
+      screen.orientation.addEventListener('change', () => {
+        this.updateOrientationMode();
+      });
+    }
   }
 
   // ==========================================
@@ -850,8 +877,52 @@ class UIManager {
   // Only requests fullscreen on touch/mobile devices; never on desktop
   // ==========================================
   
-  checkOrientation() {
+  updateOrientationMode() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    const isMobileOrTablet = isTouch || (Math.min(window.innerWidth, window.innerHeight) <= 1024);
+
+    const container = document.getElementById('gameContainer');
+    if (!container) return;
+
+    if (isPortrait && isMobileOrTablet) {
+      document.body.classList.add('portrait-fallback');
+      container.classList.add('landscape-fallback-rotated');
+      this.isPortraitFallback = true;
+
+      const angle = (screen.orientation && screen.orientation.angle !== undefined)
+        ? screen.orientation.angle
+        : (window.orientation || 0);
+
+      if (angle === 180) {
+        document.body.classList.add('rotate-reverse');
+        container.classList.add('rotate-reverse');
+        this.isReverseRotation = true;
+      } else {
+        document.body.classList.remove('rotate-reverse');
+        container.classList.remove('rotate-reverse');
+        this.isReverseRotation = false;
+      }
+    } else {
+      document.body.classList.remove('portrait-fallback', 'rotate-reverse');
+      container.classList.remove('landscape-fallback-rotated', 'rotate-reverse');
+      this.isPortraitFallback = false;
+      this.isReverseRotation = false;
+    }
+
+    // Try native orientation lock where supported
     this.tryLockLandscape();
+
+    // Trigger game engine resize to adjust canvas, runway and characters
+    if (this.game && typeof this.game.resize === 'function') {
+      this.game.resize();
+    }
+    // Refresh mascot canvas resolution
+    this.initMascotCanvasResolution();
+  }
+
+  checkOrientation() {
+    this.updateOrientationMode();
   }
 
   tryLockLandscape() {

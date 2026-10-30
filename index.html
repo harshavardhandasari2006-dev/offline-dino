@@ -12,17 +12,17 @@
   <meta property="og:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="twitter:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="apple-mobile-web-app-title" content="Offline Dino">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=60">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=60">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=60">
-  <link rel="shortcut icon" href="favicon.ico?v=60">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=60">
-  <link rel="manifest" href="manifest.json?v=60">
-  <link rel="stylesheet" href="css/style.css?v=60">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=61">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=61">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=61">
+  <link rel="shortcut icon" href="favicon.ico?v=61">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=61">
+  <link rel="manifest" href="manifest.json?v=61">
+  <link rel="stylesheet" href="css/style.css?v=61">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=60').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=61').catch(function() {});
         navigator.serviceWorker.addEventListener('controllerchange', function() {
           var bg = document.getElementById('homeMasterBg');
           if (bg) bg.src = 'assets/sprites/homepage_seamless_panorama.jpg?v=' + Date.now();
@@ -115,17 +115,17 @@
 
       <div class="homepage-stage">
         <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
-        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=60" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=61" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
 
         <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
         <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
 
         <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
-        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=60" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=61" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
 
         <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
-          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png?v=60" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
+          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png?v=61" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
         </div>
 
         <!-- Backward Compatibility Elements for Tests -->
@@ -164,7 +164,7 @@
 
     <!-- Pause Modal (Resume, Restart, Home) -->
     <div id="pauseModal" class="modal-backdrop hidden">
-      <div class="modal-card cartoon-card">
+      <div class="modal-card cartoon-card standard-popup-card pause-card">
         <div class="modal-header">
           <h2 class="modal-title">GAME PAUSED</h2>
         </div>
@@ -184,7 +184,7 @@
 
     <!-- Game Over Modal (Play Again, Home) -->
     <div id="gameOverModal" class="modal-backdrop hidden">
-      <div class="modal-card cartoon-card game-over-card">
+      <div class="modal-card cartoon-card standard-popup-card game-over-card">
         <div class="modal-header">
           <h2 class="modal-title danger">GAME OVER</h2>
         </div>
@@ -332,14 +332,14 @@
   </div>
 
   <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
-  <script src="js/sprite_data.js?v=60"></script>
-  <script src="js/skins.js?v=60"></script>
-  <script src="js/audio.js?v=60"></script>
-  <script src="js/three.min.js?v=60"></script>
-  <script src="js/dino3d.js?v=60"></script>
-  <script src="js/sprites.js?v=60"></script>
-  <script src="js/score_math.js?v=60"></script>
-  <script src="js/game.js?v=60"></script>
-  <script src="js/ui.js?v=60"></script>
+  <script src="js/sprite_data.js?v=61"></script>
+  <script src="js/skins.js?v=61"></script>
+  <script src="js/audio.js?v=61"></script>
+  <script src="js/three.min.js?v=61"></script>
+  <script src="js/dino3d.js?v=61"></script>
+  <script src="js/sprites.js?v=61"></script>
+  <script src="js/score_math.js?v=61"></script>
+  <script src="js/game.js?v=61"></script>
+  <script src="js/ui.js?v=61"></script>
 </body>
 </html>

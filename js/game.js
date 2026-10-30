@@ -262,8 +262,20 @@ class DinoGame {
   resize() {
     const container = document.getElementById('gameContainer');
     if (!container) return;
-    const cw = container.clientWidth || window.innerWidth;
-    const ch = container.clientHeight || window.innerHeight;
+
+    let cw = container.clientWidth;
+    let ch = container.clientHeight;
+
+    // In portrait fallback mode, container is rotated into landscape (width is the longer dimension):
+    if (document.body.classList.contains('portrait-fallback') || container.classList.contains('landscape-fallback-rotated')) {
+      const maxDim = Math.max(window.innerWidth, window.innerHeight);
+      const minDim = Math.min(window.innerWidth, window.innerHeight);
+      cw = maxDim;
+      ch = minDim;
+    } else {
+      if (!cw) cw = window.innerWidth;
+      if (!ch) ch = window.innerHeight;
+    }
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
     this.dpr = dpr;
