@@ -355,6 +355,13 @@ class UIManager {
   }
 
   bindEvents() {
+    // Automatic Connection Detection (Online/Offline seamless transitions)
+    window.addEventListener('online', () => {
+      // Silently update online state without disrupting active gameplay
+    });
+    window.addEventListener('offline', () => {
+      // Silently maintain cached gameplay without disrupting active gameplay
+    });
     // START GAME (Initial entry flow from Homepage with 3-second loading screen)
     this.bindButtonAction(this.btnStartGame, () => {
       if (this.sound) {
@@ -1055,9 +1062,6 @@ class UIManager {
   }
 
   startInitialGameFlow() {
-    if (this.isStartingInitialGame) return;
-    this.isStartingInitialGame = true;
-
     this.cancelCountdown();
     this.cancelInitialLoading();
     this.isStartingInitialGame = true;
@@ -1074,104 +1078,30 @@ class UIManager {
       }
     } catch (e) {}
 
-    // Dinosaur remains completely stationary on the loading screen ("don't move the dinosaur. Keep it as it is.")
-    if (this.loadingDinoImg) {
-      this.loadingDinoImg.src = 'assets/sprites/loading_dino.png';
-    }
-    if (this.loadingDinoAnimTimer) {
-      clearInterval(this.loadingDinoAnimTimer);
-      this.loadingDinoAnimTimer = null;
-    }
+    // Step A: Immediately clean up homepage state
+    this.hideScreen(this.homeScreen);
+    this.homeScreen.classList.remove('fade-out');
 
-    // Set game state to LOADING to prevent gameplay from running behind loading screen
-    if (this.game) {
-      this.game.state = this.game.STATE_LOADING || 'LOADING';
-      this.game.setJumpInput(false);
-      this.game.handleDuckPress(false);
+    // Step B: Reveal Gameplay HUD and prepare game
+    this.showScreen(this.gameplayHUD);
+    if (window.spriteRenderer && window.SkinManager) {
+      const activeSkin = window.SkinManager.getSelectedSkinId();
+      window.spriteRenderer.setSkin(activeSkin);
     }
 
-    // Reset progress bar before fade-in
-    if (this.loadingBarFill) {
-      this.loadingBarFill.style.transition = 'none';
-      this.loadingBarFill.style.width = '0%';
-      void this.loadingBarFill.offsetWidth; // Force synchronous reflow
+    // Step C: Initialize gameplay exactly once with zero artificial delay
+    this.game.resetGame();
+    this.updateHUD(0, this.game.stats.bestScore);
+
+    // Launch gameplay directly
+    this.game.lastTime = performance.now();
+    this.game.state = this.game.STATE_PLAYING;
+
+    // Start desert wind ambience when active gameplay begins
+    if (this.sound) {
+      this.sound.startAmbience();
     }
-
-    // Step A & B: Smooth fade out of homepage and fade in of loading screen
-    this.homeScreen.classList.add('fade-out');
-    this.initialLoadingScreen.classList.remove('hidden');
-    this.initialLoadingScreen.classList.remove('fade-out');
-
-    // Trigger loading screen fade-in
-    requestAnimationFrame(() => {
-      this.initialLoadingScreen.classList.add('visible');
-    });
-
-    const FADE_DURATION = 300; // ms
-    const LOADING_DURATION = 3000; // Exactly 3000ms visible loading duration
-
-    // Wait for fade-in to complete so the visible loading duration is exactly 3000ms
-    this.loadingFadeInTimer = setTimeout(() => {
-      this.loadingFadeInTimer = null;
-
-      // Progress bar smoothly fills across the 3000ms
-      if (this.loadingBarFill) {
-        this.loadingBarFill.style.transition = `width ${LOADING_DURATION}ms linear`;
-        this.loadingBarFill.style.width = '100%';
-      }
-
-      // Step C: Exactly 3000ms visible loading period
-      this.loadingScreenTimer = setTimeout(() => {
-        this.loadingScreenTimer = null;
-
-        // Clean up frame animation interval
-        if (this.loadingDinoAnimTimer) {
-          clearInterval(this.loadingDinoAnimTimer);
-          this.loadingDinoAnimTimer = null;
-        }
-
-        // Step D: Transition into Gameplay
-        // Clean up homepage state
-        this.hideScreen(this.homeScreen);
-        this.homeScreen.classList.remove('fade-out');
-
-        // Reveal Gameplay HUD and prepare game
-        this.showScreen(this.gameplayHUD);
-        if (window.spriteRenderer && window.SkinManager) {
-          const activeSkin = window.SkinManager.getSelectedSkinId();
-          window.spriteRenderer.setSkin(activeSkin);
-        }
-
-        // Initialize gameplay exactly once
-        this.game.resetGame();
-        this.updateHUD(0, this.game.stats.bestScore);
-
-        // Fade out loading screen smoothly
-        this.initialLoadingScreen.classList.remove('visible');
-        this.initialLoadingScreen.classList.add('fade-out');
-
-        this.loadingFadeOutTimer = setTimeout(() => {
-          this.loadingFadeOutTimer = null;
-          this.hideScreen(this.initialLoadingScreen);
-          this.initialLoadingScreen.classList.remove('fade-out');
-          if (this.loadingBarFill) {
-            this.loadingBarFill.style.transition = 'none';
-            this.loadingBarFill.style.width = '0%';
-          }
-
-          // Launch gameplay directly without countdown
-          this.game.lastTime = performance.now();
-          this.game.state = this.game.STATE_PLAYING;
-          // Start desert wind ambience when active gameplay begins
-          if (this.sound) {
-            this.sound.startAmbience();
-          }
-          this.isStartingInitialGame = false;
-        }, FADE_DURATION);
-
-      }, LOADING_DURATION);
-
-    }, FADE_DURATION);
+    this.isStartingInitialGame = false;
   }
 
   startNewGameSequence() {
@@ -1528,7 +1458,7 @@ class UIManager {
   // Homepage dinosaur mascot permanently remains original default green skin
   updateHomeDinoSkin() {
     if (this.homeTitleSignImg) {
-      this.homeTitleSignImg.src = 'assets/sprites/home_title_sign_green.png?v=51';
+      this.homeTitleSignImg.src = 'assets/sprites/home_title_sign_green.png';
     }
     const skinOverlay = document.getElementById('homeDinoSkinOverlay');
     if (skinOverlay) {

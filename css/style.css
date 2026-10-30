@@ -1893,117 +1893,301 @@ body.portrait-fallback.rotate-reverse #gameContainer,
 }
 
 /* Customization screen responsiveness for landscape mobile */
-@media (max-height: 520px) and (orientation: landscape) {
+@media (max-height: 540px) and (orientation: landscape),
+       (max-width: 950px) and (orientation: landscape) {
   .customization-card {
-    max-width: min(96vw, 560px);
-    max-height: 96vh;
-    padding: 7px 14px 6px 14px;
-    gap: 5px;
+    display: grid !important;
+    grid-template-areas:
+      "header header"
+      "preview skins"
+      "actions actions";
+    grid-template-columns: minmax(130px, 34%) 1fr;
+    grid-template-rows: auto 1fr auto;
+    align-items: stretch;
+    max-width: min(94vw, 680px) !important;
+    width: 94vw !important;
+    max-height: 94vh !important;
+    height: auto !important;
+    padding: clamp(7px, 2vh, 12px) clamp(10px, 2.5vw, 18px) !important;
+    gap: clamp(5px, 1.4vh, 9px) clamp(8px, 2vw, 16px) !important;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow: visible !important;
+  }
+
+  .custom-header {
+    grid-area: header;
+    text-align: center;
+    margin: 0;
   }
   .custom-title {
-    font-size: 15px;
-    margin: 0;
+    font-size: clamp(14px, 3vh, 19px) !important;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    margin: 0 0 2px 0 !important;
     line-height: 1.1;
   }
   .custom-title-row {
-    font-size: 11px;
-    gap: 6px;
+    font-size: clamp(10px, 2vh, 12.5px) !important;
+    gap: 6px !important;
   }
+  .custom-dino-name {
+    font-size: inherit;
+    font-weight: 800;
+  }
+  .custom-skin-badge {
+    font-size: clamp(9px, 1.8vh, 11px) !important;
+    padding: 1.5px 8px !important;
+    border-radius: 999px;
+  }
+
+  /* Left Column: Dedicated Dinosaur Preview Stage */
   .custom-preview-stage {
-    align-self: center;
-    width: 96px;
-    padding: 4px 10px;
-    gap: 6px;
-    border-radius: 14px;
+    grid-area: preview;
+    align-self: stretch;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 110px;
+    padding: clamp(6px, 1.5vh, 12px) !important;
+    background: #f8fafc !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: clamp(14px, 2.5vh, 18px) !important;
     box-sizing: border-box;
+    margin: 0 !important;
+  }
+  .custom-preview-stage .btn-rotate {
+    display: none !important;
   }
   .custom-canvas-wrapper {
-    width: 100%;
-    height: 58px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 100% !important;
+    position: relative;
   }
   .custom-dino-preview-img {
-    width: auto;
-    height: 58px;
-    max-width: 58px;
-    max-height: 58px;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    display: block;
+    margin: auto;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
   }
+  .custom-rotation-hint {
+    display: none !important;
+  }
+
+  /* Right Column: Skin Palette Grid */
   .custom-skins-section {
-    gap: 3px;
+    grid-area: skins;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(4px, 1vh, 8px) !important;
+    width: 100% !important;
+    margin: 0;
   }
   .custom-section-title {
-    font-size: 10px;
-    margin: 0;
+    display: flex !important;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    font-size: clamp(9px, 1.6vh, 11px) !important;
+    font-weight: 800;
+    color: #64748b;
     letter-spacing: 0.8px;
+    margin: 0 !important;
   }
+  .custom-section-title::before,
+  .custom-section-title::after {
+    content: "";
+    flex: 1;
+    height: 1.5px;
+    background: #cbd5e1;
+  }
+
   .custom-skins-grid {
-    gap: 4px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: stretch;
+    gap: clamp(4px, 1vw, 7px) !important;
+    width: 100% !important;
   }
   .skin-card {
-    flex: 0 0 calc((100% - 10px) / 3);
-    max-width: calc((100% - 10px) / 3);
-    padding: 3px 2px 3px 2px;
-    border-radius: 9px;
-    gap: 1.5px;
+    --card-gap: clamp(4px, 1vw, 7px);
+    flex: 0 0 calc((100% - (2 * var(--card-gap))) / 3) !important;
+    max-width: calc((100% - (2 * var(--card-gap))) / 3) !important;
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(2px, 0.6vh, 4px) !important;
+    background: #ffffff !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: clamp(9px, 2vh, 13px) !important;
+    padding: clamp(3px, 0.8vh, 6px) clamp(2px, 0.6vw, 5px) !important;
+    cursor: pointer;
+    box-shadow: none !important;
+  }
+  .skin-card.preview-active {
+    border-color: #3b82f6 !important;
+    border-width: 2.5px !important;
+    background: #eff6ff !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35) !important;
+  }
+  .skin-card-preview-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1px, 0.4vh, 3px);
+    width: 100%;
   }
   .skin-swatch-circle {
-    width: 17px;
-    height: 17px;
+    width: clamp(15px, 2.8vh, 22px) !important;
+    height: clamp(15px, 2.8vh, 22px) !important;
+    border-radius: 50%;
+    border: 2px solid #0f172a;
+    box-shadow: 0 1.5px 0 rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
   }
   .skin-card-name {
-    font-size: 9px;
+    font-size: clamp(8px, 1.5vh, 10.5px) !important;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.3px;
+    text-align: center;
+    white-space: nowrap;
   }
   .skin-select-btn {
-    padding: 2.5px 4px;
-    font-size: 8.5px;
+    width: 100% !important;
+    padding: clamp(2px, 0.5vh, 4px) 3px !important;
+    background: #f59e0b !important;
+    color: #0f172a !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 999px !important;
+    font-family: inherit;
+    font-size: clamp(7.5px, 1.4vh, 9.5px) !important;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    text-align: center;
+    box-shadow: 0 1.5px 0 #0f172a !important;
+    cursor: pointer;
+    user-select: none;
   }
+  .skin-select-btn.selected-btn {
+    background: #cbd5e1 !important;
+    color: #475569 !important;
+    border-color: #64748b !important;
+    box-shadow: none !important;
+    opacity: 0.9 !important;
+    cursor: default !important;
+  }
+
+  /* Bottom Actions Bar */
   .custom-actions-bar {
-    margin-top: 1px;
-    gap: 6px;
+    grid-area: actions;
+    width: 100% !important;
+    margin-top: 1px !important;
+    display: flex !important;
   }
-  .btn-custom-back, .btn-custom-confirm {
-    padding: 5px 10px;
-    font-size: 12px;
+  .btn-custom-back {
+    width: 100% !important;
+    flex: 1 !important;
+    padding: clamp(5px, 1.2vh, 9px) 14px !important;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+    border: 2.5px solid #0f172a !important;
+    border-radius: clamp(10px, 2.2vh, 14px) !important;
+    box-shadow: 0 3px 0 #0f172a !important;
+    color: #ffffff !important;
+    font-size: clamp(12px, 2.1vh, 15px) !important;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-align: center;
   }
 }
 
 /* Portrait-held orientation mobile fallback for customization card */
 body.portrait-fallback .customization-card {
-  max-width: min(96vw, 560px);
-  max-height: 96vh;
-  padding: 7px 14px 6px 14px;
-  gap: 5px;
+  display: grid !important;
+  grid-template-areas:
+    "header header"
+    "preview skins"
+    "actions actions";
+  grid-template-columns: minmax(130px, 34%) 1fr;
+  grid-template-rows: auto 1fr auto;
+  align-items: stretch;
+  max-width: min(94vw, 680px) !important;
+  width: 94vw !important;
+  max-height: 94vh !important;
+  height: auto !important;
+  padding: clamp(7px, 2vh, 12px) clamp(10px, 2.5vw, 18px) !important;
+  gap: clamp(5px, 1.4vh, 9px) clamp(8px, 2vw, 16px) !important;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow: visible !important;
 }
-body.portrait-fallback .custom-title { font-size: 15px; margin: 0; line-height: 1.1; }
-body.portrait-fallback .custom-title-row { font-size: 11px; gap: 6px; }
+body.portrait-fallback .custom-header { grid-area: header; text-align: center; margin: 0; }
+body.portrait-fallback .custom-title { font-size: clamp(14px, 3vh, 19px) !important; font-weight: 900; letter-spacing: 0.8px; margin: 0 0 2px 0 !important; line-height: 1.1; }
+body.portrait-fallback .custom-title-row { font-size: clamp(10px, 2vh, 12.5px) !important; gap: 6px !important; }
+body.portrait-fallback .custom-dino-name { font-size: inherit; font-weight: 800; }
+body.portrait-fallback .custom-skin-badge { font-size: clamp(9px, 1.8vh, 11px) !important; padding: 1.5px 8px !important; border-radius: 999px; }
 body.portrait-fallback .custom-preview-stage {
-  align-self: center;
-  width: 96px;
-  padding: 4px 10px;
-  gap: 6px;
-  border-radius: 14px;
+  grid-area: preview;
+  align-self: stretch;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 110px;
+  padding: clamp(6px, 1.5vh, 12px) !important;
+  background: #f8fafc !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: clamp(14px, 2.5vh, 18px) !important;
   box-sizing: border-box;
+  margin: 0 !important;
 }
-body.portrait-fallback .custom-canvas-wrapper { width: 100%; height: 58px; }
-body.portrait-fallback .custom-dino-preview-img { width: auto; height: 58px; max-width: 58px; max-height: 58px; }
-body.portrait-fallback .custom-skins-section { gap: 3px; }
-body.portrait-fallback .custom-section-title { font-size: 10px; margin: 0; letter-spacing: 0.8px; }
-body.portrait-fallback .custom-skins-grid { gap: 4px; }
+body.portrait-fallback .custom-preview-stage .btn-rotate { display: none !important; }
+body.portrait-fallback .custom-canvas-wrapper { display: flex !important; align-items: center; justify-content: center; width: 100% !important; height: 100% !important; position: relative; }
+body.portrait-fallback .custom-dino-preview-img { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; object-fit: contain !important; display: block; margin: auto; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18)); }
+body.portrait-fallback .custom-rotation-hint { display: none !important; }
+body.portrait-fallback .custom-skins-section { grid-area: skins; display: flex !important; flex-direction: column; justify-content: space-between; gap: clamp(4px, 1vh, 8px) !important; width: 100% !important; margin: 0; }
+body.portrait-fallback .custom-section-title { display: flex !important; align-items: center; text-align: center; gap: 8px; font-size: clamp(9px, 1.6vh, 11px) !important; font-weight: 800; color: #64748b; letter-spacing: 0.8px; margin: 0 !important; }
+body.portrait-fallback .custom-section-title::before, body.portrait-fallback .custom-section-title::after { content: ""; flex: 1; height: 1.5px; background: #cbd5e1; }
+body.portrait-fallback .custom-skins-grid { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; align-items: stretch; gap: clamp(4px, 1vw, 7px) !important; width: 100% !important; }
 body.portrait-fallback .skin-card {
-  flex: 0 0 calc((100% - 10px) / 3);
-  max-width: calc((100% - 10px) / 3);
-  padding: 3px 2px 3px 2px;
-  border-radius: 9px;
-  gap: 1.5px;
+  --card-gap: clamp(4px, 1vw, 7px);
+  flex: 0 0 calc((100% - (2 * var(--card-gap))) / 3) !important;
+  max-width: calc((100% - (2 * var(--card-gap))) / 3) !important;
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(2px, 0.6vh, 4px) !important;
+  background: #ffffff !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: clamp(9px, 2vh, 13px) !important;
+  padding: clamp(3px, 0.8vh, 6px) clamp(2px, 0.6vw, 5px) !important;
+  cursor: pointer;
+  box-shadow: none !important;
 }
-body.portrait-fallback .skin-swatch-circle { width: 17px; height: 17px; }
-body.portrait-fallback .skin-card-name { font-size: 9px; }
-body.portrait-fallback .skin-select-btn { padding: 2.5px 4px; font-size: 8.5px; }
-body.portrait-fallback .custom-actions-bar { margin-top: 1px; gap: 6px; }
-body.portrait-fallback .btn-custom-back, body.portrait-fallback .btn-custom-confirm { padding: 5px 10px; font-size: 12px; }
+body.portrait-fallback .skin-card.preview-active { border-color: #3b82f6 !important; border-width: 2.5px !important; background: #eff6ff !important; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35) !important; }
+body.portrait-fallback .skin-card-preview-area { display: flex; flex-direction: column; align-items: center; gap: clamp(1px, 0.4vh, 3px); width: 100%; }
+body.portrait-fallback .skin-swatch-circle { width: clamp(15px, 2.8vh, 22px) !important; height: clamp(15px, 2.8vh, 22px) !important; border-radius: 50%; border: 2px solid #0f172a; box-shadow: 0 1.5px 0 rgba(0, 0, 0, 0.2); flex-shrink: 0; }
+body.portrait-fallback .skin-card-name { font-size: clamp(8px, 1.5vh, 10.5px) !important; font-weight: 800; color: #0f172a; letter-spacing: 0.3px; text-align: center; white-space: nowrap; }
+body.portrait-fallback .skin-select-btn { width: 100% !important; padding: clamp(2px, 0.5vh, 4px) 3px !important; background: #f59e0b !important; color: #0f172a !important; border: 2px solid #0f172a !important; border-radius: 999px !important; font-family: inherit; font-size: clamp(7.5px, 1.4vh, 9.5px) !important; font-weight: 900; letter-spacing: 0.3px; text-align: center; box-shadow: 0 1.5px 0 #0f172a !important; cursor: pointer; user-select: none; }
+body.portrait-fallback .skin-select-btn.selected-btn { background: #cbd5e1 !important; color: #475569 !important; border-color: #64748b !important; box-shadow: none !important; opacity: 0.9 !important; cursor: default !important; }
+body.portrait-fallback .custom-actions-bar { grid-area: actions; width: 100% !important; margin-top: 1px !important; display: flex !important; }
+body.portrait-fallback .btn-custom-back { width: 100% !important; flex: 1 !important; padding: clamp(5px, 1.2vh, 9px) 14px !important; background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important; border: 2.5px solid #0f172a !important; border-radius: clamp(10px, 2.2vh, 14px) !important; box-shadow: 0 3px 0 #0f172a !important; color: #ffffff !important; font-size: clamp(12px, 2.1vh, 15px) !important; font-weight: 900; letter-spacing: 0.8px; text-align: center; }
 
 /* Small mobile portrait (<= 360px wide, e.g. 320x568) */
 @media (max-width: 360px) {
@@ -2239,4 +2423,83 @@ body.portrait-fallback .btn-custom-back, body.portrait-fallback .btn-custom-conf
     max-width: min(85vw, 460px);
     padding: 22px 26px;
   }
+}
+
+/* Tablet Landscape Customization Redesign (iPads, Android tablets) */
+@media (min-width: 601px) and (max-width: 1366px) and (orientation: landscape) and (min-height: 541px) and (pointer: coarse) {
+  .customization-card {
+    display: grid !important;
+    grid-template-areas:
+      "header header"
+      "preview skins"
+      "actions actions";
+    grid-template-columns: minmax(180px, 35%) 1fr !important;
+    grid-template-rows: auto 1fr auto !important;
+    align-items: stretch;
+    max-width: min(88vw, 720px) !important;
+    width: 88vw !important;
+    max-height: 88vh !important;
+    height: auto !important;
+    padding: 16px 22px !important;
+    gap: 12px 18px !important;
+    box-sizing: border-box;
+    overflow: visible !important;
+  }
+  .custom-header { grid-area: header; text-align: center; margin: 0; }
+  .custom-title { font-size: 22px !important; font-weight: 900; margin: 0 0 4px 0 !important; }
+  .custom-title-row { font-size: 14px !important; gap: 8px !important; }
+  .custom-skin-badge { font-size: 12px !important; padding: 3px 12px !important; }
+
+  .custom-preview-stage {
+    grid-area: preview;
+    align-self: stretch;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 170px;
+    padding: 14px !important;
+    background: #f8fafc !important;
+    border: 2.5px solid #cbd5e1 !important;
+    border-radius: 20px !important;
+    box-sizing: border-box;
+    margin: 0 !important;
+  }
+  .custom-preview-stage .btn-rotate { display: none !important; }
+  .custom-canvas-wrapper { display: flex !important; align-items: center; justify-content: center; width: 100% !important; height: 100% !important; position: relative; }
+  .custom-dino-preview-img { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; object-fit: contain !important; display: block; margin: auto; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.2)); }
+  .custom-rotation-hint { display: none !important; }
+
+  .custom-skins-section { grid-area: skins; display: flex !important; flex-direction: column; justify-content: space-between; gap: 10px !important; width: 100% !important; margin: 0; }
+  .custom-section-title { display: flex !important; align-items: center; text-align: center; gap: 10px; font-size: 12px !important; font-weight: 800; color: #64748b; letter-spacing: 1px; margin: 0 !important; }
+  .custom-section-title::before, .custom-section-title::after { content: ""; flex: 1; height: 1.5px; background: #cbd5e1; }
+
+  .custom-skins-grid { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; align-items: stretch; gap: 10px !important; width: 100% !important; }
+  .skin-card {
+    flex: 0 0 calc((100% - 20px) / 3) !important;
+    max-width: calc((100% - 20px) / 3) !important;
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px !important;
+    background: #ffffff !important;
+    border: 2.5px solid #cbd5e1 !important;
+    border-radius: 14px !important;
+    padding: 10px 8px !important;
+    cursor: pointer;
+    box-shadow: none !important;
+  }
+  .skin-card.preview-active { border-color: #3b82f6 !important; border-width: 2.5px !important; background: #eff6ff !important; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35) !important; }
+  .skin-card-preview-area { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
+  .skin-swatch-circle { width: 26px !important; height: 26px !important; border-radius: 50%; border: 2.5px solid #0f172a; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); flex-shrink: 0; }
+  .skin-card-name { font-size: 12px !important; font-weight: 800; color: #0f172a; letter-spacing: 0.4px; text-align: center; white-space: nowrap; }
+  .skin-select-btn { width: 100% !important; padding: 6px 8px !important; background: #f59e0b !important; color: #0f172a !important; border: 2px solid #0f172a !important; border-radius: 999px !important; font-family: inherit; font-size: 11px !important; font-weight: 900; letter-spacing: 0.5px; text-align: center; box-shadow: 0 2px 0 #0f172a !important; cursor: pointer; user-select: none; }
+  .skin-select-btn.selected-btn { background: #cbd5e1 !important; color: #475569 !important; border-color: #64748b !important; box-shadow: none !important; opacity: 0.9 !important; cursor: default !important; }
+
+  .custom-actions-bar { grid-area: actions; width: 100% !important; margin-top: 4px !important; display: flex !important; }
+  .btn-custom-back { width: 100% !important; flex: 1 !important; padding: 11px 20px !important; background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important; border: 3px solid #0f172a !important; border-radius: 16px !important; box-shadow: 0 4px 0 #0f172a !important; color: #ffffff !important; font-size: 16px !important; font-weight: 900; letter-spacing: 1px; text-align: center; }
 }

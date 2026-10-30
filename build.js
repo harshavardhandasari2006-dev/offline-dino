@@ -151,7 +151,7 @@ async function runBuild() {
     console.error('  [FAIL] Missing assets/sprites directory');
     errors++;
   } else {
-    const files = fs.readdirSync(spritesDir).filter(f => f.endsWith('.png'));
+    const files = fs.readdirSync(spritesDir).filter(f => f.endsWith('.png') && !f.includes('backup') && !f.includes('test') && !f.includes('original') && !f.includes('ref'));
     console.log(`  ✓ Found ${files.length} sprite assets`);
 
     const spriteMap = {};

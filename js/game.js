@@ -993,6 +993,11 @@ class DinoGame {
   // RENDERING (Style 1 Friendly Classic Environment)
   // ==========================================
   render() {
+    // When on home screen or when page is hidden in background tab, skip canvas redraw to save CPU/battery
+    if (this.state === this.STATE_HOME || (typeof document !== 'undefined' && document.hidden)) {
+      return;
+    }
+
     const ctx = this.ctx;
     const cw = this.canvas.width;
     const ch = this.canvas.height;

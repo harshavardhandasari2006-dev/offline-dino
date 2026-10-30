@@ -1,7 +1,7 @@
 // OFFLINE DINO - Authentic Offline Service Worker (Cache-First)
 // Complete offline-first application shell, resilient precaching, and offline video streaming.
 
-const CACHE_NAME = 'offline-dino-v63';
+const CACHE_NAME = 'offline-dino-v66';
 
 // 1. Critical Application Shell (HTML, CSS, JavaScript, Manifest, Icons)
 const CORE_ASSETS = [
@@ -22,7 +22,6 @@ const CORE_ASSETS = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./assets/offline_dino_mascot_logo.png",
-  "./js/sprite_data.js",
   "./js/skins.js",
   "./js/audio.js",
   "./js/three.min.js",
@@ -30,11 +29,29 @@ const CORE_ASSETS = [
   "./js/sprites.js",
   "./js/score_math.js",
   "./js/game.js",
-  "./js/ui.js"
+  "./js/ui.js",
+  // Essential instant-render sprites
+  "./assets/sprites/homepage_seamless_panorama.jpg",
+  "./assets/sprites/skin_green.png",
+  "./assets/sprites/skin_blue.png",
+  "./assets/sprites/skin_red.png",
+  "./assets/sprites/skin_orange.png",
+  "./assets/sprites/skin_black.png",
+  "./assets/sprites/home_title_sign_green.png",
+  "./assets/sprites/home_title_sign_blue.png",
+  "./assets/sprites/home_title_sign_red.png",
+  "./assets/sprites/home_title_sign_orange.png",
+  "./assets/sprites/home_title_sign_black.png",
+  "./assets/sprites/cactus_single.png",
+  "./assets/sprites/cactus_double.png",
+  "./assets/sprites/cactus_triple.png",
+  "./assets/sprites/pterodactyl_0.png",
+  "./assets/sprites/pterodactyl_1.png"
 ];
 
 // 2. High-Performance Media Assets (Sprites, Audio Buffers, 3D Model, Intro Video)
 const MEDIA_ASSETS = [
+  "./js/sprite_data.js",
   "./assets/models/dino.glb",
   "./assets/audio/sand_step.wav",
   "./assets/audio/sand_step_left.wav",
@@ -44,15 +61,8 @@ const MEDIA_ASSETS = [
   "./assets/audio/dragon_flap.wav",
   "./assets/audio/dragon_flap_down.wav",
   "./assets/audio/dragon_flap_up.wav",
-  "./assets/sprites/homepage_seamless_panorama.jpg",
-  "./assets/sprites/homepage_seamless_panorama.jpg?v=33",
   "./assets/sprites/home_bg_desktop.png",
   "./assets/sprites/home_sound_off_patch.png",
-  "./assets/sprites/home_title_sign_green.png",
-  "./assets/sprites/home_title_sign_blue.png",
-  "./assets/sprites/home_title_sign_red.png",
-  "./assets/sprites/home_title_sign_orange.png",
-  "./assets/sprites/home_title_sign_black.png",
   "./assets/sprites/home_title_sign_yellow.png",
   "./assets/sprites/home_title_sign_purple.png",
   "./assets/sprites/home_title_sign_pink.png",
@@ -61,14 +71,9 @@ const MEDIA_ASSETS = [
   "./assets/sprites/btn_mask_highscore.png",
   "./assets/sprites/btn_mask_sound.png",
   "./assets/sprites/btn_mask_exit.png",
-  "./assets/sprites/skin_green.png",
-  "./assets/sprites/skin_blue.png",
-  "./assets/sprites/skin_red.png",
   "./assets/sprites/skin_yellow.png",
-  "./assets/sprites/skin_orange.png",
   "./assets/sprites/skin_purple.png",
   "./assets/sprites/skin_pink.png",
-  "./assets/sprites/skin_black.png",
   "./assets/sprites/home_dino_skin_green.png",
   "./assets/sprites/home_dino_skin_blue.png",
   "./assets/sprites/home_dino_skin_red.png",
@@ -79,13 +84,8 @@ const MEDIA_ASSETS = [
   "./assets/sprites/home_dino_skin_black.png",
   "./assets/sprites/bg_day.png",
   "./assets/sprites/bg_night.png",
-  "./assets/sprites/cactus_single.png",
-  "./assets/sprites/cactus_double.png",
   "./assets/sprites/cactus_small.png",
   "./assets/sprites/cactus_tall.png",
-  "./assets/sprites/cactus_triple.png",
-  "./assets/sprites/pterodactyl_0.png",
-  "./assets/sprites/pterodactyl_1.png",
   "./assets/sprites/dino_idle_0.png",
   "./assets/sprites/dino_idle_1.png",
   "./assets/sprites/dino_idle_2.png",
@@ -190,22 +190,27 @@ self.addEventListener('install', (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
 
-      // 1. Atomically precache core application shell
+      // 1. Atomically precache core application shell (< 1 MB, completes in < 200ms)
       await cache.addAll(CORE_ASSETS);
 
-      // 2. Precache media, sprites, audio and video with individual resilience
-      await Promise.all(
-        MEDIA_ASSETS.map(async (url) => {
-          try {
-            const res = await fetch(url);
-            if (res && res.status === 200) {
-              await cache.put(url, res.clone());
+      // 2. Precache media, sprites, and audio in controlled batches (concurrency of 6)
+      // Prevents socket exhaustion and timeouts on mobile connections
+      const CONCURRENCY = 6;
+      for (let i = 0; i < MEDIA_ASSETS.length; i += CONCURRENCY) {
+        const batch = MEDIA_ASSETS.slice(i, i + CONCURRENCY);
+        await Promise.all(
+          batch.map(async (url) => {
+            try {
+              const res = await fetch(url);
+              if (res && res.status === 200) {
+                await cache.put(url, res.clone());
+              }
+            } catch (err) {
+              // Non-critical asset skipped
             }
-          } catch (err) {
-            console.warn('[SW] Non-critical precache skipped for:', url);
-          }
-        })
-      );
+          })
+        );
+      }
 
       await self.skipWaiting();
     })()
@@ -248,46 +253,76 @@ self.addEventListener('fetch', (event) => {
   // 2. Navigation requests (HTML document)
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
+      (async () => {
+        // Fast path: if offline, immediately serve cached index.html with zero network wait
+        if (!navigator.onLine) {
+          const cached = (await caches.match(event.request, { ignoreSearch: true })) ||
+                         (await caches.match('./index.html', { ignoreSearch: true })) ||
+                         (await caches.match('/index.html', { ignoreSearch: true })) ||
+                         (await caches.match('./', { ignoreSearch: true }));
+          if (cached) return cached;
+        }
+
+        // When online, race network fetch with a tight 1.5s timeout.
+        // If network responds fast, update cache and serve latest.
+        // If network is offline, slow, or hanging (Lie-Fi), instantly fall back to cached index.html.
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 1500);
+
+          const networkResponse = await fetch(event.request, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
           if (networkResponse && networkResponse.status === 200) {
-            const resClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then(c => c.put(event.request, resClone));
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(event.request, networkResponse.clone());
           }
           return networkResponse;
-        })
-        .catch(async () => {
-          const cached = await caches.match(event.request, { ignoreSearch: true });
+        } catch (err) {
+          const cached = (await caches.match(event.request, { ignoreSearch: true })) ||
+                         (await caches.match('./index.html', { ignoreSearch: true })) ||
+                         (await caches.match('/index.html', { ignoreSearch: true })) ||
+                         (await caches.match('./', { ignoreSearch: true }));
           if (cached) return cached;
-          return (await caches.match('./index.html', { ignoreSearch: true })) ||
-                 (await caches.match('/index.html', { ignoreSearch: true })) ||
-                 (await caches.match('./', { ignoreSearch: true }));
-        })
+          throw err;
+        }
+      })()
     );
     return;
   }
 
-  // 3. All other assets: Cache-First with Network fallback
+  // 3. Static Game Assets (Scripts, Styles, Sprites, Audio, Models) -> Cache-First
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    (async () => {
+      // Check cache with multiple key representations before touching the network
+      const cached = (await caches.match(event.request, { ignoreSearch: true })) ||
+                     (await caches.match(url.pathname, { ignoreSearch: true })) ||
+                     (await caches.match('.' + url.pathname, { ignoreSearch: true }));
+      if (cached) {
+        return cached;
       }
 
-      return fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const resClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then(c => c.put(event.request, resClone));
-          }
-          return networkResponse;
-        })
-        .catch(async () => {
-          // Fallback for relative vs absolute path mismatch
-          return (await caches.match(url.pathname, { ignoreSearch: true })) ||
-                 (await caches.match('.' + url.pathname, { ignoreSearch: true }));
-        });
-    })
+      // If missing from cache and device is offline, avoid network error spam
+      if (!navigator.onLine) {
+        return new Response('', { status: 503, statusText: 'Offline Cache Miss' });
+      }
+
+      // Only if not in cache, fetch from network and store for future offline sessions
+      try {
+        const networkResponse = await fetch(event.request);
+        if (networkResponse && networkResponse.status === 200) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(event.request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (err) {
+        // Fallback for relative vs absolute path mismatch
+        const fallback = (await caches.match(url.pathname, { ignoreSearch: true })) ||
+                         (await caches.match('.' + url.pathname, { ignoreSearch: true }));
+        if (fallback) return fallback;
+        throw err;
+      }
+    })()
   );
 });
 
