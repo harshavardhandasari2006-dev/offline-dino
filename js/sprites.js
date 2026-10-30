@@ -19,17 +19,25 @@ class SpriteRenderer {
     this.imagesLoaded = false;
     this.blurredBgs = {}; // Pre-rendered blurred canvases to eliminate per-frame ctx.filter overhead (DINO-007)
     this.currentSkin = (typeof window !== 'undefined' && window.SkinManager)
-      ? window.SkinManager.getSelectedSkinId()
+      ? (typeof window.SkinManager.getGameplaySkinId === 'function'
+          ? window.SkinManager.getGameplaySkinId(window.SkinManager.getSelectedSkinId())
+          : window.SkinManager.getSelectedSkinId())
       : 'green';
     this.skinCache = {};
     this.loadSprites();
   }
 
   setSkin(skinId) {
+    let effectiveSkin = skinId;
     if (typeof window !== 'undefined' && window.SkinManager) {
-      this.currentSkin = window.SkinManager.setSelectedSkinId(skinId);
+      if (typeof window.SkinManager.getGameplaySkinId === 'function') {
+        effectiveSkin = window.SkinManager.getGameplaySkinId(skinId);
+      } else {
+        effectiveSkin = (skinId === 'brown') ? 'orange' : skinId;
+      }
+      this.currentSkin = effectiveSkin;
     } else {
-      this.currentSkin = skinId || 'green';
+      this.currentSkin = (effectiveSkin === 'brown') ? 'orange' : (effectiveSkin || 'green');
     }
     if (this.currentSkin && this.currentSkin !== 'green') {
       this.preloadSkinSprites(this.currentSkin);

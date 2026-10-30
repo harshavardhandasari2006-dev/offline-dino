@@ -50,6 +50,20 @@
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
   }
 
+  const ORANGE_GAMEPLAY_SKIN = {
+    id: 'orange',
+    name: 'SUNSET ORANGE',
+    subtitle: 'Amber Runner',
+    swatchColor: '#ed8936',
+    accentColor: '#7b341e',
+    borderGrad: 'linear-gradient(135deg, #fbd38d, #dd6b20)',
+    targetH: 26,
+    sMul: 1.12,
+    lMul: 1.0,
+    previewAsset: 'assets/sprites/skin_orange.png',
+    gameplaySkinId: 'orange'
+  };
+
   const DINO_SKINS = [
     {
       id: 'green',
@@ -60,7 +74,9 @@
       borderGrad: 'linear-gradient(135deg, #68d391, #2f855a)',
       targetH: 92,
       sMul: 1.0,
-      lMul: 1.0
+      lMul: 1.0,
+      previewAsset: 'assets/sprites/skin_green.png',
+      gameplaySkinId: 'green'
     },
     {
       id: 'blue',
@@ -71,7 +87,9 @@
       borderGrad: 'linear-gradient(135deg, #63b3ed, #2b6cb0)',
       targetH: 204,
       sMul: 1.05,
-      lMul: 0.98
+      lMul: 0.98,
+      previewAsset: 'assets/sprites/skin_blue.png',
+      gameplaySkinId: 'blue'
     },
     {
       id: 'red',
@@ -82,18 +100,22 @@
       borderGrad: 'linear-gradient(135deg, #fc8181, #c53030)',
       targetH: 4,
       sMul: 1.10,
-      lMul: 0.95
+      lMul: 0.95,
+      previewAsset: 'assets/sprites/skin_red.png',
+      gameplaySkinId: 'red'
     },
     {
-      id: 'orange',
-      name: 'SUNSET ORANGE',
-      subtitle: 'Amber Runner',
-      swatchColor: '#ed8936',
-      accentColor: '#7b341e',
-      borderGrad: 'linear-gradient(135deg, #fbd38d, #dd6b20)',
+      id: 'brown',
+      name: 'CHOCOLATE BROWN',
+      subtitle: 'Earth Rover',
+      swatchColor: '#8c593b',
+      accentColor: '#3d2516',
+      borderGrad: 'linear-gradient(135deg, #b7791f, #744210)',
       targetH: 26,
       sMul: 1.12,
-      lMul: 1.0
+      lMul: 1.0,
+      previewAsset: 'assets/sprites/skin_brown.png',
+      gameplaySkinId: 'orange' // CRITICAL: Uses existing Orange dinosaur during gameplay!
     },
     {
       id: 'black',
@@ -104,18 +126,24 @@
       borderGrad: 'linear-gradient(135deg, #718096, #2d3748)',
       targetH: 215,
       sMul: 0.12,
-      lMul: 0.55
+      lMul: 0.55,
+      previewAsset: 'assets/sprites/skin_black.png',
+      gameplaySkinId: 'black'
     }
   ];
 
-  const REMOVED_SKIN_IDS = ['yellow', 'purple', 'pink', 'brown'];
+  const REMOVED_SKIN_IDS = ['yellow', 'purple', 'pink', 'orange'];
   const STORAGE_KEY = 'offline_dino_selected_skin';
   const DEFAULT_SKIN_ID = 'green';
   let activeSkinId = DEFAULT_SKIN_ID;
 
   // Restore previously saved skin from localStorage safely
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'orange') {
+      saved = 'brown';
+      try { localStorage.setItem(STORAGE_KEY, 'brown'); } catch(e) {}
+    }
     if (saved && !REMOVED_SKIN_IDS.includes(saved) && DINO_SKINS.some(s => s.id === saved)) {
       activeSkinId = saved;
     } else if (saved) {
@@ -130,6 +158,7 @@
     skins: DINO_SKINS,
     DEFAULT_SKIN_ID,
     REMOVED_SKIN_IDS,
+    ORANGE_GAMEPLAY_SKIN,
 
     getSelectedSkinId() {
       if (!activeSkinId || REMOVED_SKIN_IDS.includes(activeSkinId) || !DINO_SKINS.some(s => s.id === activeSkinId)) {
@@ -139,6 +168,7 @@
     },
 
     setSelectedSkinId(skinId) {
+      if (skinId === 'orange') skinId = 'brown';
       if (!skinId || REMOVED_SKIN_IDS.includes(skinId) || !DINO_SKINS.some(s => s.id === skinId)) {
         skinId = DEFAULT_SKIN_ID;
       }
@@ -147,6 +177,13 @@
         localStorage.setItem(STORAGE_KEY, activeSkinId);
       } catch (e) {}
       return activeSkinId;
+    },
+
+    getGameplaySkinId(skinId) {
+      const targetId = skinId || activeSkinId;
+      if (targetId === 'brown') return 'orange';
+      const skin = this.getSkinById(targetId);
+      return (skin && skin.gameplaySkinId) ? skin.gameplaySkinId : (targetId || 'green');
     },
 
     resetToDefault() {
@@ -158,6 +195,9 @@
     },
 
     getSkinById(skinId) {
+      if (skinId === 'orange') {
+        return ORANGE_GAMEPLAY_SKIN;
+      }
       if (!skinId || REMOVED_SKIN_IDS.includes(skinId)) {
         return DINO_SKINS[0];
       }

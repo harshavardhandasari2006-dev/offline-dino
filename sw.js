@@ -1,7 +1,7 @@
 // OFFLINE DINO - Authentic Offline Service Worker (Cache-First)
 // Complete offline-first application shell, resilient precaching, and offline video streaming.
 
-const CACHE_NAME = 'offline-dino-v68';
+const CACHE_NAME = 'offline-dino-v69';
 
 // 1. Critical Application Shell (HTML, CSS, JavaScript, Manifest, Icons)
 const CORE_ASSETS = [
@@ -36,6 +36,7 @@ const CORE_ASSETS = [
   "./assets/sprites/skin_blue.png",
   "./assets/sprites/skin_red.png",
   "./assets/sprites/skin_orange.png",
+  "./assets/sprites/skin_brown.png",
   "./assets/sprites/skin_black.png",
   "./assets/sprites/home_title_sign_green.png",
   "./assets/sprites/home_title_sign_blue.png",

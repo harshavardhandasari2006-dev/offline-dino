@@ -1104,6 +1104,13 @@ class DinoGame {
     }
     this.animFrameId = requestAnimationFrame(loop);
   }
+
+  stopLoop() {
+    if (this.animFrameId) {
+      cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = null;
+    }
+  }
 }
 
 window.dinoGame = new DinoGame();

@@ -139,7 +139,8 @@ class UIManager {
     this.preloadSkinAssets();
     this.updateHomeDinoSkin();
     if (this.customDinoPreviewImg) {
-      this.customDinoPreviewImg.src = `assets/sprites/skin_${this.confirmedSkinId}.png`;
+      const activeSkinObj = (window.SkinManager) ? window.SkinManager.getSkinById(this.confirmedSkinId) : null;
+      this.customDinoPreviewImg.src = this.getSkinPreviewAsset(this.confirmedSkinId);
     }
 
     this.customRotationAngle = 0; // Continuous angle in [0, 2*PI)
@@ -158,6 +159,7 @@ class UIManager {
 
     // State helpers
     this.isAutoPaused = false;
+    this.isExiting = false;
     this.countdownTimer = null;
     this.bannerTimeout = null;
 
@@ -395,31 +397,9 @@ class UIManager {
 
     // EXIT DIALOG: Yes — Immediately exit the game and return to appropriate destination
     if (this.btnExitYes) {
-      this.btnExitYes.addEventListener('click', () => {
+      this.bindButtonAction(this.btnExitYes, () => {
         this.sound.playClick();
-        this.hideModal(this.exitModal);
-
-        // Stop all audio and animations immediately
-        if (this.sound) {
-          this.sound.stopAmbience();
-        }
-        this.stopMascotAnimation();
-
-        // 1. Attempt programmatic window close (supported when opened via script/standalone/PWA)
-        try {
-          window.close();
-        } catch (e) {}
-
-        // 2. If the window remains open because the browser blocks window.close(),
-        // return to the appropriate exit destination supported by the browser environment:
-        // Return to referrer or previous page if available, else exit to about:blank.
-        if (document.referrer && document.referrer !== window.location.href) {
-          window.location.href = document.referrer;
-        } else if (window.history && window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.location.href = 'about:blank';
-        }
+        this.executeExit();
       });
     }
 
@@ -1291,7 +1271,44 @@ class UIManager {
     });
   }
 
+  executeExit() {
+    this.isExiting = true;
+    this.hideModal(this.exitModal);
+
+    // Stop all audio, mascot animations, and gameplay loops immediately
+    if (this.sound) {
+      this.sound.stopAmbience();
+    }
+    this.stopMascotAnimation();
+    if (this.game) {
+      this.game.stopLoop();
+    }
+
+    // 1. Attempt programmatic window close (supported when opened via script/standalone/PWA)
+    try {
+      window.close();
+    } catch (e) {}
+
+    // 2. Return to referrer if arriving from an external site
+    try {
+      if (document.referrer && document.referrer !== window.location.href && !document.referrer.includes(window.location.host)) {
+        window.location.replace(document.referrer);
+        return;
+      }
+    } catch (e) {}
+
+    // 3. Immediate supported exit fallback for browser tabs
+    try {
+      window.location.replace('about:blank');
+    } catch (e) {
+      try {
+        window.location.href = 'about:blank';
+      } catch (err) {}
+    }
+  }
+
   handlePopState(e) {
+    if (this.isExiting) return;
     // 1. Actively playing, paused, countdown, or loading
     if (this.isGameplayActive()) {
       try {
@@ -1491,7 +1508,7 @@ class UIManager {
   preloadSkinAssets() {
     const skins = (window.SkinManager && window.SkinManager.skins)
       ? window.SkinManager.skins.map(s => s.id)
-      : ['green', 'blue', 'red', 'orange', 'black'];
+      : ['green', 'blue', 'red', 'brown', 'black'];
     skins.forEach((s) => {
       const img1 = new Image();
       img1.src = `assets/sprites/skin_${s}.png`;
@@ -1625,7 +1642,8 @@ class UIManager {
     if (this.customizationCanvas && this.customCtx) {
       this.customizationCanvas.classList.add('hidden');
       if (this.customDinoPreviewImg) {
-        this.customDinoPreviewImg.src = `assets/sprites/skin_${this.previewSkinId}.png`;
+        const activeSkinObj = (window.SkinManager) ? window.SkinManager.getSkinById(this.previewSkinId) : null;
+      this.customDinoPreviewImg.src = this.getSkinPreviewAsset(this.previewSkinId);
       }
       const dpr = Math.min(window.devicePixelRatio || 1, 3);
       const cssW = 220;
@@ -1696,7 +1714,7 @@ class UIManager {
     this.previewSkinId = this.confirmedSkinId;
 
     if (this.customDinoPreviewImg) {
-      this.customDinoPreviewImg.src = `assets/sprites/skin_${this.previewSkinId}.png`;
+      this.customDinoPreviewImg.src = this.getSkinPreviewAsset(this.previewSkinId);
     }
     this.updateHomeDinoSkin();
 
@@ -1799,8 +1817,16 @@ class UIManager {
     if (this.customSkinLabel && activeSkinObj) {
       this.customSkinLabel.textContent = activeSkinObj.name;
       this.customSkinLabel.style.background = activeSkinObj.swatchColor;
-      this.customSkinLabel.style.color = (activeSkinObj.id === 'black' || activeSkinObj.id === 'red' || activeSkinObj.id === 'blue') ? '#ffffff' : '#0f172a';
+      this.customSkinLabel.style.color = (activeSkinObj.id === 'black' || activeSkinObj.id === 'red' || activeSkinObj.id === 'blue' || activeSkinObj.id === 'brown') ? '#ffffff' : '#0f172a';
     }
+  }
+
+  getSkinPreviewAsset(skinId) {
+    if (window.SkinManager && typeof window.SkinManager.getSkinById === 'function') {
+      const skin = window.SkinManager.getSkinById(skinId);
+      if (skin && skin.previewAsset) return skin.previewAsset;
+    }
+    return `assets/sprites/skin_${skinId || 'green'}.png`;
   }
 
   // Previews a skin without selecting or confirming it
@@ -1809,7 +1835,7 @@ class UIManager {
     this.previewSkinId = skinId;
 
     if (this.customDinoPreviewImg) {
-      this.customDinoPreviewImg.src = `assets/sprites/skin_${skinId}.png`;
+      this.customDinoPreviewImg.src = this.getSkinPreviewAsset(skinId);
     }
     this.triggerCustomReaction();
     this.renderCustomSkinsGrid();
@@ -1831,7 +1857,7 @@ class UIManager {
     window.SkinManager.setSelectedSkinId(skinId);
 
     if (this.customDinoPreviewImg) {
-      this.customDinoPreviewImg.src = `assets/sprites/skin_${skinId}.png`;
+      this.customDinoPreviewImg.src = this.getSkinPreviewAsset(skinId);
     }
     this.updateHomeDinoSkin();
 
