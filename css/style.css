@@ -959,13 +959,13 @@ body.portrait-fallback.rotate-reverse #gameContainer,
 
 
 /* ==========================================================================
-   STANDARDIZED POPUP DESIGN SYSTEM (GAME OVER & GAME PAUSED)
-   Shared balanced aspect ratio (~1.1:1), identical depth, borders, typography
+   STANDARDIZED POPUP DESIGN SYSTEM (GAME OVER & GAME PAUSED ONLY)
+   Shared balanced aspect ratio (~1.1:1 to ~1.3:1), identical depth, borders, typography
    Modeled directly on the balanced reference design (Image 1)
+   Leaves High Scores and Skin Selection completely in their original design!
    ========================================================================== */
 #gameOverModal .modal-card,
-#pauseModal .modal-card,
-.standard-popup-card {
+#pauseModal .modal-card {
   width: min(88vw, 316px) !important;
   max-width: 316px !important;
   box-sizing: border-box !important;
@@ -988,10 +988,8 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   animation: cardEnter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-/* Modal Title */
-#gameOverModal .modal-title,
-#pauseModal .modal-title,
-.standard-popup-card .modal-title {
+#gameOverModal .modal-title {
+  color: #e11d48 !important;
   font-size: 22px !important;
   font-weight: 900 !important;
   letter-spacing: 1.2px !important;
@@ -999,17 +997,19 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   line-height: 1.15 !important;
   text-align: center !important;
 }
-#gameOverModal .modal-title {
-  color: #e11d48 !important; /* Coral / Red Danger */
-}
+
 #pauseModal .modal-title {
-  color: #0f172a !important; /* Dark Navy */
+  color: #0f172a !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.2px !important;
+  margin: 0 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
 }
 
-/* Modal Body */
 #gameOverModal .modal-body,
-#pauseModal .modal-body,
-.standard-popup-card .modal-body {
+#pauseModal .modal-body {
   width: 100% !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1018,7 +1018,6 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   padding: 0 !important;
 }
 
-/* Scoreboard (Game Over) */
 #gameOverModal .stats-scoreboard {
   background: #f1f5f9 !important;
   border: 2.5px solid #cbd5e1 !important;
@@ -1030,6 +1029,7 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   width: 100% !important;
   box-sizing: border-box !important;
 }
+
 #gameOverModal .stat-box {
   flex: 1 !important;
   display: flex !important;
@@ -1037,12 +1037,14 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   align-items: center !important;
   gap: 2px !important;
 }
+
 #gameOverModal .stat-label {
   font-size: 10px !important;
   font-weight: 800 !important;
   color: #64748b !important;
   letter-spacing: 0.6px !important;
 }
+
 #gameOverModal .stat-val {
   font-size: 20px !important;
   font-weight: 900 !important;
@@ -1050,14 +1052,13 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   letter-spacing: 1px !important;
   font-variant-numeric: tabular-nums !important;
 }
+
 #gameOverModal .stat-val.highlight {
   color: #e11d48 !important;
 }
 
-/* Shared Buttons in Game Over and Game Paused */
 #gameOverModal .cartoon-btn,
-#pauseModal .cartoon-btn,
-.standard-popup-card .cartoon-btn {
+#pauseModal .cartoon-btn {
   width: 100% !important;
   height: 44px !important;
   min-height: 44px !important;
@@ -1074,12 +1075,12 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   box-sizing: border-box !important;
   transition: transform 0.1s ease, box-shadow 0.1s ease !important;
 }
+
 #gameOverModal .cartoon-btn:active,
 #pauseModal .cartoon-btn:active {
   transform: translateY(3px) !important;
 }
 
-/* Button Colors */
 #gameOverModal #btnPlayAgain {
   background: linear-gradient(180deg, #ffb703 0%, #fb8500 100%) !important;
   color: #ffffff !important;
@@ -1118,87 +1119,6 @@ body.portrait-fallback.rotate-reverse #gameContainer,
 }
 #pauseModal #btnPauseRestart:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #c2410c !important; }
 #pauseModal #btnPauseRestart:active { transform: translateY(3px); box-shadow: 0 2px 0 #c2410c !important; }
-  .cartoon-card {
-    padding: 12px 18px;
-    border-radius: 20px;
-    border-width: 3px;
-    gap: 8px;
-    max-height: 94dvh;
-    max-width: min(92vw, 380px);
-  }
-  .modal-title {
-    font-size: 19px;
-  }
-  .cartoon-btn {
-    padding: 8px 14px;
-    font-size: 13.5px;
-    border-radius: 12px;
-  }
-  .btn-primary-yellow {
-    font-size: 15px;
-    padding: 10px 18px;
-  }
-  .stats-scoreboard {
-    padding: 6px 10px;
-    gap: 6px;
-  }
-  .stat-val {
-    font-size: 16px;
-  }
-  .stat-label {
-    font-size: 8.5px;
-  }
-}
-
-/* ==========================================================================
-   DEDICATED TABLET LANDSCAPE RESPONSIVE SYSTEM
-   Applies to iPads & Android tablets in landscape (aspect ~ 4:3, 16:10, 3:2)
-   ========================================================================== */
-@media (min-width: 601px) and (max-width: 1366px) and (orientation: landscape) and (min-height: 541px) {
-  .hud-center-panel {
-    padding: 8px 20px;
-    gap: 16px;
-    border-width: 3px;
-  }
-  .hud-score-label {
-    font-size: 11px;
-  }
-  .hud-score-val {
-    font-size: 20px;
-  }
-  .hud-actions-group {
-    top: max(14px, env(safe-area-inset-top, 14px));
-    right: max(20px, env(safe-area-inset-right, 20px));
-    gap: 10px;
-  }
-  .home-top-actions {
-    top: max(14px, env(safe-area-inset-top, 14px));
-    right: max(20px, env(safe-area-inset-right, 20px));
-    gap: 10px;
-  }
-  .hud-action-btn,
-  .home-action-btn,
-  .hud-pause-btn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    max-width: 44px;
-    max-height: 44px;
-    border-radius: 13px;
-    border-width: 2.5px;
-    box-shadow: 0 3.5px 0 #0f172a;
-  }
-  .pause-icon,
-  .pause-svg {
-    width: 15px;
-    height: 15px;
-  }
-  .fs-icon {
-    width: 18px;
-    height: 18px;
-  }
-
 @keyframes cardEnter {
   0% { transform: scale(0.8) translateY(20px); opacity: 0; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
@@ -1972,115 +1892,73 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   }
 }
 
-/* Customization screen responsiveness for landscape mobile (Zero-Scroll 2-Column Grid) */
-@media (max-height: 540px) and (orientation: landscape) {
+/* Customization screen responsiveness for landscape mobile */
+@media (max-height: 520px) and (orientation: landscape) {
   .customization-card {
-    max-width: min(96vw, 680px) !important;
-    max-height: 96dvh !important;
-    overflow-y: hidden !important;
-    padding: 8px 16px !important;
-    gap: 6px !important;
-    display: grid !important;
-    grid-template-columns: minmax(135px, 175px) 1fr !important;
-    grid-template-rows: auto auto auto !important;
-    column-gap: 16px !important;
-    row-gap: 4px !important;
-    align-items: center !important;
-    box-sizing: border-box !important;
-  }
-  .custom-header {
-    grid-column: 1 / -1 !important;
-    grid-row: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0 4px !important;
-    margin: 0 !important;
+    max-width: min(96vw, 560px);
+    max-height: 96vh;
+    padding: 7px 14px 6px 14px;
+    gap: 5px;
+    box-sizing: border-box;
+    overflow-y: auto;
   }
   .custom-title {
-    font-size: 16px !important;
-    margin: 0 !important;
-    letter-spacing: 0.8px !important;
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.1;
   }
   .custom-title-row {
-    font-size: 12px !important;
-    gap: 6px !important;
-  }
-  .custom-dino-name {
-    font-size: 12px !important;
-  }
-  .custom-skin-badge {
-    font-size: 11px !important;
-    padding: 2px 8px !important;
+    font-size: 11px;
+    gap: 6px;
   }
   .custom-preview-stage {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-    padding: 4px 6px !important;
-    height: 92px !important;
-    border-radius: 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    padding: 2px 6px;
+    gap: 6px;
+    border-radius: 12px;
   }
   .custom-canvas-wrapper {
-    height: 84px !important;
-    width: 100% !important;
+    height: 68px;
   }
   .custom-dino-preview-img {
-    max-width: 80px !important;
-    max-height: 80px !important;
-  }
-  .custom-actions-bar {
-    grid-column: 1 !important;
-    grid-row: 3 !important;
-    margin-top: 4px !important;
-    width: 100% !important;
-    padding: 0 !important;
-  }
-  .custom-actions-bar .btn-custom-back {
-    padding: 6px 12px !important;
-    font-size: 13px !important;
-    width: 100% !important;
-    border-radius: 12px !important;
+    max-width: 62px;
+    max-height: 62px;
   }
   .custom-skins-section {
-    grid-column: 2 !important;
-    grid-row: 2 / 4 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    gap: 4px !important;
+    gap: 3px;
   }
   .custom-section-title {
-    font-size: 11px !important;
-    margin: 0 0 2px 0 !important;
-    letter-spacing: 0.8px !important;
+    font-size: 10px;
+    margin: 0;
+    letter-spacing: 0.8px;
   }
   .custom-skins-grid {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 6px !important;
+    gap: 4px;
   }
   .skin-card {
-    flex: 0 0 calc((100% - 16px) / 3) !important;
-    max-width: calc((100% - 16px) / 3) !important;
-    padding: 4px 4px 3px 4px !important;
-    border-radius: 10px !important;
-    gap: 2px !important;
+    flex: 0 0 calc((100% - 10px) / 3);
+    max-width: calc((100% - 10px) / 3);
+    padding: 3px 2px 3px 2px;
+    border-radius: 9px;
+    gap: 1.5px;
   }
   .skin-swatch-circle {
-    width: 18px !important;
-    height: 18px !important;
+    width: 17px;
+    height: 17px;
   }
   .skin-card-name {
-    font-size: 9.5px !important;
+    font-size: 9px;
   }
   .skin-select-btn {
-    padding: 3px 6px !important;
-    font-size: 9px !important;
-    border-radius: 6px !important;
+    padding: 2.5px 4px;
+    font-size: 8.5px;
+  }
+  .custom-actions-bar {
+    margin-top: 1px;
+    gap: 6px;
+  }
+  .btn-custom-back, .btn-custom-confirm {
+    padding: 5px 10px;
+    font-size: 12px;
   }
 }
 
@@ -2103,6 +1981,71 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   }
 }
 
+
+/* ==========================================================================
+   Rotate Device Overlay (Mobile & Tablet Portrait)
+   Clean, minimal prompt when landscape orientation is required
+   ========================================================================== */
+.orientation-prompt {
+  display: none !important;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  padding: 28px 24px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 3.5px solid #ffb703;
+  border-radius: 28px;
+  box-shadow: 0 12px 0 #0f172a, 0 20px 40px rgba(0, 0, 0, 0.5);
+  gap: 14px;
+}
+
+.orientation-phone-icon-anim {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotatePhone 2.2s ease-in-out infinite;
+}
+
+@keyframes rotatePhone {
+  0%, 15% {
+    transform: rotate(0deg);
+  }
+  50%, 75% {
+    transform: rotate(90deg);
+  }
+  85%, 100% {
+    transform: rotate(0deg);
+  }
+}
+
+.phone-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.orientation-prompt-title {
+  font-family: var(--font-family);
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.orientation-prompt-desc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
 
 /* ==========================================================================
    DEDICATED MOBILE LANDSCAPE RESPONSIVE SYSTEM
@@ -2165,10 +2108,92 @@ body.portrait-fallback.rotate-reverse #gameContainer,
     height: 16px;
   }
 
-  
-  /* Tablet popups adhere to standardized modal design */
-  .standard-popup-card {
-    max-width: 320px !important;
-    padding: 20px 20px !important;
+  /* Compact modals in landscape */
+  .modal-backdrop {
+    padding: 6px;
+  }
+  .cartoon-card {
+    padding: 12px 18px;
+    border-radius: 20px;
+    border-width: 3px;
+    gap: 8px;
+    max-height: 94dvh;
+    max-width: min(92vw, 380px);
+  }
+  .modal-title {
+    font-size: 19px;
+  }
+  .cartoon-btn {
+    padding: 8px 14px;
+    font-size: 13.5px;
+    border-radius: 12px;
+  }
+  .btn-primary-yellow {
+    font-size: 15px;
+    padding: 10px 18px;
+  }
+  .stats-scoreboard {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .stat-val {
+    font-size: 16px;
+  }
+  .stat-label {
+    font-size: 8.5px;
+  }
+}
+
+/* ==========================================================================
+   DEDICATED TABLET LANDSCAPE RESPONSIVE SYSTEM
+   Applies to iPads & Android tablets in landscape (aspect ~ 4:3, 16:10, 3:2)
+   ========================================================================== */
+@media (min-width: 601px) and (max-width: 1366px) and (orientation: landscape) and (min-height: 541px) {
+  .hud-center-panel {
+    padding: 8px 20px;
+    gap: 16px;
+    border-width: 3px;
+  }
+  .hud-score-label {
+    font-size: 11px;
+  }
+  .hud-score-val {
+    font-size: 20px;
+  }
+  .hud-actions-group {
+    top: max(14px, env(safe-area-inset-top, 14px));
+    right: max(20px, env(safe-area-inset-right, 20px));
+    gap: 10px;
+  }
+  .home-top-actions {
+    top: max(14px, env(safe-area-inset-top, 14px));
+    right: max(20px, env(safe-area-inset-right, 20px));
+    gap: 10px;
+  }
+  .hud-action-btn,
+  .home-action-btn,
+  .hud-pause-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 44px;
+    max-height: 44px;
+    border-radius: 13px;
+    border-width: 2.5px;
+    box-shadow: 0 3.5px 0 #0f172a;
+  }
+  .pause-icon,
+  .pause-svg {
+    width: 15px;
+    height: 15px;
+  }
+  .fs-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .cartoon-card {
+    max-width: min(85vw, 460px);
+    padding: 22px 26px;
   }
 }
