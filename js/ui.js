@@ -759,12 +759,9 @@ class UIManager {
     gameArea.addEventListener('touchstart', (e) => {
       // Isolate UI controls: never register jump or swipe if tapping any button/modal/HUD
       if (isInteractiveUI(e.target)) return;
+      if (e.cancelable) e.preventDefault();
 
       this.sound.unlockAudio();
-
-      if (this.game.state === this.game.STATE_PLAYING) {
-        if (e.cancelable) e.preventDefault();
-      }
 
       if (e.touches && e.touches.length > 0) {
         const touch = e.touches[0];
@@ -792,8 +789,8 @@ class UIManager {
 
     gameArea.addEventListener('touchmove', (e) => {
       if (isInteractiveUI(e.target)) return;
-      if (this.game.state !== this.game.STATE_PLAYING) return;
       if (e.cancelable) e.preventDefault();
+      if (this.game.state !== this.game.STATE_PLAYING) return;
 
       if (e.touches && e.touches.length > 0) {
         const touch = e.touches[0];
@@ -828,14 +825,18 @@ class UIManager {
             }
             this.game.handleDuckPress(true);
           }
+        } else if (this.isSwipingDown && deltaY < 8) {
+          // If finger is moved back up near initial touch, stop ducking
+          this.isSwipingDown = false;
+          this.game.handleDuckPress(false);
         }
       }
     }, { passive: false });
 
     const handleTouchEnd = (e) => {
       if (isInteractiveUI(e.target)) return;
-      if (this.game.state !== this.game.STATE_PLAYING) return;
       if (e.cancelable) e.preventDefault();
+      if (this.game.state !== this.game.STATE_PLAYING) return;
 
       if (this.touchPendingJumpTimer) {
         clearTimeout(this.touchPendingJumpTimer);
@@ -861,6 +862,26 @@ class UIManager {
 
     gameArea.addEventListener('touchend', handleTouchEnd, { passive: false });
     gameArea.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+    // Global lock: prevent browser page scroll / bounce / drag during active gameplay
+    document.addEventListener('touchmove', (e) => {
+      if (isInteractiveUI(e.target)) return;
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    // Prevent iOS pinch zoom and gesture scaling
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach((evt) => {
+      document.addEventListener(evt, (e) => {
+        if (e.cancelable) e.preventDefault();
+      }, { passive: false });
+    });
+
+    // Hard-pin window scroll coordinates to (0, 0)
+    window.addEventListener('scroll', () => {
+      if (window.scrollX !== 0 || window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+    }, { passive: false });
 
     // Window resize observer for mascot canvas DPR
     window.addEventListener('resize', () => {

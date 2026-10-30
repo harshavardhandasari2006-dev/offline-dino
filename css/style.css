@@ -38,6 +38,11 @@
 }
 
 html, body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
   height: 100dvh;
@@ -46,8 +51,14 @@ html, body {
   overflow: hidden;
   background-color: #0f172a;
   font-family: var(--font-family);
-  touch-action: manipulation;
+  touch-action: none;
   overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: auto;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -82,6 +93,8 @@ body.portrait-fallback {
   height: 100dvh !important;
   margin: 0 !important;
   padding: 0 !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
 }
 
 body.portrait-fallback #gameContainer,
@@ -942,6 +955,9 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   max-width: 380px;
   max-height: 92vh;
   overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1446,6 +1462,9 @@ body.portrait-fallback.rotate-reverse #gameContainer,
   width: 95%;
   max-height: 94vh;
   overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 20px 22px;
   display: flex;
   flex-direction: column;
