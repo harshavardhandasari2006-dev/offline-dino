@@ -12,17 +12,17 @@
   <meta property="og:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="twitter:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="apple-mobile-web-app-title" content="Offline Dino">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=57">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=57">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=57">
-  <link rel="shortcut icon" href="favicon.ico?v=57">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=57">
-  <link rel="manifest" href="manifest.json?v=57">
-  <link rel="stylesheet" href="css/style.css?v=57">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=58">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=58">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=58">
+  <link rel="shortcut icon" href="favicon.ico?v=58">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=58">
+  <link rel="manifest" href="manifest.json?v=58">
+  <link rel="stylesheet" href="css/style.css?v=58">
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=57').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=58').catch(function() {});
         navigator.serviceWorker.addEventListener('controllerchange', function() {
           var bg = document.getElementById('homeMasterBg');
           if (bg) bg.src = 'assets/sprites/homepage_seamless_panorama.jpg?v=' + Date.now();
@@ -61,9 +61,24 @@
           <span id="hudHighScore" class="hud-score-val hi">HI 00000</span>
         </div>
       </div>
-      <button id="btnPause" class="hud-pause-btn" aria-label="Pause Game">
-        <span class="pause-icon"></span>
-      </button>
+      <div class="hud-actions-group">
+        <button id="btnFullscreen" class="hud-action-btn hud-fullscreen-btn" aria-label="Enter Fullscreen" title="Enter Fullscreen">
+          <svg class="fs-icon fs-icon-expand" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />
+          </svg>
+          <svg class="fs-icon fs-icon-compress hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" />
+          </svg>
+        </button>
+        <button id="btnPause" class="hud-action-btn hud-pause-btn" aria-label="Pause Game" title="Pause Game">
+          <span class="pause-icon">
+            <svg class="pause-svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <rect x="3" y="2" width="3.5" height="12" rx="1.75" fill="#0f172a" />
+              <rect x="9.5" y="2" width="3.5" height="12" rx="1.75" fill="#0f172a" />
+            </svg>
+          </span>
+        </button>
+      </div>
       <div id="newHighScoreBanner" class="high-score-banner hidden">
         ⭐ NEW HIGH SCORE! ⭐
       </div>
@@ -95,22 +110,34 @@
 
     <!-- Home Screen -->
     <div id="homeScreen" class="screen home-screen" role="region" aria-label="Home Screen">
+      <!-- Top Right Actions (Fullscreen / Expand Button) -->
+      <div class="home-top-actions">
+        <button id="btnHomeFullscreen" class="home-action-btn home-fullscreen-btn" aria-label="Enter Fullscreen" title="Enter Fullscreen">
+          <svg class="fs-icon fs-icon-expand" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />
+          </svg>
+          <svg class="fs-icon fs-icon-compress hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" />
+          </svg>
+        </button>
+      </div>
+
       <!-- Continuous Responsive Desert Scenery Background Layer -->
       <div class="home-responsive-scenery" aria-hidden="true"></div>
 
       <div class="homepage-stage">
         <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
-        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=57" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=58" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
 
         <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
         <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
 
         <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
-        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=57" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=58" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
 
         <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
-          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png?v=57" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
+          <img id="homeTitleSignImg" src="assets/sprites/home_title_sign_green.png?v=58" alt="OFFLINE DINO" class="home-title-sign-img" draggable="false" />
         </div>
 
         <!-- Backward Compatibility Elements for Tests -->
@@ -334,14 +361,14 @@
   </div>
 
   <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
-  <script src="js/sprite_data.js?v=57"></script>
-  <script src="js/skins.js?v=57"></script>
-  <script src="js/audio.js?v=57"></script>
-  <script src="js/three.min.js?v=57"></script>
-  <script src="js/dino3d.js?v=57"></script>
-  <script src="js/sprites.js?v=57"></script>
-  <script src="js/score_math.js?v=57"></script>
-  <script src="js/game.js?v=57"></script>
-  <script src="js/ui.js?v=57"></script>
+  <script src="js/sprite_data.js?v=58"></script>
+  <script src="js/skins.js?v=58"></script>
+  <script src="js/audio.js?v=58"></script>
+  <script src="js/three.min.js?v=58"></script>
+  <script src="js/dino3d.js?v=58"></script>
+  <script src="js/sprites.js?v=58"></script>
+  <script src="js/score_math.js?v=58"></script>
+  <script src="js/game.js?v=58"></script>
+  <script src="js/ui.js?v=58"></script>
 </body>
 </html>

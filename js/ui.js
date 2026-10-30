@@ -50,6 +50,8 @@ class UIManager {
     this.hudScore = document.getElementById('hudScore');
     this.hudHighScore = document.getElementById('hudHighScore');
     this.btnPause = document.getElementById('btnPause');
+    this.btnFullscreen = document.getElementById('btnFullscreen');
+    this.btnHomeFullscreen = document.getElementById('btnHomeFullscreen');
 
     // Home buttons (Settings completely removed)
     this.btnStartGame = document.getElementById('btnStartGame');
@@ -173,8 +175,137 @@ class UIManager {
     this.initCustomizationUI();
     this.bindEvents();
     this.updateSoundButtons();
+    this.setupFullscreen();
     this.initIntroVideo();
     this.setupHistoryNavigation();
+  }
+
+  // ==========================================
+  // FULLSCREEN MANAGEMENT (Expand / Exit Fullscreen)
+  // ==========================================
+  setupFullscreen() {
+    if (!this.isFullscreenSupported()) {
+      if (this.btnFullscreen) this.btnFullscreen.classList.add('hidden');
+      if (this.btnHomeFullscreen) this.btnHomeFullscreen.classList.add('hidden');
+      return;
+    }
+
+    const onFullscreenClick = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (this.sound && typeof this.sound.playClick === 'function') {
+        this.sound.playClick();
+      }
+      this.toggleFullscreen();
+    };
+
+    if (this.btnFullscreen) {
+      this.btnFullscreen.addEventListener('click', onFullscreenClick);
+    }
+    if (this.btnHomeFullscreen) {
+      this.btnHomeFullscreen.addEventListener('click', onFullscreenClick);
+    }
+
+    const changeEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+    changeEvents.forEach(evt => {
+      document.addEventListener(evt, () => {
+        this.updateFullscreenUI();
+      }, { passive: true });
+    });
+
+    this.updateFullscreenUI();
+  }
+
+  isFullscreenSupported() {
+    return !!(
+      document.fullscreenEnabled ||
+      document.webkitFullscreenEnabled ||
+      document.mozFullScreenEnabled ||
+      document.msFullscreenEnabled ||
+      document.documentElement.requestFullscreen ||
+      document.documentElement.webkitRequestFullscreen
+    );
+  }
+
+  isFullscreen() {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  }
+
+  requestFullscreen() {
+    const elem = document.documentElement || document.body;
+    try {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    } catch (err) {
+      console.warn('Fullscreen request could not be processed:', err);
+    }
+  }
+
+  exitFullscreen() {
+    try {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    } catch (err) {
+      console.warn('Exit fullscreen could not be processed:', err);
+    }
+  }
+
+  toggleFullscreen() {
+    if (this.isFullscreen()) {
+      this.exitFullscreen();
+    } else {
+      this.requestFullscreen();
+    }
+  }
+
+  updateFullscreenUI() {
+    const isFS = this.isFullscreen();
+    const expandIcons = document.querySelectorAll('.fs-icon-expand');
+    const compressIcons = document.querySelectorAll('.fs-icon-compress');
+    const fsButtons = document.querySelectorAll('.hud-fullscreen-btn, .home-fullscreen-btn');
+
+    if (isFS) {
+      expandIcons.forEach(el => el.classList.add('hidden'));
+      compressIcons.forEach(el => el.classList.remove('hidden'));
+      fsButtons.forEach(btn => {
+        btn.setAttribute('aria-label', 'Exit Fullscreen');
+        btn.setAttribute('title', 'Exit Fullscreen (Esc)');
+      });
+      if (document.body) document.body.classList.add('is-fullscreen');
+    } else {
+      expandIcons.forEach(el => el.classList.remove('hidden'));
+      compressIcons.forEach(el => el.classList.add('hidden'));
+      fsButtons.forEach(btn => {
+        btn.setAttribute('aria-label', 'Enter Fullscreen');
+        btn.setAttribute('title', 'Enter Fullscreen');
+      });
+      if (document.body) document.body.classList.remove('is-fullscreen');
+    }
+
+    if (window.dinoGame && typeof window.dinoGame.resize === 'function') {
+      window.dinoGame.resize();
+    }
   }
 
   // High-DPI resolution setup for mascot canvas (DINO-016)
@@ -432,9 +563,13 @@ class UIManager {
         }
       }
 
-      // Escape handler: Modal dismissal / Quit confirmation / Customization exit
+      // Escape handler: Fullscreen exit / Modal dismissal / Quit confirmation / Customization exit
       if (e.code === 'Escape' || e.key === 'Escape') {
         if (!e.repeat) {
+          if (this.isFullscreen()) {
+            this.exitFullscreen();
+            return;
+          }
           if (this.backspaceModal && !this.backspaceModal.classList.contains('hidden')) {
             e.preventDefault();
             this.sound.playClick();
