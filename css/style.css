@@ -1695,56 +1695,115 @@ html, body {
   }
 }
 
-/* Customization screen responsiveness for landscape mobile */
-@media (max-height: 520px) and (orientation: landscape) {
+/* Customization screen responsiveness for landscape mobile (Zero-Scroll 2-Column Grid) */
+@media (max-height: 540px) and (orientation: landscape) {
   .customization-card {
-    max-width: min(96vw, 580px);
-    max-height: 94vh;
-    padding: 10px 14px;
-    gap: 8px;
+    max-width: min(96vw, 680px) !important;
+    max-height: 96dvh !important;
+    overflow-y: hidden !important;
+    padding: 8px 16px !important;
+    gap: 6px !important;
+    display: grid !important;
+    grid-template-columns: minmax(135px, 175px) 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    column-gap: 16px !important;
+    row-gap: 4px !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+  }
+  .custom-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 4px !important;
+    margin: 0 !important;
   }
   .custom-title {
-    font-size: 18px;
-    margin: 0;
+    font-size: 16px !important;
+    margin: 0 !important;
+    letter-spacing: 0.8px !important;
   }
   .custom-title-row {
-    font-size: 12px;
+    font-size: 12px !important;
+    gap: 6px !important;
+  }
+  .custom-dino-name {
+    font-size: 12px !important;
+  }
+  .custom-skin-badge {
+    font-size: 11px !important;
+    padding: 2px 8px !important;
   }
   .custom-preview-stage {
-    padding: 4px 8px;
-    gap: 8px;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    padding: 4px 6px !important;
+    height: 92px !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   .custom-canvas-wrapper {
-    height: 100px;
+    height: 84px !important;
+    width: 100% !important;
   }
   .custom-dino-preview-img {
-    max-width: 90px;
-    max-height: 90px;
-  }
-  .custom-skins-grid {
-    gap: 5px;
-  }
-  .skin-card {
-    flex: 0 0 calc((100% - 10px) / 3);
-    max-width: calc((100% - 10px) / 3);
-    padding: 4px 3px;
-    border-radius: 10px;
-    gap: 2px;
-  }
-  .skin-swatch-circle {
-    width: 20px;
-    height: 20px;
-  }
-  .skin-card-name {
-    font-size: 9px;
+    max-width: 80px !important;
+    max-height: 80px !important;
   }
   .custom-actions-bar {
-    margin-top: 2px;
-    gap: 8px;
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    margin-top: 4px !important;
+    width: 100% !important;
+    padding: 0 !important;
   }
-  .btn-custom-back, .btn-custom-confirm {
-    padding: 8px 10px;
-    font-size: 13px;
+  .custom-actions-bar .btn-custom-back {
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    width: 100% !important;
+    border-radius: 12px !important;
+  }
+  .custom-skins-section {
+    grid-column: 2 !important;
+    grid-row: 2 / 4 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+  .custom-section-title {
+    font-size: 11px !important;
+    margin: 0 0 2px 0 !important;
+    letter-spacing: 0.8px !important;
+  }
+  .custom-skins-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 6px !important;
+  }
+  .skin-card {
+    flex: 0 0 calc((100% - 16px) / 3) !important;
+    max-width: calc((100% - 16px) / 3) !important;
+    padding: 4px 4px 3px 4px !important;
+    border-radius: 10px !important;
+    gap: 2px !important;
+  }
+  .skin-swatch-circle {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .skin-card-name {
+    font-size: 9.5px !important;
+  }
+  .skin-select-btn {
+    padding: 3px 6px !important;
+    font-size: 9px !important;
+    border-radius: 6px !important;
   }
 }
 
@@ -1767,94 +1826,6 @@ html, body {
   }
 }
 
-
-/* ==========================================================================
-   Rotate Device Overlay (Mobile & Tablet Portrait)
-   Clean, minimal prompt when landscape orientation is required
-   ========================================================================== */
-.orientation-prompt {
-  display: none;
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  z-index: 100000;
-  background: rgba(15, 23, 42, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-@media (orientation: portrait) and (max-width: 1024px) {
-  .orientation-prompt:not(.force-hidden) {
-    display: flex !important;
-  }
-}
-
-.orientation-prompt-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 340px;
-  width: 90%;
-  padding: 28px 24px;
-  background: rgba(30, 41, 59, 0.85);
-  border: 3.5px solid #ffb703;
-  border-radius: 28px;
-  box-shadow: 0 12px 0 #0f172a, 0 20px 40px rgba(0, 0, 0, 0.5);
-  gap: 14px;
-}
-
-.orientation-phone-icon-anim {
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: rotatePhone 2.2s ease-in-out infinite;
-}
-
-@keyframes rotatePhone {
-  0%, 15% {
-    transform: rotate(0deg);
-  }
-  50%, 75% {
-    transform: rotate(90deg);
-  }
-  85%, 100% {
-    transform: rotate(0deg);
-  }
-}
-
-.phone-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.orientation-prompt-title {
-  font-family: var(--font-family);
-  font-size: 20px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-  margin: 0;
-  line-height: 1.25;
-}
-
-.orientation-prompt-desc {
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 600;
-  color: #cbd5e1;
-  line-height: 1.45;
-  margin: 0;
-}
 
 /* ==========================================================================
    DEDICATED MOBILE LANDSCAPE RESPONSIVE SYSTEM
@@ -1920,6 +1891,49 @@ html, body {
   /* Compact modals in landscape */
   .modal-backdrop {
     padding: 6px;
+  }
+  .game-over-card {
+    max-width: min(84vw, 310px) !important;
+    padding: 10px 16px !important;
+    gap: 6px !important;
+    border-radius: 18px !important;
+    border-width: 3px !important;
+  }
+  .game-over-card .modal-title {
+    font-size: 18px !important;
+    letter-spacing: 1px !important;
+    margin: 0 !important;
+  }
+  .game-over-card .modal-body {
+    gap: 6px !important;
+  }
+  .game-over-card .stats-scoreboard {
+    padding: 5px 10px !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+    border-width: 2px !important;
+    margin-bottom: 2px !important;
+  }
+  .game-over-card .stat-box {
+    gap: 2px !important;
+  }
+  .game-over-card .stat-label {
+    font-size: 8.5px !important;
+    letter-spacing: 0.6px !important;
+  }
+  .game-over-card .stat-val {
+    font-size: 16px !important;
+    letter-spacing: 1px !important;
+  }
+  .game-over-card .cartoon-btn {
+    padding: 7px 12px !important;
+    font-size: 13px !important;
+    border-radius: 12px !important;
+    border-width: 2.5px !important;
+  }
+  .game-over-card .btn-primary-yellow {
+    padding: 8px 14px !important;
+    font-size: 14px !important;
   }
   .cartoon-card {
     padding: 12px 18px;

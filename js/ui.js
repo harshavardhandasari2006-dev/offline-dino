@@ -29,8 +29,7 @@ class UIManager {
     this.btnBackspaceNo = document.getElementById('btnBackspaceNo');
     this.wasPlayingBeforeBackspace = false;
     this.countdownOverlay = document.getElementById('countdownOverlay');
-    this.orientationPrompt = document.getElementById('orientationPrompt');
-    this.countdownText = document.getElementById('countdownText');
+        this.countdownText = document.getElementById('countdownText');
     this.newHighScoreBanner = document.getElementById('newHighScoreBanner');
 
     // Initial Start Game Loading Screen Elements
@@ -321,9 +320,40 @@ class UIManager {
   // ==========================================
   // EVENT BINDINGS
   // ==========================================
+  // Universal Touch & Click isolation helper for all mobile buttons
+  bindButtonAction(button, callback) {
+    if (!button) return;
+    let lastActionTime = 0;
+
+    const execute = (e) => {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (e.type === 'touchstart' && e.cancelable) {
+          e.preventDefault();
+        }
+      }
+      const now = performance.now();
+      if (now - lastActionTime < 280) return;
+      lastActionTime = now;
+
+      // Cancel any pending jump timer or jump state immediately
+      if (this.touchPendingJumpTimer) {
+        clearTimeout(this.touchPendingJumpTimer);
+        this.touchPendingJumpTimer = null;
+      }
+      this.touchPendingJump = false;
+      this.touchDispatchedJump = false;
+
+      callback(e);
+    };
+
+    button.addEventListener('touchstart', execute, { passive: false });
+    button.addEventListener('click', execute);
+  }
+
   bindEvents() {
     // START GAME (Initial entry flow from Homepage with 3-second loading screen)
-    this.btnStartGame.addEventListener('click', () => {
+    this.bindButtonAction(this.btnStartGame, () => {
       if (this.sound) {
         this.sound.unlockAudio();
         this.sound.playClick();
@@ -332,14 +362,14 @@ class UIManager {
     });
 
     // HOME: High Score
-    this.btnHomeHighScore.addEventListener('click', () => {
+    this.bindButtonAction(this.btnHomeHighScore, () => {
       this.sound.playClick();
       this.stopMascotAnimation();
       this.openHighScore();
     });
 
     // HOME: Sound Toggle
-    this.btnHomeSound.addEventListener('click', () => {
+    this.bindButtonAction(this.btnHomeSound, () => {
       this.sound.playClick();
       this.sound.toggleMute();
       this.updateSoundButtons();
@@ -347,7 +377,7 @@ class UIManager {
 
     // HOME: Exit Button — show confirmation dialog immediately (Section 23)
     if (this.btnHomeExit) {
-      this.btnHomeExit.addEventListener('click', () => {
+      this.bindButtonAction(this.btnHomeExit, () => {
         this.sound.playClick();
         this.showModal(this.exitModal);
       });
@@ -385,7 +415,7 @@ class UIManager {
 
     // EXIT DIALOG: No — Close the dialog and return to the homepage without changing anything
     if (this.btnExitNo) {
-      this.btnExitNo.addEventListener('click', () => {
+      this.bindButtonAction(this.btnExitNo, () => {
         this.sound.playClick();
         this.hideModal(this.exitModal);
       });
@@ -403,14 +433,14 @@ class UIManager {
 
     // BACKSPACE QUIT DIALOG: Yes — close current gameplay session and return to homepage
     if (this.btnBackspaceYes) {
-      this.btnBackspaceYes.addEventListener('click', () => {
+      this.bindButtonAction(this.btnBackspaceYes, () => {
         this.confirmBackspaceQuit();
       });
     }
 
     // BACKSPACE QUIT DIALOG: No — dismiss dialog and resume current game
     if (this.btnBackspaceNo) {
-      this.btnBackspaceNo.addEventListener('click', () => {
+      this.bindButtonAction(this.btnBackspaceNo, () => {
         this.sound.playClick();
         this.dismissBackspaceModal();
       });
@@ -427,19 +457,19 @@ class UIManager {
     }
 
     // PAUSE: Pause Button (HUD)
-    this.btnPause.addEventListener('click', () => {
+    this.bindButtonAction(this.btnPause, () => {
       this.sound.playClick();
       this.pauseGame();
     });
 
     // PAUSE: Resume Button
-    this.btnPauseResume.addEventListener('click', () => {
+    this.bindButtonAction(this.btnPauseResume, () => {
       this.sound.playClick();
       this.resumeGame();
     });
 
     // PAUSE: Restart Button
-    this.btnPauseRestart.addEventListener('click', () => {
+    this.bindButtonAction(this.btnPauseRestart, () => {
       this.sound.playClick();
       this.hideModal(this.pauseModal);
       this.startNewGameSequence();
@@ -447,14 +477,14 @@ class UIManager {
 
     // PAUSE: Home Button
     if (this.btnPauseHome) {
-      this.btnPauseHome.addEventListener('click', () => {
+      this.bindButtonAction(this.btnPauseHome, () => {
         this.sound.playClick();
         this.returnToHomeScreen();
       });
     }
 
     // GAME OVER: Play Again
-    this.btnPlayAgain.addEventListener('click', () => {
+    this.bindButtonAction(this.btnPlayAgain, () => {
       this.sound.playClick();
       this.hideModal(this.gameOverModal);
       this.startNewGameSequence();
@@ -462,14 +492,14 @@ class UIManager {
 
     // GAME OVER: Home Button
     if (this.btnGameOverHome) {
-      this.btnGameOverHome.addEventListener('click', () => {
+      this.bindButtonAction(this.btnGameOverHome, () => {
         this.sound.playClick();
         this.returnToHomeScreen();
       });
     }
 
     // HIGH SCORE: Back Button
-    this.btnHighScoreBack.addEventListener('click', () => {
+    this.bindButtonAction(this.btnHighScoreBack, () => {
       this.sound.playClick();
       this.hideModal(this.highScoreModal);
       this.showScreen(this.homeScreen);
@@ -479,14 +509,14 @@ class UIManager {
 
     // DINO CUSTOMIZATION BUTTONS
     if (this.btnHomeCustomize) {
-      this.btnHomeCustomize.addEventListener('click', () => {
+      this.bindButtonAction(this.btnHomeCustomize, () => {
         this.sound.playClick();
         this.openCustomizationScreen();
       });
     }
 
     if (this.btnCustomizationBack) {
-      this.btnCustomizationBack.addEventListener('click', () => {
+      this.bindButtonAction(this.btnCustomizationBack, () => {
         this.sound.playClick();
         this.closeCustomizationScreen();
       });
@@ -505,7 +535,7 @@ class UIManager {
     }
 
     if (this.btnConfirmSkin) {
-      this.btnConfirmSkin.addEventListener('click', () => {
+      this.bindButtonAction(this.btnConfirmSkin, () => {
         this.confirmSelectedSkin();
       });
     }
@@ -706,7 +736,20 @@ class UIManager {
     this.touchPendingJump = false;
     this.touchDispatchedJump = false;
 
+    const isInteractiveUI = (target) => {
+      if (!target || typeof target.closest !== 'function') return false;
+      return !!target.closest(
+        'button, .hud-actions-group, .hud-overlay, .modal-card, .modal-backdrop, ' +
+        '.homepage-bottom-nav, .home-top-actions, .home-controls-wrapper, ' +
+        '.customization-card, .custom-skins-grid, .skin-card, .cartoon-btn, ' +
+        '[role="button"], a, input, select, textarea'
+      );
+    };
+
     gameArea.addEventListener('touchstart', (e) => {
+      // Isolate UI controls: never register jump or swipe if tapping any button/modal/HUD
+      if (isInteractiveUI(e.target)) return;
+
       this.sound.unlockAudio();
 
       if (this.game.state === this.game.STATE_PLAYING) {
@@ -738,6 +781,7 @@ class UIManager {
     }, { passive: false });
 
     gameArea.addEventListener('touchmove', (e) => {
+      if (isInteractiveUI(e.target)) return;
       if (this.game.state !== this.game.STATE_PLAYING) return;
       if (e.cancelable) e.preventDefault();
 
@@ -756,7 +800,6 @@ class UIManager {
 
           if (!this.isSwipingDown) {
             this.isSwipingDown = true;
-            // Cancel jump input if already dispatched
             if (this.touchDispatchedJump) {
               this.game.setJumpInput(false);
             }
@@ -767,6 +810,7 @@ class UIManager {
     }, { passive: false });
 
     const handleTouchEnd = (e) => {
+      if (isInteractiveUI(e.target)) return;
       if (this.game.state !== this.game.STATE_PLAYING) return;
       if (e.cancelable) e.preventDefault();
 
@@ -807,16 +851,7 @@ class UIManager {
   // ==========================================
   
   checkOrientation() {
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const isMobileOrTablet = window.innerWidth <= 1024 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-
-    if (this.orientationPrompt) {
-      if (isPortrait && isMobileOrTablet) {
-        this.orientationPrompt.classList.remove('hidden');
-      } else {
-        this.orientationPrompt.classList.add('hidden');
-      }
-    }
+    this.tryLockLandscape();
   }
 
   tryLockLandscape() {
@@ -1115,10 +1150,20 @@ class UIManager {
   pauseGame() {
     if (this.game.state !== this.game.STATE_PLAYING) return;
     this.cancelCountdown();
+
+    // Cancel any jump or duck state immediately
+    if (this.touchPendingJumpTimer) {
+      clearTimeout(this.touchPendingJumpTimer);
+      this.touchPendingJumpTimer = null;
+    }
+    this.touchPendingJump = false;
+    this.touchDispatchedJump = false;
+    this.isSwipingDown = false;
     this.game.setJumpInput(false);
     this.game.handleDuckPress(false);
+
+    // Freeze game state
     this.game.state = this.game.STATE_PAUSED;
-    // Stop wind when paused
     if (this.sound) this.sound.stopAmbience();
     this.showModal(this.pauseModal);
   }
@@ -1127,9 +1172,21 @@ class UIManager {
     this.isAutoPaused = false;
     this.cancelCountdown();
     this.hideModal(this.pauseModal);
+
+    // Ensure no stale input is carried over
+    if (this.touchPendingJumpTimer) {
+      clearTimeout(this.touchPendingJumpTimer);
+      this.touchPendingJumpTimer = null;
+    }
+    this.touchPendingJump = false;
+    this.touchDispatchedJump = false;
+    this.isSwipingDown = false;
+    this.game.setJumpInput(false);
+    this.game.handleDuckPress(false);
+
+    // Resume physics clock seamlessly from exact frame
     this.game.lastTime = performance.now();
     this.game.state = this.game.STATE_PLAYING;
-    // Resume wind ambience when unpausing
     if (this.sound) this.sound.startAmbience();
   }
 
@@ -1684,8 +1741,7 @@ class UIManager {
       // Clicking preview area previews skin without confirming
       const previewArea = card.querySelector('.skin-card-preview-area');
       if (previewArea) {
-        previewArea.addEventListener('click', (e) => {
-          e.stopPropagation();
+        this.bindButtonAction(previewArea, () => {
           this.previewSkin(s.id);
         });
         previewArea.addEventListener('keydown', (e) => {
@@ -1698,7 +1754,7 @@ class UIManager {
       }
 
       // Clicking card outside the select button previews skin without confirming
-      card.addEventListener('click', (e) => {
+      this.bindButtonAction(card, (e) => {
         if (!e.target.closest('.skin-select-btn')) {
           this.previewSkin(s.id);
         }
@@ -1707,8 +1763,7 @@ class UIManager {
       // Clicking SELECT button confirms skin
       const selectBtn = card.querySelector('.skin-select-btn');
       if (selectBtn) {
-        selectBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
+        this.bindButtonAction(selectBtn, () => {
           if (s.id !== this.confirmedSkinId) {
             this.confirmSkinSelection(s.id);
           }
