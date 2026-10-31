@@ -12,20 +12,39 @@
   <meta property="og:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="twitter:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="apple-mobile-web-app-title" content="Offline Dino">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=71">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=71">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=71">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=71">
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png?v=71">
-  <link rel="shortcut icon" href="favicon.ico?v=71">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=71">
-  <link rel="manifest" href="manifest.json?v=71">
-  <link rel="preload" as="image" href="assets/sprites/homepage_seamless_panorama.jpg?v=71">
-  <link rel="stylesheet" href="css/style.css?v=71">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=72">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=72">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=72">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=72">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png?v=72">
+  <link rel="shortcut icon" href="favicon.ico?v=72">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=72">
+  <link rel="manifest" href="manifest.json?v=72">
+  <link rel="preload" as="image" href="assets/sprites/homepage_seamless_panorama.jpg?v=72">
+  <link rel="stylesheet" href="css/style.css?v=72">
+  <script>
+    // Immediate early landscape setup & portrait protection
+    (function() {
+      try {
+        if (screen.orientation && typeof screen.orientation.lock === 'function') {
+          screen.orientation.lock('landscape').catch(function() {});
+        }
+      } catch (e) {}
+
+      var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+      var isMobileOrTablet = isTouch || (Math.min(window.innerWidth, window.innerHeight) <= 1024);
+      var isPortrait = window.innerHeight > window.innerWidth;
+
+      if (isTouch && isMobileOrTablet && isPortrait) {
+        document.documentElement.classList.add('require-landscape');
+      }
+    })();
+  </script>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=71').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=72').catch(function() {});
       });
     }
   </script>
@@ -114,13 +133,13 @@
 
       <div class="homepage-stage">
         <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
-        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=71" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=72" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
 
         <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
         <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
 
         <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
-        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=71" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=72" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
 
         <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
@@ -329,16 +348,33 @@
     <!-- Small Skin Selection Notification Toast -->
     <div id="skinSelectToast" class="skin-select-toast hidden" aria-live="polite"></div>
   </div>
+    <!-- Clean Minimal Landscape Required Overlay (Mobile & Tablet Portrait) -->
+    <div id="orientationPrompt" class="orientation-prompt hidden" aria-live="polite">
+      <div class="orientation-prompt-card">
+        <div class="orientation-phone-icon-anim" aria-hidden="true">
+          <svg class="phone-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="8" width="24" height="48" rx="4" stroke="#ffffff" stroke-width="3" fill="#1e293b" />
+            <circle cx="32" cy="50" r="2" fill="#ffffff" />
+            <line x1="28" y1="12" x2="36" y2="12" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M8 32 C8 18 18 8 32 8" stroke="#ffb703" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="round" />
+            <polygon points="32,4 36,8 32,12" fill="#ffb703" />
+          </svg>
+        </div>
+        <h2 class="orientation-prompt-title">Please Rotate Your Device</h2>
+        <p class="orientation-prompt-desc">Offline Dino is designed for landscape mode. Rotate your screen to run, jump, and survive!</p>
+      </div>
+    </div>
+
 
   <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
-  <script src="js/sprite_data.js?v=71" defer></script>
-  <script src="js/skins.js?v=71"></script>
-  <script src="js/audio.js?v=71"></script>
-  <script src="js/three.min.js?v=71" defer></script>
-  <script src="js/dino3d.js?v=71" defer></script>
-  <script src="js/sprites.js?v=71"></script>
-  <script src="js/score_math.js?v=71"></script>
-  <script src="js/game.js?v=71"></script>
-  <script src="js/ui.js?v=71"></script>
+  <script src="js/sprite_data.js?v=72" defer></script>
+  <script src="js/skins.js?v=72"></script>
+  <script src="js/audio.js?v=72"></script>
+  <script src="js/three.min.js?v=72" defer></script>
+  <script src="js/dino3d.js?v=72" defer></script>
+  <script src="js/sprites.js?v=72"></script>
+  <script src="js/score_math.js?v=72"></script>
+  <script src="js/game.js?v=72"></script>
+  <script src="js/ui.js?v=72"></script>
 </body>
 </html>

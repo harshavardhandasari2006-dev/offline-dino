@@ -263,19 +263,8 @@ class DinoGame {
     const container = document.getElementById('gameContainer');
     if (!container) return;
 
-    let cw = container.clientWidth;
-    let ch = container.clientHeight;
-
-    // In portrait fallback mode, container is rotated into landscape (width is the longer dimension):
-    if (document.body.classList.contains('portrait-fallback') || container.classList.contains('landscape-fallback-rotated')) {
-      const maxDim = Math.max(window.innerWidth, window.innerHeight);
-      const minDim = Math.min(window.innerWidth, window.innerHeight);
-      cw = maxDim;
-      ch = minDim;
-    } else {
-      if (!cw) cw = window.innerWidth;
-      if (!ch) ch = window.innerHeight;
-    }
+    let cw = container.clientWidth || window.innerWidth;
+    let ch = container.clientHeight || window.innerHeight;
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
     this.dpr = dpr;
@@ -284,35 +273,29 @@ class DinoGame {
     this.canvas.style.width = cw + 'px';
     this.canvas.style.height = ch + 'px';
 
-    const isPortrait = ch > cw;
+    const prevGroundY = this.groundY;
+    const aspect = cw / ch;
 
-    if (isPortrait) {
-      // Responsive Portrait Framing:
-      this.scale = Math.max(0.68, Math.min(0.95, cw / 480));
+    if (aspect < 1.6) {
+      // Dedicated Tablet Landscape (4:3, 16:10, 3:2, e.g. iPad 1024x768, 1180x820):
+      // Proportion character size and runway so the ground sits comfortably at ~72% height
+      this.scale = Math.max(0.80, Math.min(1.35, ch / 540));
       const viewH = ch / this.scale;
-      this.groundY = Math.round(viewH * 0.68);
+      this.groundY = Math.round(viewH * 0.72);
     } else {
-      // Landscape Viewports:
-      const aspect = cw / ch;
-      if (aspect < 1.6) {
-        // Dedicated Tablet Landscape (4:3, 16:10, 3:2, e.g. iPad 1024x768, 1180x820):
-        // Proportion character size and runway so the ground sits comfortably at ~72% height
-        // without making the dinosaur tiny or creating an oversized empty sky
-        this.scale = Math.max(0.80, Math.min(1.35, ch / 540));
-        const viewH = ch / this.scale;
-        this.groundY = Math.round(viewH * 0.72);
-      } else {
-        // Standard Wide Landscape (Mobile Phones & Desktop Monitors, 16:9 / 19.5:9):
-        this.scale = Math.min(cw / this.baseWidth, ch / this.baseHeight);
-        if (this.scale < 0.65) this.scale = 0.65;
-        this.groundY = Math.round((ch / this.scale) - 68);
-      }
+      // Standard Wide Landscape (Mobile Phones & Desktop Monitors, 16:9 / 19.5:9):
+      this.scale = Math.min(cw / this.baseWidth, ch / this.baseHeight);
+      if (this.scale < 0.65) this.scale = 0.65;
+      this.groundY = Math.round((ch / this.scale) - 68);
     }
     if (this.groundY < 240) this.groundY = 240;
 
     // Recalculate dinosaur baseline attached to ground (DINO-002)
     if (this.dino.isGrounded) {
-      this.dino.y = this.groundY - this.dino.height;
+      this.dino.y = this.groundY - (this.dino.isDucking ? this.dino.duckHeight : this.dino.height);
+    } else if (prevGroundY && typeof prevGroundY === 'number') {
+      const dy = this.groundY - prevGroundY;
+      this.dino.y += dy;
     }
 
     // Recalculate ALL active obstacles relative to new groundY (DINO-004)
@@ -326,10 +309,6 @@ class DinoGame {
   setupWindowListeners() {
     window.addEventListener('resize', () => {
       requestAnimationFrame(() => this.resize());
-    }, { passive: true });
-    window.addEventListener('orientationchange', () => {
-      requestAnimationFrame(() => this.resize());
-      setTimeout(() => this.resize(), 150);
     }, { passive: true });
 
     // Auto-pause and recovery on tab change / minimize

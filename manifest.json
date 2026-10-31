@@ -4,7 +4,7 @@
   "description": "Offline Dino — Run, Jump, Survive! A colorful, smooth, polished 2D cartoon endless runner.",
   "start_url": "./index.html",
   "display": "fullscreen",
-  "orientation": "any",
+  "orientation": "landscape",
   "background_color": "#5bb2ff",
   "theme_color": "#5bb2ff",
   "icons": [

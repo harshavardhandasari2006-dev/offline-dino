@@ -30,6 +30,10 @@ class UIManager {
     this.wasPlayingBeforeBackspace = false;
     this.countdownOverlay = document.getElementById('countdownOverlay');
         this.countdownText = document.getElementById('countdownText');
+    this.orientationPrompt = document.getElementById('orientationPrompt');
+    if (this.orientationPrompt) {
+      this.orientationPrompt.addEventListener('click', () => this.tryLockLandscape());
+    }
     this.newHighScoreBanner = document.getElementById('newHighScoreBanner');
     this.isPortraitFallback = false;
     this.isReverseRotation = false;
@@ -777,18 +781,7 @@ class UIManager {
         let deltaY = touch.clientY - this.touchStartY;
         let deltaX = touch.clientX - this.touchStartX;
 
-        // In portrait fallback rotation, map screen touch delta into container coordinates:
-        if (this.isPortraitFallback) {
-          const origX = deltaX;
-          const origY = deltaY;
-          if (this.isReverseRotation) {
-            deltaY = -origX;
-            deltaX = origY;
-          } else {
-            deltaY = origX;
-            deltaX = -origY;
-          }
-        }
+        // Touch swipe coordinates are naturally aligned with screen in landscape
 
         // Detect downward swipe gesture (deltaY > 18 and predominantly downward)
         if (deltaY > 18 && Math.abs(deltaY) > Math.abs(deltaX) * 0.75) {
@@ -863,20 +856,23 @@ class UIManager {
       }
     }, { passive: false });
 
-    // Window resize observer for mascot canvas DPR
-    window.addEventListener('resize', () => {
-      this.updateOrientationMode();
-    }, { passive: true });
+    // Single unified debounced orientation & resize listener
+    let orientationDebounceTimer = null;
+    const handleOrientationOrResize = () => {
+      if (orientationDebounceTimer) cancelAnimationFrame(orientationDebounceTimer);
+      orientationDebounceTimer = requestAnimationFrame(() => {
+        this.updateOrientationMode();
+      });
+    };
 
+    window.addEventListener('resize', handleOrientationOrResize, { passive: true });
     window.addEventListener('orientationchange', () => {
-      this.updateOrientationMode();
-      setTimeout(() => this.updateOrientationMode(), 150);
+      handleOrientationOrResize();
+      setTimeout(handleOrientationOrResize, 100);
     }, { passive: true });
 
     if (screen.orientation && typeof screen.orientation.addEventListener === 'function') {
-      screen.orientation.addEventListener('change', () => {
-        this.updateOrientationMode();
-      });
+      screen.orientation.addEventListener('change', handleOrientationOrResize);
     }
   }
 
@@ -890,43 +886,46 @@ class UIManager {
     const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     const isMobileOrTablet = isTouch || (Math.min(window.innerWidth, window.innerHeight) <= 1024);
 
+    const prompt = this.orientationPrompt || document.getElementById('orientationPrompt');
     const container = document.getElementById('gameContainer');
-    if (!container) return;
 
-    if (isPortrait && isMobileOrTablet) {
-      document.body.classList.add('portrait-fallback');
-      container.classList.add('landscape-fallback-rotated');
-      this.isPortraitFallback = true;
-
-      const angle = (screen.orientation && screen.orientation.angle !== undefined)
-        ? screen.orientation.angle
-        : (window.orientation || 0);
-
-      if (angle === 180) {
-        document.body.classList.add('rotate-reverse');
-        container.classList.add('rotate-reverse');
-        this.isReverseRotation = true;
-      } else {
-        document.body.classList.remove('rotate-reverse');
-        container.classList.remove('rotate-reverse');
-        this.isReverseRotation = false;
-      }
-    } else {
-      document.body.classList.remove('portrait-fallback', 'rotate-reverse');
-      container.classList.remove('landscape-fallback-rotated', 'rotate-reverse');
-      this.isPortraitFallback = false;
-      this.isReverseRotation = false;
-    }
-
-    // Try native orientation lock where supported
+    // Attempt native orientation lock where supported
     this.tryLockLandscape();
 
-    // Trigger game engine resize to adjust canvas, runway and characters
-    if (this.game && typeof this.game.resize === 'function') {
-      this.game.resize();
+    if (isPortrait && isMobileOrTablet) {
+      // Mobile or tablet held in portrait: display clean landscape required overlay
+      document.documentElement.classList.add('require-landscape');
+      if (prompt) {
+        prompt.classList.remove('hidden');
+      }
+
+      // If active gameplay in progress, pause cleanly without resetting session
+      if (this.game && this.game.state === this.game.STATE_PLAYING) {
+        this.game.handleAutoPause();
+      }
+    } else {
+      // Landscape orientation (primary or secondary) or desktop
+      document.documentElement.classList.remove('require-landscape');
+      if (prompt) {
+        prompt.classList.add('hidden');
+      }
+
+      // Clean up legacy fallback classes if present
+      document.body.classList.remove('portrait-fallback', 'rotate-reverse');
+      if (container) {
+        container.classList.remove('landscape-fallback-rotated', 'rotate-reverse');
+      }
+      this.isPortraitFallback = false;
+      this.isReverseRotation = false;
+
+      // Trigger game engine resize to adapt canvas to landscape dimensions
+      if (this.game && typeof this.game.resize === 'function') {
+        this.game.resize();
+      }
+
+      // Refresh mascot canvas resolution
+      this.initMascotCanvasResolution();
     }
-    // Refresh mascot canvas resolution
-    this.initMascotCanvasResolution();
   }
 
   checkOrientation() {
