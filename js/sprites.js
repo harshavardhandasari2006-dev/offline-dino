@@ -253,10 +253,12 @@ class SpriteRenderer {
       ? Math.max(0, Math.min(1, nightProgress))
       : (nightProgress ? 1.0 : 0.0);
 
-    if (bgDay && (bgDay.width || bgDay.naturalWidth)) {
+    const activeBg = (p >= 0.999 && bgNight && (bgNight.width || bgNight.naturalWidth)) ? bgNight : bgDay;
+
+    if (activeBg && (activeBg.width || activeBg.naturalWidth)) {
       ctx.save();
-      const naturalW = bgDay.width || bgDay.naturalWidth;
-      const naturalH = bgDay.height || bgDay.naturalHeight;
+      const naturalW = activeBg.width || activeBg.naturalWidth;
+      const naturalH = activeBg.height || activeBg.naturalHeight;
       const aspect = naturalW / naturalH;
       const bgH = groundY;
       const bgW = bgH * aspect;
@@ -266,11 +268,30 @@ class SpriteRenderer {
       const startTile = -1;
       const endTile = Math.ceil(width / bgW) + 1;
 
-      // 1. Draw Day Background (base layer: Stage A)
-      for (let l = startTile; l <= endTile; l++) {
-        const bx0 = Math.round(offset + l * bgW);
-        const bx1 = Math.round(offset + (l + 1) * bgW);
-        ctx.drawImage(bgDay, bx0, 0, bx1 - bx0, bgH);
+      // 0. Base sky fill in Night Mode to ensure continuous deep indigo atmosphere
+      if (p > 0.001) {
+        ctx.save();
+        const nightBaseGrad = ctx.createLinearGradient(0, 0, 0, bgH);
+        nightBaseGrad.addColorStop(0, '#0a1024');
+        nightBaseGrad.addColorStop(1, '#1b223d');
+        ctx.fillStyle = nightBaseGrad;
+        ctx.fillRect(0, 0, width, bgH);
+        ctx.restore();
+      }
+
+      // 1. Draw Day Background (base layer: Stage A - active only while daytime is visible)
+      if (p < 0.999 && bgDay && (bgDay.width || bgDay.naturalWidth)) {
+        ctx.save();
+        if (p > 0.001) {
+          ctx.globalAlpha = 1.0 - p;
+        }
+        for (let l = startTile; l <= endTile; l++) {
+          const bx0 = Math.floor(offset + l * bgW);
+          const bx1 = Math.ceil(offset + (l + 1) * bgW);
+          // +2px overlap completely eliminates hardware rasterizer subpixel seams
+          ctx.drawImage(bgDay, bx0, 0, (bx1 - bx0) + 2, bgH);
+        }
+        ctx.restore();
       }
 
       // 2. Crossfade Night Background (aligned mesas, clouds, stars & moon)
@@ -278,9 +299,10 @@ class SpriteRenderer {
         ctx.save();
         ctx.globalAlpha = p;
         for (let l = startTile; l <= endTile; l++) {
-          const bx0 = Math.round(offset + l * bgW);
-          const bx1 = Math.round(offset + (l + 1) * bgW);
-          ctx.drawImage(bgNight, bx0, 0, bx1 - bx0, bgH);
+          const bx0 = Math.floor(offset + l * bgW);
+          const bx1 = Math.ceil(offset + (l + 1) * bgW);
+          // +2px overlap completely eliminates hardware rasterizer subpixel seams
+          ctx.drawImage(bgNight, bx0, 0, (bx1 - bx0) + 2, bgH);
         }
         ctx.restore();
       }
