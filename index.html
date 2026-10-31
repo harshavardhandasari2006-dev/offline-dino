@@ -12,16 +12,16 @@
   <meta property="og:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="twitter:title" content="Offline Dino — Run, Jump, Survive!">
   <meta name="apple-mobile-web-app-title" content="Offline Dino">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=77">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=77">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=77">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=77">
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png?v=77">
-  <link rel="shortcut icon" href="favicon.ico?v=77">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=77">
-  <link rel="manifest" href="manifest.json?v=77">
-  <link rel="preload" as="image" href="assets/sprites/homepage_seamless_panorama.jpg?v=77">
-  <link rel="stylesheet" href="css/style.css?v=77">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=78">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48x48.png?v=78">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=78">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=78">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png?v=78">
+  <link rel="shortcut icon" href="favicon.ico?v=78">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=78">
+  <link rel="manifest" href="manifest.json?v=78">
+  <link rel="preload" as="image" href="assets/sprites/homepage_seamless_panorama.jpg?v=78">
+  <link rel="stylesheet" href="css/style.css?v=78">
   <script>
     // Immediate early landscape setup for mobile & tablet
     (function() {
@@ -44,7 +44,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=77').catch(function() {});
+        navigator.serviceWorker.register('./sw.js?v=78').catch(function() {});
       });
     }
   </script>
@@ -133,13 +133,13 @@
 
       <div class="homepage-stage">
         <!-- Master Reference Visual Artwork Layer (Active in Desktop Landscape 16:9) -->
-        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=77" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
+        <img id="homeMasterBg" src="assets/sprites/homepage_seamless_panorama.jpg?v=78" alt="OFFLINE DINO" class="home-master-bg" draggable="false" />
 
         <!-- Stationary Skin Synchronization Layer (Only active for non-green skins on desktop) -->
         <img id="homeDinoSkinOverlay" src="assets/sprites/home_dino_skin_green.png" alt="Selected Dino Skin" class="home-dino-skin-overlay hidden" draggable="false" />
 
         <!-- Sound: OFF Visual Patch (Toggles when muted in desktop mode) -->
-        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=77" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
+        <img id="homeSoundOffPatch" src="assets/sprites/home_sound_off_patch.png?v=78" alt="Sound: OFF" class="home-sound-off-patch hidden" draggable="false" />
 
         <!-- Responsive Title & Mascot Graphic (Active on mobile & tablet) -->
         <div class="home-title-wrapper">
@@ -298,16 +298,7 @@
     <!-- DINO CUSTOMIZATION SCREEN -->
     <div id="customizationScreen" class="screen customization-screen hidden">
       <div class="customization-card cartoon-card">
-        <div class="custom-header">
-          <h2 class="custom-title">DINO CUSTOMIZATION</h2>
-          <div class="custom-title-row">
-            <span class="custom-dino-name">REX</span>
-            <span class="custom-title-dot">•</span>
-            <span id="customSkinLabel" class="custom-skin-badge">CLASSIC GREEN</span>
-          </div>
-        </div>
-
-        <!-- Forward-Facing Dinosaur Preview Stage (Reversibly hidden rotation arrows per Requirement 4) -->
+        <!-- Forward-Facing Dinosaur Preview Stage (Left Column) -->
         <div class="custom-preview-stage">
           <button id="btnRotateLeft" class="btn-rotate preview-arrow-hidden" aria-label="Rotate Left" title="Rotate Left">
             <span class="rotate-arrow">◀</span>
@@ -325,11 +316,16 @@
           </button>
         </div>
 
-        <!-- Skin Selection Grid (9 Selectable Cards) -->
+        <!-- Skin Selection Section (Right Column) -->
         <div class="custom-skins-section">
           <div class="custom-section-title">SELECT SKIN PALETTE</div>
+          <div class="custom-title-row">
+            <span class="custom-dino-name">REX</span>
+            <span class="custom-title-dot">•</span>
+            <span id="customSkinLabel" class="custom-skin-badge">CLASSIC GREEN</span>
+          </div>
           <div id="customSkinsGrid" class="custom-skins-grid">
-            <!-- 9 skin cards populated dynamically -->
+            <!-- skin cards populated dynamically -->
           </div>
         </div>
 
@@ -349,14 +345,14 @@
     <div id="skinSelectToast" class="skin-select-toast hidden" aria-live="polite"></div>
   </div>
       <!-- Embedded Style 1 Sprite Data & Engine Scripts -->
-  <script src="js/sprite_data.js?v=77" defer></script>
-  <script src="js/skins.js?v=77"></script>
-  <script src="js/audio.js?v=77"></script>
-  <script src="js/three.min.js?v=77" defer></script>
-  <script src="js/dino3d.js?v=77" defer></script>
-  <script src="js/sprites.js?v=77"></script>
-  <script src="js/score_math.js?v=77"></script>
-  <script src="js/game.js?v=77"></script>
-  <script src="js/ui.js?v=77"></script>
+  <script src="js/sprite_data.js?v=78" defer></script>
+  <script src="js/skins.js?v=78"></script>
+  <script src="js/audio.js?v=78"></script>
+  <script src="js/three.min.js?v=78" defer></script>
+  <script src="js/dino3d.js?v=78" defer></script>
+  <script src="js/sprites.js?v=78"></script>
+  <script src="js/score_math.js?v=78"></script>
+  <script src="js/game.js?v=78"></script>
+  <script src="js/ui.js?v=78"></script>
 </body>
 </html>
