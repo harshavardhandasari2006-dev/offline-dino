@@ -1254,22 +1254,62 @@ class UIManager {
   // CROSS-DEVICE BROWSER & ANDROID BACK NAVIGATION
   // ==========================================
   setupHistoryNavigation() {
-    if (typeof window === 'undefined' || !window.history || !window.history.pushState) return;
+    if (typeof window === 'undefined') return;
 
+    if (window.history && window.history.pushState) {
+      try {
+        window.history.replaceState({ dinoView: 'home_base' }, '');
+        window.history.pushState({ dinoView: 'home' }, '');
+      } catch (e) {}
+
+      window.addEventListener('popstate', (e) => {
+        this.handlePopState(e);
+      });
+    }
+
+    this.setupCapacitorBackButton();
+  }
+
+  setupCapacitorBackButton() {
     try {
-      window.history.replaceState({ dinoView: 'home_base' }, '');
-      window.history.pushState({ dinoView: 'home' }, '');
+      const cap = window.Capacitor;
+      const appPlugin = (cap && cap.Plugins && cap.Plugins.App) || (window.CapacitorApp);
+      if (appPlugin && typeof appPlugin.addListener === 'function') {
+        appPlugin.addListener('backButton', () => {
+          this.handlePopState();
+        });
+      }
     } catch (e) {}
-
-    window.addEventListener('popstate', (e) => {
-      this.handlePopState(e);
-    });
   }
 
   executeExit() {
     this.hideModal(this.exitModal);
 
-    // 1. Electron runtime exit
+    // 1. Native Capacitor Android Exit (Highest Priority when running inside Android App)
+    try {
+      const cap = window.Capacitor;
+      const appPlugin = (cap && cap.Plugins && cap.Plugins.App) || (window.CapacitorApp);
+      if (appPlugin && typeof appPlugin.exitApp === 'function') {
+        appPlugin.exitApp();
+        return;
+      }
+    } catch (e) {
+      console.warn('Capacitor native exitApp error:', e);
+    }
+
+    // 2. Android Capacitor / Cordova / Native WebView runtime exit fallbacks
+    try {
+      if (typeof navigator !== 'undefined' && navigator.app && typeof navigator.app.exitApp === 'function') {
+        navigator.app.exitApp();
+        return;
+      }
+      if (window.Android && typeof window.Android.exitApp === 'function') {
+        window.Android.exitApp();
+        return;
+      }
+    } catch (e) {}
+
+    // 3. Electron runtime exit
     try {
       if (window.electronAPI && typeof window.electronAPI.quit === 'function') {
         window.electronAPI.quit();
@@ -1284,24 +1324,7 @@ class UIManager {
       }
     } catch (e) {}
 
-    // 2. Android Capacitor / Cordova / Native WebView runtime exit
-    try {
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App && typeof window.Capacitor.Plugins.App.exitApp === 'function') {
-        window.Capacitor.Plugins.App.exitApp();
-        return;
-      }
-      if (typeof navigator !== 'undefined' && navigator.app && typeof navigator.app.exitApp === 'function') {
-        navigator.app.exitApp();
-        return;
-      }
-      if (window.Android && typeof window.Android.exitApp === 'function') {
-        window.Android.exitApp();
-        return;
-      }
-    } catch (e) {}
-
-    // 3. Genuine Window / PWA Close Action
-    // - In an installed standalone PWA window, window.close() closes the application window.
+    // 4. Genuine Window / PWA Close Action
     // - In script-opened browser tabs, window.close() closes the current tab.
     // - In standard browser tabs opened directly by user, browser security policy restricts tab closure.
     try {

@@ -33,7 +33,14 @@ PROJECT_RULES.md
 model_capabilities.yaml
 adapters/
 scripts/
-# Video working copies and backups (keep only canonical intro.mp4)
+# Android / Capacitor build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.apk
+www/
+
 assets/videos/intro_original.mp4
 assets/videos/intro_trimmed.mp4
 *.corrupted_backup_*

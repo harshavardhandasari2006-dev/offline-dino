@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Offline Dino</string>
+    <string name="title_activity_main">Offline Dino</string>
+    <string name="package_name">com.offlinedino.game</string>
+    <string name="custom_url_scheme">com.offlinedino.game</string>
+</resources>
