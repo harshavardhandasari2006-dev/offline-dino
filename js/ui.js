@@ -58,6 +58,21 @@ class UIManager {
     this.btnFullscreen = document.getElementById('btnFullscreen');
     this.btnHomeFullscreen = document.getElementById('btnHomeFullscreen');
 
+    if (this.isCapacitorNative()) {
+      if (document.documentElement) document.documentElement.classList.add('is-capacitor-native');
+      if (document.body) document.body.classList.add('is-capacitor-native');
+      if (this.btnFullscreen) {
+        this.btnFullscreen.remove();
+        this.btnFullscreen = null;
+      }
+      if (this.btnHomeFullscreen) {
+        this.btnHomeFullscreen.remove();
+        this.btnHomeFullscreen = null;
+      }
+      const topActions = document.querySelector('.home-top-actions');
+      if (topActions) topActions.remove();
+    }
+
     // Home buttons (Settings completely removed)
     this.btnStartGame = document.getElementById('btnStartGame');
     this.btnHomeHighScore = document.getElementById('btnHomeHighScore');
@@ -184,10 +199,42 @@ class UIManager {
     this.updateOrientationMode();
   }
 
+  isCapacitorNative() {
+    try {
+      const cap = typeof window !== 'undefined' ? window.Capacitor : null;
+      if (!cap) return false;
+      if (typeof cap.isNativePlatform === 'function') {
+        return cap.isNativePlatform();
+      }
+      if (typeof cap.getPlatform === 'function') {
+        return cap.getPlatform() !== 'web';
+      }
+      return !!(cap.platform && cap.platform !== 'web');
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ==========================================
   // FULLSCREEN MANAGEMENT (Expand / Exit Fullscreen)
   // ==========================================
   setupFullscreen() {
+    // In native Android application, app is already running in native immersive fullscreen.
+    // The Expand button is completely removed from the UI.
+    if (this.isCapacitorNative()) {
+      if (this.btnFullscreen) {
+        this.btnFullscreen.remove();
+        this.btnFullscreen = null;
+      }
+      if (this.btnHomeFullscreen) {
+        this.btnHomeFullscreen.remove();
+        this.btnHomeFullscreen = null;
+      }
+      const topActions = document.querySelector('.home-top-actions');
+      if (topActions) topActions.remove();
+      return;
+    }
+
     if (!this.isFullscreenSupported()) {
       if (this.btnFullscreen) this.btnFullscreen.classList.add('hidden');
       if (this.btnHomeFullscreen) this.btnHomeFullscreen.classList.add('hidden');
@@ -284,6 +331,7 @@ class UIManager {
   }
 
   updateFullscreenUI() {
+    if (this.isCapacitorNative()) return;
     const isFS = this.isFullscreen();
     const expandIcons = document.querySelectorAll('.fs-icon-expand');
     const compressIcons = document.querySelectorAll('.fs-icon-compress');

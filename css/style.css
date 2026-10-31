@@ -2407,3 +2407,18 @@ html, body {
   .btn-custom-back { width: 100% !important; flex: 1 !important; padding: 11px 20px !important; background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important; border: 3px solid #0f172a !important; border-radius: 16px !important; box-shadow: 0 4px 0 #0f172a !important; color: #ffffff !important; font-size: 16px !important; font-weight: 900; letter-spacing: 1px; text-align: center; }
 }
 
+/* ==========================================
+   NATIVE CAPACITOR ANDROID OVERRIDES
+   Remove Expand / Fullscreen button completely
+   (Android app already runs in native immersive fullscreen)
+   ========================================== */
+.is-capacitor-native .home-fullscreen-btn,
+.is-capacitor-native .hud-fullscreen-btn,
+.is-capacitor-native #btnHomeFullscreen,
+.is-capacitor-native #btnFullscreen,
+.is-capacitor-native .home-top-actions {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
