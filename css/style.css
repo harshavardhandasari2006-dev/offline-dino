@@ -2406,3 +2406,8 @@ html, body {
   .custom-actions-bar { grid-area: actions; width: 100% !important; margin-top: 4px !important; display: flex !important; }
   .btn-custom-back { width: 100% !important; flex: 1 !important; padding: 11px 20px !important; background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important; border: 3px solid #0f172a !important; border-radius: 16px !important; box-shadow: 0 4px 0 #0f172a !important; color: #ffffff !important; font-size: 16px !important; font-weight: 900; letter-spacing: 1px; text-align: center; }
 }
+
+/* Exit Notice Toast: elevated above modals */
+.exit-notice-toast {
+  z-index: 1002;
+}

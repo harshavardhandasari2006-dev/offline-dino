@@ -166,6 +166,8 @@ class UIManager {
     this.isExiting = false;
     this.countdownTimer = null;
     this.bannerTimeout = null;
+    this.exitNoticeToast = document.getElementById('exitNoticeToast');
+    this.exitNoticeTimeout = null;
 
     // Touch gesture state (DINO-003)
     this.touchStartY = 0;
@@ -964,7 +966,12 @@ class UIManager {
   }
 
   showModal(el) {
-    if (el) el.classList.remove('hidden');
+    if (el) {
+      if (el === this.exitModal) {
+        this.dismissExitNotice();
+      }
+      el.classList.remove('hidden');
+    }
   }
 
   hideModal(el) {
@@ -1271,35 +1278,72 @@ class UIManager {
     this.isExiting = true;
     this.hideModal(this.exitModal);
 
-    // Stop all audio, mascot animations, and gameplay loops immediately
-    if (this.sound) {
-      this.sound.stopAmbience();
-    }
-    this.stopMascotAnimation();
-    if (this.game) {
-      this.game.stopLoop();
-    }
-
-    // 1. Attempt programmatic window close (supported when opened via script/standalone/PWA)
+    // 1. Attempt programmatic window close (supported in standalone PWA, mobile wrappers, or script-opened tabs)
     try {
       window.close();
     } catch (e) {}
 
-    // 2. Return to referrer if arriving from an external site
     try {
-      if (document.referrer && document.referrer !== window.location.href && !document.referrer.includes(window.location.host)) {
-        window.location.replace(document.referrer);
-        return;
+      if (typeof navigator !== 'undefined' && navigator.app && typeof navigator.app.exitApp === 'function') {
+        navigator.app.exitApp();
       }
     } catch (e) {}
 
-    // 3. Supported exit fallback: redirect to Google homepage instead of blank page
-    try {
-      window.location.replace('https://www.google.com/');
-    } catch (e) {
-      try {
-        window.location.href = 'https://www.google.com/';
-      } catch (err) {}
+    // 2. If the browser blocks programmatic tab closure:
+    // Display a simple, unobtrusive message explaining manual close.
+    // Do NOT navigate to about:blank.
+    // Do NOT redirect to an empty page or external URL.
+    // Do NOT reload the homepage.
+    // Do NOT freeze the game or leave it in a blank state.
+    setTimeout(() => {
+      this.isExiting = false;
+      this.showExitNotice('To exit, please close this tab or window manually.');
+    }, 120);
+  }
+
+  showExitNotice(message = 'To exit, please close this tab or window manually.') {
+    if (!this.exitNoticeToast) {
+      this.exitNoticeToast = document.getElementById('exitNoticeToast');
+    }
+    if (!this.exitNoticeToast) {
+      this.exitNoticeToast = document.createElement('div');
+      this.exitNoticeToast.id = 'exitNoticeToast';
+      this.exitNoticeToast.className = 'skin-select-toast exit-notice-toast hidden';
+      this.exitNoticeToast.setAttribute('aria-live', 'polite');
+      const appContainer = document.getElementById('app') || document.body;
+      appContainer.appendChild(this.exitNoticeToast);
+    }
+
+    if (this.exitNoticeTimeout) {
+      clearTimeout(this.exitNoticeTimeout);
+      this.exitNoticeTimeout = null;
+    }
+
+    this.exitNoticeToast.textContent = message;
+    this.exitNoticeToast.classList.remove('hidden');
+    void this.exitNoticeToast.offsetWidth;
+    this.exitNoticeToast.classList.add('toast-visible');
+
+    this.exitNoticeTimeout = setTimeout(() => {
+      if (this.exitNoticeToast) {
+        this.exitNoticeToast.classList.remove('toast-visible');
+        setTimeout(() => {
+          if (this.exitNoticeToast && !this.exitNoticeToast.classList.contains('toast-visible')) {
+            this.exitNoticeToast.classList.add('hidden');
+          }
+        }, 300);
+      }
+    }, 4500);
+  }
+
+  dismissExitNotice() {
+    if (this.exitNoticeTimeout) {
+      clearTimeout(this.exitNoticeTimeout);
+      this.exitNoticeTimeout = null;
+    }
+    if (this.exitNoticeToast) {
+      this.exitNoticeToast.classList.remove('toast-visible');
+      this.exitNoticeToast.classList.add('hidden');
     }
   }
 
