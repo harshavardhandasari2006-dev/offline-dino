@@ -1267,6 +1267,7 @@ class UIManager {
   }
 
   executeExit() {
+    if (this.isExiting) return;
     this.isExiting = true;
     this.hideModal(this.exitModal);
 
@@ -1292,12 +1293,12 @@ class UIManager {
       }
     } catch (e) {}
 
-    // 3. Immediate supported exit fallback for browser tabs
+    // 3. Supported exit fallback: redirect to Google homepage instead of blank page
     try {
-      window.location.replace('about:blank');
+      window.location.replace('https://www.google.com/');
     } catch (e) {
       try {
-        window.location.href = 'about:blank';
+        window.location.href = 'https://www.google.com/';
       } catch (err) {}
     }
   }
