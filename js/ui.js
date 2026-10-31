@@ -166,8 +166,6 @@ class UIManager {
     this.isExiting = false;
     this.countdownTimer = null;
     this.bannerTimeout = null;
-    this.exitNoticeToast = document.getElementById('exitNoticeToast');
-    this.exitNoticeTimeout = null;
 
     // Touch gesture state (DINO-003)
     this.touchStartY = 0;
@@ -966,12 +964,7 @@ class UIManager {
   }
 
   showModal(el) {
-    if (el) {
-      if (el === this.exitModal) {
-        this.dismissExitNotice();
-      }
-      el.classList.remove('hidden');
-    }
+    if (el) el.classList.remove('hidden');
   }
 
   hideModal(el) {
@@ -1274,77 +1267,54 @@ class UIManager {
   }
 
   executeExit() {
-    if (this.isExiting) return;
-    this.isExiting = true;
     this.hideModal(this.exitModal);
 
-    // 1. Attempt programmatic window close (supported in standalone PWA, mobile wrappers, or script-opened tabs)
+    // 1. Electron runtime exit
+    try {
+      if (window.electronAPI && typeof window.electronAPI.quit === 'function') {
+        window.electronAPI.quit();
+        return;
+      }
+      if (typeof window.require === 'function') {
+        const electron = window.require('electron');
+        if (electron && electron.ipcRenderer) {
+          electron.ipcRenderer.send('app-quit');
+          return;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Android Capacitor / Cordova / Native WebView runtime exit
+    try {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App && typeof window.Capacitor.Plugins.App.exitApp === 'function') {
+        window.Capacitor.Plugins.App.exitApp();
+        return;
+      }
+      if (typeof navigator !== 'undefined' && navigator.app && typeof navigator.app.exitApp === 'function') {
+        navigator.app.exitApp();
+        return;
+      }
+      if (window.Android && typeof window.Android.exitApp === 'function') {
+        window.Android.exitApp();
+        return;
+      }
+    } catch (e) {}
+
+    // 3. Genuine Window / PWA Close Action
+    // - In an installed standalone PWA window, window.close() closes the application window.
+    // - In script-opened browser tabs, window.close() closes the current tab.
+    // - In standard browser tabs opened directly by user, browser security policy restricts tab closure.
     try {
       window.close();
     } catch (e) {}
 
     try {
-      if (typeof navigator !== 'undefined' && navigator.app && typeof navigator.app.exitApp === 'function') {
-        navigator.app.exitApp();
-      }
+      window.open('', '_self');
+      window.close();
     } catch (e) {}
 
-    // 2. If the browser blocks programmatic tab closure:
-    // Display a simple, unobtrusive message explaining manual close.
-    // Do NOT navigate to about:blank.
-    // Do NOT redirect to an empty page or external URL.
-    // Do NOT reload the homepage.
-    // Do NOT freeze the game or leave it in a blank state.
-    setTimeout(() => {
-      this.isExiting = false;
-      this.showExitNotice('To exit, please close this tab or window manually.');
-    }, 120);
-  }
-
-  showExitNotice(message = 'To exit, please close this tab or window manually.') {
-    if (!this.exitNoticeToast) {
-      this.exitNoticeToast = document.getElementById('exitNoticeToast');
-    }
-    if (!this.exitNoticeToast) {
-      this.exitNoticeToast = document.createElement('div');
-      this.exitNoticeToast.id = 'exitNoticeToast';
-      this.exitNoticeToast.className = 'skin-select-toast exit-notice-toast hidden';
-      this.exitNoticeToast.setAttribute('aria-live', 'polite');
-      const appContainer = document.getElementById('app') || document.body;
-      appContainer.appendChild(this.exitNoticeToast);
-    }
-
-    if (this.exitNoticeTimeout) {
-      clearTimeout(this.exitNoticeTimeout);
-      this.exitNoticeTimeout = null;
-    }
-
-    this.exitNoticeToast.textContent = message;
-    this.exitNoticeToast.classList.remove('hidden');
-    void this.exitNoticeToast.offsetWidth;
-    this.exitNoticeToast.classList.add('toast-visible');
-
-    this.exitNoticeTimeout = setTimeout(() => {
-      if (this.exitNoticeToast) {
-        this.exitNoticeToast.classList.remove('toast-visible');
-        setTimeout(() => {
-          if (this.exitNoticeToast && !this.exitNoticeToast.classList.contains('toast-visible')) {
-            this.exitNoticeToast.classList.add('hidden');
-          }
-        }, 300);
-      }
-    }, 4500);
-  }
-
-  dismissExitNotice() {
-    if (this.exitNoticeTimeout) {
-      clearTimeout(this.exitNoticeTimeout);
-      this.exitNoticeTimeout = null;
-    }
-    if (this.exitNoticeToast) {
-      this.exitNoticeToast.classList.remove('toast-visible');
-      this.exitNoticeToast.classList.add('hidden');
-    }
+    // Reset exit flag to ensure homepage remains completely interactive and never frozen
+    this.isExiting = false;
   }
 
   handlePopState(e) {
