@@ -82,15 +82,58 @@ html, body {
 }
 
 /* ==========================================================================
-   PORTRAIT PROTECTION & LANDSCAPE ORIENTATION LOCK
-   Prevents distorted portrait gameplay; shows clean rotate prompt
+   MOBILE & TABLET: LANDSCAPE ORIENTATION ONLY
+   Locks Offline Dino to landscape orientation on all mobile & tablet devices.
+   Powered purely by CSS media queries for instant zero-lag frame-0 rendering.
    ========================================================================== */
-html.require-landscape #gameContainer {
-  visibility: hidden !important;
+@media (orientation: portrait) and (max-width: 1024px) {
+  html, body {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
+  }
+
+  #gameContainer {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100vh !important;
+    width: 100dvh !important;
+    height: 100vw !important;
+    height: 100dvw !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    transform-origin: center center !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    z-index: 1 !important;
+  }
+
+  html.rotate-reverse #gameContainer {
+    transform: translate(-50%, -50%) rotate(-90deg) !important;
+  }
 }
 
-html.require-landscape .orientation-prompt {
-  display: flex !important;
+@media (orientation: landscape) {
+  #gameContainer {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100vw !important;
+    width: 100dvw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    transform: none !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
 }
 
 #gameCanvas {
@@ -1886,8 +1929,7 @@ html.require-landscape .orientation-prompt {
 }
 
 /* Customization screen responsiveness for landscape mobile */
-@media (max-height: 540px) and (orientation: landscape),
-       (max-width: 950px) and (orientation: landscape) {
+@media (max-height: 540px) and (orientation: landscape), (max-width: 950px) and (orientation: landscape), (orientation: portrait) and (max-width: 1024px) {
   .customization-card {
     display: grid !important;
     grid-template-areas:
@@ -2133,99 +2175,13 @@ html.require-landscape .orientation-prompt {
    Rotate Device Overlay (Mobile & Tablet Portrait)
    Clean, minimal prompt when landscape orientation is required
    ========================================================================== */
-.orientation-prompt {
-  display: none;
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  z-index: 100000;
-  background: rgba(15, 23, 42, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-.orientation-prompt.hidden {
-  display: none !important;
-}
-
-@media (orientation: portrait) and (max-width: 1024px) {
-  .orientation-prompt:not(.hidden) {
-    display: flex !important;
-  }
-}
-
-.orientation-prompt-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 340px;
-  width: 90%;
-  padding: 28px 24px;
-  background: rgba(30, 41, 59, 0.92);
-  border: 3.5px solid #ffb703;
-  border-radius: 28px;
-  box-shadow: 0 12px 0 #0f172a, 0 20px 40px rgba(0, 0, 0, 0.5);
-  gap: 14px;
-}
-
-.orientation-phone-icon-anim {
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: rotatePhone 2.2s ease-in-out infinite;
-}
-
-@keyframes rotatePhone {
-  0%, 15% {
-    transform: rotate(0deg);
-  }
-  50%, 75% {
-    transform: rotate(90deg);
-  }
-  85%, 100% {
-    transform: rotate(0deg);
-  }
-}
-
-.phone-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.orientation-prompt-title {
-  font-family: var(--font-family);
-  font-size: 20px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-  margin: 0;
-  line-height: 1.25;
-}
-
-.orientation-prompt-desc {
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 600;
-  color: #cbd5e1;
-  line-height: 1.45;
-  margin: 0;
-}
+.orientation-prompt { display: none !important; }
 
 /* ==========================================================================
    DEDICATED MOBILE LANDSCAPE RESPONSIVE SYSTEM
    Applies to phones in landscape (height <= 540px)
    ========================================================================== */
-@media (orientation: landscape) and (max-height: 540px) {
+@media (orientation: landscape) and (max-height: 540px), (orientation: portrait) and (max-width: 1024px) {
   .hud-overlay {
     padding-top: max(6px, env(safe-area-inset-top, 6px));
     padding-left: max(16px, env(safe-area-inset-left, 16px));

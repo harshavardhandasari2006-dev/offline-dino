@@ -263,8 +263,20 @@ class DinoGame {
     const container = document.getElementById('gameContainer');
     if (!container) return;
 
-    let cw = container.clientWidth || window.innerWidth;
-    let ch = container.clientHeight || window.innerHeight;
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    const isMobileOrTablet = isTouch || (Math.min(window.innerWidth, window.innerHeight) <= 1024);
+    const isPortrait = window.innerHeight > window.innerWidth;
+
+    let cw, ch;
+    if (isPortrait && isMobileOrTablet) {
+      // In portrait on mobile/tablet, container is rotated into landscape (long edge is width):
+      cw = Math.max(window.innerWidth, window.innerHeight);
+      ch = Math.min(window.innerWidth, window.innerHeight);
+    } else {
+      cw = container.clientWidth || window.innerWidth;
+      ch = container.clientHeight || window.innerHeight;
+    }
+
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
     this.dpr = dpr;

@@ -778,10 +778,22 @@ class UIManager {
 
       if (e.touches && e.touches.length > 0) {
         const touch = e.touches[0];
-        let deltaY = touch.clientY - this.touchStartY;
-        let deltaX = touch.clientX - this.touchStartX;
+        const rawDeltaY = touch.clientY - this.touchStartY;
+        const rawDeltaX = touch.clientX - this.touchStartX;
 
-        // Touch swipe coordinates are naturally aligned with screen in landscape
+        let deltaY = rawDeltaY;
+        let deltaX = rawDeltaX;
+
+        // In portrait on mobile/tablet, container is rotated into landscape:
+        if (this.isPortraitRotated) {
+          if (this.isReverseRotation) {
+            deltaY = rawDeltaX;
+            deltaX = -rawDeltaY;
+          } else {
+            deltaY = -rawDeltaX;
+            deltaX = rawDeltaY;
+          }
+        }
 
         // Detect downward swipe gesture (deltaY > 18 and predominantly downward)
         if (deltaY > 18 && Math.abs(deltaY) > Math.abs(deltaX) * 0.75) {
@@ -886,46 +898,30 @@ class UIManager {
     const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     const isMobileOrTablet = isTouch || (Math.min(window.innerWidth, window.innerHeight) <= 1024);
 
-    const prompt = this.orientationPrompt || document.getElementById('orientationPrompt');
-    const container = document.getElementById('gameContainer');
+    const angle = (screen.orientation && screen.orientation.angle !== undefined)
+      ? screen.orientation.angle
+      : (window.orientation || 0);
+
+    if (isPortrait && isMobileOrTablet && angle === 180) {
+      document.documentElement.classList.add('rotate-reverse');
+      this.isReverseRotation = true;
+    } else {
+      document.documentElement.classList.remove('rotate-reverse');
+      this.isReverseRotation = false;
+    }
+
+    this.isPortraitRotated = isPortrait && isMobileOrTablet;
 
     // Attempt native orientation lock where supported
     this.tryLockLandscape();
 
-    if (isPortrait && isMobileOrTablet) {
-      // Mobile or tablet held in portrait: display clean landscape required overlay
-      document.documentElement.classList.add('require-landscape');
-      if (prompt) {
-        prompt.classList.remove('hidden');
-      }
-
-      // If active gameplay in progress, pause cleanly without resetting session
-      if (this.game && this.game.state === this.game.STATE_PLAYING) {
-        this.game.handleAutoPause();
-      }
-    } else {
-      // Landscape orientation (primary or secondary) or desktop
-      document.documentElement.classList.remove('require-landscape');
-      if (prompt) {
-        prompt.classList.add('hidden');
-      }
-
-      // Clean up legacy fallback classes if present
-      document.body.classList.remove('portrait-fallback', 'rotate-reverse');
-      if (container) {
-        container.classList.remove('landscape-fallback-rotated', 'rotate-reverse');
-      }
-      this.isPortraitFallback = false;
-      this.isReverseRotation = false;
-
-      // Trigger game engine resize to adapt canvas to landscape dimensions
-      if (this.game && typeof this.game.resize === 'function') {
-        this.game.resize();
-      }
-
-      // Refresh mascot canvas resolution
-      this.initMascotCanvasResolution();
+    // Trigger game engine resize to adapt canvas
+    if (this.game && typeof this.game.resize === 'function') {
+      this.game.resize();
     }
+
+    // Refresh mascot canvas resolution
+    this.initMascotCanvasResolution();
   }
 
   checkOrientation() {
